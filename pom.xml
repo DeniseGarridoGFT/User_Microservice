@@ -97,7 +97,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version> <!-- Asegúrate de usar una versión que soporte esta característica -->
+				<version>0.8.7</version>
 				<executions>
 					<execution>
 						<goals>
@@ -112,11 +112,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<excludes>
-						<exclude>**/*Generated*</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
