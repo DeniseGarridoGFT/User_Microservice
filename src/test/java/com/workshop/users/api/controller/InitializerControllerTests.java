@@ -1,9 +1,7 @@
 package com.workshop.users.api.controller;
 
 import com.workshop.users.api.controller.Data.DataInitzializerController;
-import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.*;
-import com.workshop.users.exceptions.PasswordDoentMatchException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 
@@ -14,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 
@@ -74,22 +73,45 @@ public class InitializerControllerTests {
             verify(userService,times(1)).getUserByEmail(anyString());
 
         }
-//        @Test
-//        @DisplayName("Given existing email and correct password Then return the correct user")
-//        void loginUserErrorPassword() {
-//            //Given
-//            when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
-//            Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
-//            //When
-//            ResponseEntity<?> userLogged = initializerController.loginUser(userToLogin);
-//
-//            //Then
-//            assertThat(userLogged).isNotNull();
-//            assertThat(userLogged.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-//            assertThatThrownBy(userLogged::getBody).isInstanceOf(PasswordDoentMatchException.class);
-//
-//            verify(userService,times(1)).getUserByEmail(anyString());
-//
-//        }
+        @Test
+        @DisplayName("Given existing email and incorrect password Then return the password error")
+        void loginUserErrorPassword() {
+            //Given
+            when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
+            Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
+            try {
+                //When
+                ResponseEntity<UserDto> responseStatusException = initializerController.loginUser(userToLogin);
+            }catch (Exception exception){
+                //Then
+                assertThat(exception).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+                assertThat(responseStatusException.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password is incorrect\"");
+            }
+
+            verify(userService,times(1)).getUserByEmail(anyString());
+        }
+
+        @Test
+        @DisplayName("Given non-existing email and correct password Then return the email error")
+        void loginUserErrorEmail() {
+            //Given
+            when(userService.getUserByEmail("denipse@gmail.com")).thenThrow(new RuntimeException());
+            Login userToLogin = Login.builder().email("denipse@gmail.com").password("3214").build();
+
+            try {
+                //When
+                ResponseEntity<UserDto> responseStatusException = initializerController.loginUser(userToLogin);
+            }catch (Exception exception){
+                //Then
+                assertThat(exception).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+                assertThat(responseStatusException.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password is incorrect\"");
+            }
+
+            verify(userService,times(1)).getUserByEmail(anyString());
+        }
     }
 }
