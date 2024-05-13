@@ -2,10 +2,12 @@ package com.workshop.users.model;
 
 import com.workshop.users.api.dto.UserDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -18,29 +20,39 @@ public class UserEntity implements Serializable {
     @Column(name="ID")
     private long id;
     @Column(name="NAME")
+    @NotNull
     private String name;
     @Column(name="LAST_NAME")
+    @NotNull
     private String lastName;
     @Column(name="EMAIL")
+    @NotNull
     private String email;
     @Column(name="PASSWORD")
+    @NotNull
     private String password;
     @ManyToOne
     @JoinColumn(name = "COUNTRY_ID", referencedColumnName = "ID")
+    @NotNull
     private CountryEntity country;
-    @Column(name= "FIDELITY_POINTS")
+    @Column(name= "FIDELITY_POINTS", columnDefinition = "integer default 0")
     private Integer fidelityPoints;
     @Column(name= "BIRTH_DATE")
     private Date birthDate;
     @Column(name= "PHONE")
+    @NotNull
     private String phone;
     @OneToOne
     @JoinColumn(name = "ADDRESS_ID", referencedColumnName = "ID")
+    @NotNull
     private AddressEntity address;
 
 
     public static UserDto fromEntity(UserEntity userEntity) {
         Date birthDate = userEntity.getBirthDate();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedBirthDate = dateFormat.format(birthDate);
+
         return UserDto.builder()
                 .id(userEntity.getId())
                 .name(userEntity.getName())
@@ -48,11 +60,10 @@ public class UserEntity implements Serializable {
                 .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
                 .fidelityPoints(userEntity.getFidelityPoints())
-                .birthDate(birthDate.getYear()+"/"+birthDate.getMonth()+"/"+birthDate.getDate())
+                .birthDate(formattedBirthDate)
                 .phone(userEntity.getPhone())
                 .address(AddressEntity.fromEntity(userEntity.getAddress()))
                 .country(CountryEntity.fromEntity(userEntity.getCountry()))
                 .build();
     }
-
 }
