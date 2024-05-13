@@ -1,6 +1,3 @@
-[Thursday 4:31 PM] Jimeno Cerverón, Carlos
-yaml de configuración de la pipeline: 
- 
 name: pipeline
  
 on:
@@ -57,5 +54,3 @@ jobs:
 
         path: target/*.jar
  
- 
- heart 1
