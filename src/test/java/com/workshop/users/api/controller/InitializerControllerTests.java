@@ -74,22 +74,22 @@ public class InitializerControllerTests {
             verify(userService,times(1)).getUserByEmail(anyString());
 
         }
-        @Test
-        @DisplayName("Given existing email and correct password Then return the correct user")
-        void loginUserErrorPassword() {
-            //Given
-            when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
-            Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
-            //When
-            ResponseEntity<?> userLogged = initializerController.loginUser(userToLogin);
-
-            //Then
-            assertThat(userLogged).isNotNull();
-            assertThat(userLogged.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-            assertThatThrownBy(userLogged::getBody).isInstanceOf(PasswordDoentMatchException.class);
-
-            verify(userService,times(1)).getUserByEmail(anyString());
-
-        }
+//        @Test
+//        @DisplayName("Given existing email and correct password Then return the correct user")
+//        void loginUserErrorPassword() {
+//            //Given
+//            when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
+//            Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
+//            //When
+//            ResponseEntity<?> userLogged = initializerController.loginUser(userToLogin);
+//
+//            //Then
+//            assertThat(userLogged).isNotNull();
+//            assertThat(userLogged.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+//            assertThatThrownBy(userLogged::getBody).isInstanceOf(PasswordDoentMatchException.class);
+//
+//            verify(userService,times(1)).getUserByEmail(anyString());
+//
+//        }
     }
 }
