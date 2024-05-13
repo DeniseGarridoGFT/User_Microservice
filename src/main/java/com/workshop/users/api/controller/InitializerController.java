@@ -3,16 +3,16 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.exceptions.PasswordDoentMatchException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
-import org.h2.engine.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 
@@ -39,12 +39,17 @@ public class InitializerController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<?> loginUser(@Validated @RequestBody Login userToLogIn){
-        UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
-        if (userToLogIn.passwordMatch(userToRespones.getPassword())){
-            return new ResponseEntity<>(userToRespones,HttpStatus.OK);
+    public ResponseEntity<UserDto> loginUser(@Validated @RequestBody Login userToLogIn) throws ResponseStatusException {
+
+        try {
+            UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
+            if (userToLogIn.passwordMatch(userToRespones.getPassword())) {
+                return new ResponseEntity<>(userToRespones, HttpStatus.OK);
+            }
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect");
+        }catch (RuntimeException runtimeException){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect");
         }
-        return new ResponseEntity<>(new PasswordDoentMatchException("The password or the email are incorrect"),PasswordDoentMatchException.STATUS_CODE);
     }
 
 }
