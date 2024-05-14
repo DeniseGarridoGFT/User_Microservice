@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class FromEntityTest {
+class FromEntityTest {
     @Test
     @DisplayName("Given a UserEntity When fromEntity Then return a dto")
     void UserFromEntityTest() {

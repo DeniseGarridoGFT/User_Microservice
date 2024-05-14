@@ -49,9 +49,6 @@ public class UserEntity implements Serializable {
 
 
     public static UserDto fromEntity(UserEntity userEntity) {
-        Date birthDate = userEntity.getBirthDate();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        String formattedBirthDate = dateFormat.format(birthDate);
 
         return UserDto.builder()
                 .id(userEntity.getId())
@@ -60,10 +57,16 @@ public class UserEntity implements Serializable {
                 .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
                 .fidelityPoints(userEntity.getFidelityPoints())
-                .birthDate(formattedBirthDate)
+                .birthDate(parseDate(userEntity.getBirthDate()))
                 .phone(userEntity.getPhone())
                 .address(AddressEntity.fromEntity(userEntity.getAddress()))
                 .country(CountryEntity.fromEntity(userEntity.getCountry()))
                 .build();
     }
+
+    public static String parseDate(Date date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return dateFormat.format(date);
+    }
+
 }
