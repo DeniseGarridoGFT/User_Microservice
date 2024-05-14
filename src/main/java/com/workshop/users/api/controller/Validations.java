@@ -15,7 +15,7 @@ public class Validations {
 
     boolean checkPassword(UserDto userToCheck) throws ResponseStatusException {
         if (!userToCheck.checkSecurityPassword()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"The password must contain, at least, 8 alphanumeric characters.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
         }
         return true;
     }
@@ -41,7 +41,7 @@ public class Validations {
         return true;
     }
 
-    boolean checkAllMethods(UserDto userToCheck) throws ResponseStatusException{
+    boolean checkAllMethodsUser(UserDto userToCheck) throws ResponseStatusException{
         return checkEmail(userToCheck) && checkPassword(userToCheck) && checkDateFormat(userToCheck) && checkPhone(userToCheck) && checkAge(userToCheck);
     }
 

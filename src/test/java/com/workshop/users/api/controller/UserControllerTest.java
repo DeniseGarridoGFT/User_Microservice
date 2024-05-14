@@ -2,6 +2,7 @@ package com.workshop.users.api.controller;
 
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,14 @@ class UserControllerTest {
 
     private UserService userService;
     private UserController userController;
+    private AddressService addressService;
     private int port;
 
     @BeforeEach
     void setUp() {
         userService  = Mockito.mock(UserService.class);
-        userController = new UserController(userService);
+        addressService = Mockito.mock(AddressService.class);
+        userController = new UserController(userService, addressService);
     }
 
     @Test

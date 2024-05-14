@@ -1,9 +1,12 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -38,9 +41,19 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) {
-        return null;
-    }
+        UserEntity userEntity = userDAORepository.findById(id).orElseThrow();
+        userEntity.setName(userDto.getName());
+        userEntity.setLastName(userDto.getLastName());
+        userEntity.setEmail(userDto.getEmail());
+        userEntity.setBirthDate(new Date(userDto.getBirthDate()));
+        userEntity.setPassword(userDto.getPassword());
+        userEntity.setFidelityPoints(userDto.getFidelityPoints());
+        userEntity.setPhone(userDto.getPhone());
+        userEntity.setAddress(AddressDto.toEntity(userDto.getAddress()));
 
+        return UserEntity.fromEntity(userDAORepository.save(userEntity));
+
+    }
 
     public void isNotNull(Object id) throws RuntimeException{
         if (id==null){
