@@ -1,5 +1,6 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService{
 
     private UserDAORepository userDAORepository;
+    private Login loginDto;
 
     public UserServiceImpl(UserDAORepository userDAORepository){
         this.userDAORepository=userDAORepository;
@@ -20,6 +22,10 @@ public class UserServiceImpl implements UserService{
         if (user.getFidelityPoints() == null) {
             user.setFidelityPoints(0);
         }
+
+        String encryptedPassword = loginDto.BCRYPT.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
+
         return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
     }
 

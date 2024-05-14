@@ -25,4 +25,11 @@ public class AddressServiceImpl implements AddressService {
     public AddressDto addAddress(AddressDto address) throws ParseException {
         return AddressEntity.fromEntity(addressDAORepository.save(AddressDto.toEntity(address)));
     }
+
+    @Override
+    public AddressDto deleteAddress(AddressDto address) throws ParseException {
+        AddressEntity addressEntity = AddressDto.toEntity(address);
+        addressDAORepository.delete(addressEntity);
+        return AddressEntity.fromEntity(addressEntity);
+    }
 }

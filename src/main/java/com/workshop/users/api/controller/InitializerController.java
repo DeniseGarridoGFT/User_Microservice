@@ -6,7 +6,6 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.PasswordDoentMatchException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
-import org.h2.engine.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,31 +19,46 @@ import java.text.ParseException;
 public class InitializerController {
     private final UserService userService;
     private final AddressService addressService;
+    private Validations validations = new Validations();
 
-
-    public InitializerController(UserService userService,AddressService addressService) {
-        this.addressService=addressService;
+    public InitializerController(UserService userService, AddressService addressService) {
+        this.addressService = addressService;
         this.userService = userService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> addUser(@Validated @RequestBody UserDto user) throws ParseException {
-        AddressDto addressDto = user.getAddress();
-        user.setAddress(addressService.addAddress(addressDto));
-        UserDto createdUser = userService.addUser(user);
-        if(!user.checkFormatEmail()){
-            return new ResponseEntity<>(createdUser, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws ParseException {
+
+        if (!validations.checkAllMethods(user)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        AddressDto addressDto = user.getAddress();
+        if (addressDto != null) {
+            AddressDto createdAddress = addressService.addAddress(addressDto);
+            if (createdAddress == null) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            user.setAddress(createdAddress);
+        }
+
+        UserDto createdUser = userService.addUser(user);
+        if (createdUser == null && addressDto != null) {
+            addressService.deleteAddress(addressDto);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+
     @PostMapping("login")
-    public ResponseEntity<?> loginUser(@Validated @RequestBody Login userToLogIn){
+    public ResponseEntity<?> loginUser(@Validated @RequestBody Login userToLogIn) {
         UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
-        if (userToLogIn.passwordMatch(userToRespones.getPassword())){
-            return new ResponseEntity<>(userToRespones,HttpStatus.OK);
+        if (userToLogIn.passwordMatch(userToRespones.getPassword())) {
+            return new ResponseEntity<>(userToRespones, HttpStatus.OK);
         }
-        return new ResponseEntity<>(new PasswordDoentMatchException("The password or the email are incorrect"),PasswordDoentMatchException.STATUS_CODE);
+        return new ResponseEntity<>(new PasswordDoentMatchException("The password or the email are incorrect"), PasswordDoentMatchException.STATUS_CODE);
     }
 
 }
