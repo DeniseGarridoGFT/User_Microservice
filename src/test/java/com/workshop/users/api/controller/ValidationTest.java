@@ -56,7 +56,7 @@ class ValidationTest {
 //        UserDto userDto = DataToUserControllerTesting.USER_ID_2;
 
 
-        validations = new Validations();
+        validations = new Validations(userService);
     }
 
     @Test

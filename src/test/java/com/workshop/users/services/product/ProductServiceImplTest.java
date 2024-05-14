@@ -55,11 +55,33 @@ class ProductServiceImplTest {
         @DisplayName("Given a invalid Id Then return the associated Product")
         void findProductByIdInvalid() {
             //Given
-            Mockito.when(productRepository.findProductById(2L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists"););
+            Mockito.when(productRepository.findProductById(2L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists"));
             //When
-            Product productObtainedCallingMethod = productService.findProductById(2L);
-            //Then
-            assertThat(productObtainedCallingMethod).isEqualTo(product);
+            try {
+                productService.findProductById(2L);
+            }catch (Exception exc){
+                //Then
+                assertThat(exc).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exc;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                assertThat(responseStatusException.getMessage()).isEqualTo("404 NOT_FOUND \"The product not exists\"");
+            }
+        }
+        @Test
+        @DisplayName("Given a null Then throw exception")
+        void findProductByIdNull() {
+            //Given
+            Mockito.when(productRepository.findProductById(2L)).thenReturn(Mono.empty());
+            //When
+            try {
+                productService.findProductById(2L);
+            }catch (Exception exc){
+                //Then
+                assertThat(exc).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exc;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                assertThat(responseStatusException.getMessage()).isEqualTo("404 NOT_FOUND \"The product not exists\"");
+            }
         }
     }
 
