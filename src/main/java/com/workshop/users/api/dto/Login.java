@@ -19,7 +19,4 @@ public class Login implements Serializable {
     public boolean passwordMatch(String passwordHash){
         return BCRYPT.matches(getPassword(),passwordHash);
     }
-
-
-
 }

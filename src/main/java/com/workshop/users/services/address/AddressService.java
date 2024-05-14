@@ -9,5 +9,6 @@ import java.text.ParseException;
 @Service
 public interface AddressService {
     AddressDto addAddress(AddressDto address) throws ParseException;
+    AddressDto deleteAddress(AddressDto address) throws ParseException;
 
 }
