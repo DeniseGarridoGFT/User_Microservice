@@ -82,11 +82,11 @@ public class Validations {
         return true;
     }
 
-    boolean checkAllMethods(UserDto userToCheck) throws ResponseStatusException{
+    boolean checkAllMethods(UserDto userToCheck) throws ResponseStatusException {
         return checkEmail(userToCheck) && checkPassword(userToCheck) && checkDateFormat(userToCheck) && checkPhone(userToCheck) && checkAge(userToCheck) && checkSameEmail(userToCheck);
-    boolean checkAllMethodsUser(UserDto userToCheck) throws ResponseStatusException{
-        return checkEmail(userToCheck) && checkPassword(userToCheck) && checkDateFormat(userToCheck) && checkPhone(userToCheck) && checkAge(userToCheck);
-    }
+        boolean checkAllMethodsUser (UserDto userToCheck) throws ResponseStatusException {
+            return checkEmail(userToCheck) && checkPassword(userToCheck) && checkDateFormat(userToCheck) && checkPhone(userToCheck) && checkAge(userToCheck);
+        }
 
-}
+    }
 }

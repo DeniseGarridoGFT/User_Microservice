@@ -37,6 +37,8 @@ public class AddressServiceImpl implements AddressService {
         return AddressEntity.fromEntity(addressDAORepository.findById(id).orElseThrow());
     }
 
+
+
     private void isNotNull(Long id) {
         if (id == null){
             throw new RuntimeException("Request not valid");
@@ -49,7 +51,7 @@ public class AddressServiceImpl implements AddressService {
         addressDAORepository.delete(addressEntity);
         return AddressEntity.fromEntity(addressEntity);
     }
-}
+
 
     @Override
     public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws ParseException {
