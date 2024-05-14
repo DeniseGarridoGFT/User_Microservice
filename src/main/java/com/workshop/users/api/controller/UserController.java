@@ -30,9 +30,9 @@ public class UserController {
     private AddressService addressService;
 
     public UserController(UserService userService, AddressService addressService) {
-
         this.userService = userService;
         this.addressService = addressService;
+        validations = new Validations(userService);
     }
 
 
