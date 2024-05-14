@@ -81,10 +81,11 @@
 			<scope>test</scope>
 		</dependency>
 
-
-
-
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+			<version>6.1.6</version>
+		</dependency>
 	</dependencies>
 
 	<build>
