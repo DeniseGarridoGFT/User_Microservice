@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -40,7 +41,7 @@ public class UserEntity implements Serializable {
 
 
     public static UserDto fromEntity(UserEntity userEntity) {
-        Date birthDate = userEntity.getBirthDate();
+
         return UserDto.builder()
                 .id(userEntity.getId())
                 .name(userEntity.getName())
@@ -48,11 +49,16 @@ public class UserEntity implements Serializable {
                 .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
                 .fidelityPoints(userEntity.getFidelityPoints())
-                .birthDate(birthDate.getYear()+"/"+birthDate.getMonth()+"/"+birthDate.getDate())
+                .birthDate(parseDate(userEntity.getBirthDate()))
                 .phone(userEntity.getPhone())
                 .address(AddressEntity.fromEntity(userEntity.getAddress()))
                 .country(CountryEntity.fromEntity(userEntity.getCountry()))
                 .build();
+    }
+
+    public static String parseDate(Date date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return dateFormat.format(date);
     }
 
 }
