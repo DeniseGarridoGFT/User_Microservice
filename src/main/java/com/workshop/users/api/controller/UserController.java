@@ -26,7 +26,7 @@ import java.util.function.Function;
 public class UserController {
 
     private final UserService userService;
-    private Validations validations = new Validations();
+    private Validations validations;
     private AddressService addressService;
 
     public UserController(UserService userService, AddressService addressService) {
