@@ -17,6 +17,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto addUser(UserDto user) {
+        if (user.getFidelityPoints() == null) {
+            user.setFidelityPoints(0);
+        }
         return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
     }
 

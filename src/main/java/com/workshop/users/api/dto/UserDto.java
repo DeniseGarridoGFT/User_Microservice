@@ -1,6 +1,7 @@
 package com.workshop.users.api.dto;
 
 import com.workshop.users.model.UserEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,20 +13,28 @@ import java.util.Date;
 @Data
 @Builder
 public class UserDto implements Serializable {
-
     private Long id;
+    @NotNull
     private String name;
+    @NotNull
     private String lastName;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
     private Integer fidelityPoints;
+    @NotNull
     private String birthDate;
+    @NotNull
     private String phone;
+    @NotNull
     private AddressDto address;
+    @NotNull
     private CountryDto country;
 
     public static UserEntity toEntity(UserDto dto) {
         UserEntity entity = new UserEntity();
+        entity.setName(dto.getName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
         entity.setPassword(dto.getPassword());
