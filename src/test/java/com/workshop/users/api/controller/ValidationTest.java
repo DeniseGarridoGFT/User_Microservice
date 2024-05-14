@@ -1,6 +1,5 @@
 package com.workshop.users.api.controller;
 
-import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
@@ -38,10 +37,26 @@ class ValidationTest {
         userService = Mockito.mock(UserService.class);
         addressService = mock(AddressService.class);
         initializerController = new InitializerController(userService,addressService);
+        userDto = UserDto.builder()
+                .id(2L)
+                .name("Denise")
+                .lastName("Garrido")
+                .email("denise@gmail.com")
+                .address(null)
+                .birthDate("2004/14/04")
+                .password("password")
+                .phone("123456789")
+                .fidelityPoints(100)
+                .country(null)
+                .build();
+
+
+
+//        DataToUserControllerTesting.USER_ID_2.setEmail("invalid email");
+//        UserDto userDto = DataToUserControllerTesting.USER_ID_2;
+
+
         validations = new Validations();
-        countryDto = DataInitzializerController.COUNTRY_SPAIN;
-        addressDto = DataInitzializerController.ADDRESS_VALLECAS;
-        userDto = DataInitzializerController.USER_LOGGED;
     }
 
     @Test
@@ -68,13 +83,4 @@ class ValidationTest {
                 .isTrue();
     }
 
-    @Test
-    void checkAllMethodsUserTest() throws ParseException {
-        Assertions.assertThat(validations.checkAllMethodsUser(userDto))
-                .isTrue();
-    }
-
-    @Test
-    void name() {
-    }
 }

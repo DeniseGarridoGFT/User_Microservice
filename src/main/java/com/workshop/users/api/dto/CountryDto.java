@@ -25,5 +25,4 @@ public class CountryDto {
         return entity;
     }
 
-
 }
