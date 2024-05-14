@@ -103,7 +103,6 @@ public class UserDto implements Serializable {
     }
 
 
-
     public void setValidBirthDate(String birthDate) throws Exception{
         if (UserDto.checkBirthDateFormat(birthDate))
             setOver18BirthDate(birthDate);
@@ -135,6 +134,4 @@ public class UserDto implements Serializable {
         else
             throw new Exception("The email is not valid");
     }
-
-
 }
