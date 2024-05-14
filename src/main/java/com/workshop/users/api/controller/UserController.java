@@ -48,12 +48,11 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id,
-                                               @RequestBody UserDto updatedUserDto) throws ParseException {
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto updatedUserDto) throws ParseException {
         if (updatedUserDto == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        validations.checkAllMethodsUser(updatedUserDto);
+        validations.checkAllMethods(updatedUserDto);
         AddressDto updatedUserAddress = addressService.updateAddress(updatedUserDto.getAddress().getId(), updatedUserDto.getAddress());
         updatedUserDto.setAddress(updatedUserAddress);
         UserDto updatedUser = userService.updateUser(id,updatedUserDto);
