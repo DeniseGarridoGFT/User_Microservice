@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService{
         userEntity.setAddress(AddressDto.toEntity(userDto.getAddress()));
 
         return UserEntity.fromEntity(userDAORepository.save(userEntity));
-
     }
 
 

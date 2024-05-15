@@ -45,9 +45,8 @@ public class InitializerController {
     }
 
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<UserDto> loginUser(@Validated @RequestBody Login userToLogIn) throws ResponseStatusException {
-
         try {
             UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
             if (userToLogIn.passwordMatch(userToRespones.getPassword())) {

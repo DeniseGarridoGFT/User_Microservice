@@ -19,7 +19,7 @@ import java.text.ParseException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class InitializerControllerTests {
+class InitializerControllerTests {
 
 
     private UserService userService;
@@ -39,7 +39,7 @@ public class InitializerControllerTests {
     }
 
     @Test
-    public void testAddUser() throws ParseException {
+    void testAddUser() throws ParseException {
         when(addressService.addAddress(DataInitzializerController.ADDRESS_VALLECAS_WITHOUT_ID))
                 .thenReturn(DataInitzializerController.ADDRESS_VALLECAS);
 

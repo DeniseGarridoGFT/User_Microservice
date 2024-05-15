@@ -4,6 +4,8 @@ import com.workshop.users.api.dto.WishListDto;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.workshop.users.model.data.DataWishListDto;
+import com.workshop.users.model.data.DataWishProductPK;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 class WishListDtoTest {
     @Nested
@@ -75,6 +78,27 @@ class WishListDtoTest {
         }
     }
 
+    @Test
+    @DisplayName("Given a WishListDto When to entity Then return a list of wish product pk")
+    void testsToEntity() {
+        WishListDto wishListDto = WishListDto.builder().userId(1L).productsIds(new HashSet<Long>(Arrays.asList(1L,2L,3L))).build();
+        List<WishProductPK> wishProductPKList = wishListDto.toEntity();
+        assertThat(wishProductPKList)
+                .contains(DataWishProductPK.WISH_PRODUCT_PK_USER_1_PRODUCT_1)
+                .contains(DataWishProductPK.WISH_PRODUCT_PK_USER_1_PRODUCT_2)
+                .contains(DataWishProductPK.WISH_PRODUCT_PK_USER_1_PRODUCT_3);
+    }
+    @Test
+    @DisplayName("Given a WishListDto When divide Then return a list of wish list")
+    void testsDivideWishLists() {
+        WishListDto wishListDto = WishListDto.builder().userId(1L).productsIds(new HashSet<Long>(Arrays.asList(1L,2L,3L))).build();
+        List<WishListDto> wishProductPKList = wishListDto.toDividedWisListDtos();
+        assertThat(wishProductPKList)
+                .contains(DataWishListDto.WISH_LIST_USER_1_PRODUCT_1)
+                .contains(DataWishListDto.WISH_LIST_USER_1_PRODUCT_2)
+                .contains(DataWishListDto.WISH_LIST_USER_1_PRODUCT_3);
+    }
+
     @Nested
     @DisplayName("When comprobe is null product")
     class isNullProductsGoodSettTest {
@@ -97,6 +121,8 @@ class WishListDtoTest {
                 assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             }
         }
+
+
     }
 
     @Nested
