@@ -30,7 +30,7 @@ public class ControllerAddUserTest {
     void setUp() {
         userService = Mockito.mock(UserService.class);
         addressService = mock(AddressService.class);
-        initializerController = new InitializerController(userService,addressService);
+        initializerController = new InitializerController(userService,addressService,new Validations(userService));
         addressDto = AddressDto.builder()
                 .id(3L)
                 .cityName("Madrid")

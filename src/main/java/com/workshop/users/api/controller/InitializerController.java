@@ -21,10 +21,10 @@ public class InitializerController {
     private final AddressService addressService;
     private Validations validations;
 
-    public InitializerController(UserService userService, AddressService addressService) {
+    public InitializerController(UserService userService, AddressService addressService,Validations validations) {
         this.addressService = addressService;
         this.userService = userService;
-        validations = new Validations(userService);
+        this.validations =validations;
     }
 
     @PostMapping("/register")

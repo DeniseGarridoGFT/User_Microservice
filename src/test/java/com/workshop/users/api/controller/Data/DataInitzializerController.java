@@ -1,5 +1,6 @@
 package com.workshop.users.api.controller.Data;
 
+import com.workshop.users.api.controller.Validations;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.UserDto;
@@ -14,9 +15,11 @@ public class DataInitzializerController {
     public final static AddressDto ADDRESS_VALLECAS;
     public final static CountryDto COUNTRY_SPAIN;
     public final static UserDto USER_LOGGED;
+    public final static UserDto USER_REGISTERED;
     public final static AddressDto ADDRESS_VALLECAS_WITHOUT_ID;
 
     public final static UserDto USER_WITHOUT_ID;
+
     static {
         ADDRESS_VALLECAS = AddressDto.builder()
                 .id(3L)
@@ -33,7 +36,6 @@ public class DataInitzializerController {
                 .number(3)
                 .door("1A")
                 .build();
-
         COUNTRY_SPAIN = CountryDto.builder()
                 .id(1L)
                 .name("España")
@@ -58,7 +60,19 @@ public class DataInitzializerController {
         USER_WITHOUT_ID = UserDto.builder()
                 .email("manuel@example.com")
                 .name("Manuel")
-                .password("12345678.")
+                .password("12345678")
+                .lastName("Salamanca")
+                .phone("839234012")
+                .birthDate("2000/12/01")
+                .fidelityPoints(50)
+                .country(COUNTRY_SPAIN)
+                .address(ADDRESS_VALLECAS_WITHOUT_ID)
+                .build();
+
+        USER_REGISTERED = UserDto.builder()
+                .email("manuela@example.com")
+                .name("Manuela")
+                .password("12345678sXD@")
                 .lastName("Salamanca")
                 .phone("839234012")
                 .birthDate("2000/12/01")
@@ -67,4 +81,6 @@ public class DataInitzializerController {
                 .address(ADDRESS_VALLECAS_WITHOUT_ID)
                 .build();
     }
+
+
 }

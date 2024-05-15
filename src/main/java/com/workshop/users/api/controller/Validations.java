@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.util.Optional;
 
 
+@Controller
 public class Validations {
     private UserService userService;
 
@@ -54,12 +55,15 @@ public class Validations {
 
     boolean checkSameEmail(UserDto userToCheck) throws ResponseStatusException{
         String email = userToCheck.getEmail();
-            try {
-                userService.getUserByEmail(email);
-            } catch (RuntimeException e) {
-                return true;
-            }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your email is already registered");
+        UserDto userDto =null;
+        try {
+            userDto = userService.getUserByEmail(email);
+        } catch (RuntimeException e) {
+            return true;
+        }
+        if (userDto!=null||(userToCheck.getId()!=null&&userDto.getId()!=userToCheck.getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your email is already registered");
+        return true;
     }
 
 

@@ -36,7 +36,8 @@ class ValidationTest {
     void setUp() {
         userService = Mockito.mock(UserService.class);
         addressService = mock(AddressService.class);
-        initializerController = new InitializerController(userService,addressService);
+        validations = mock(Validations.class);
+        initializerController = new InitializerController(userService,addressService,validations);
         userDto = UserDto.builder()
                 .id(2L)
                 .name("Denise")
@@ -49,14 +50,6 @@ class ValidationTest {
                 .fidelityPoints(100)
                 .country(null)
                 .build();
-
-
-
-//        DataToUserControllerTesting.USER_ID_2.setEmail("invalid email");
-//        UserDto userDto = DataToUserControllerTesting.USER_ID_2;
-
-
-        validations = new Validations();
     }
 
     @Test

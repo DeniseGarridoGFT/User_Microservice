@@ -55,7 +55,7 @@ class ProductServiceImplTest {
         @DisplayName("Given a invalid Id Then return the associated Product")
         void findProductByIdInvalid() {
             //Given
-            Mockito.when(productRepository.findProductById(2L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists"););
+            Mockito.when(productRepository.findProductById(2L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists"));
             //When
             Product productObtainedCallingMethod = productService.findProductById(2L);
             //Then
