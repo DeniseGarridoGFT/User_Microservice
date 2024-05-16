@@ -6,11 +6,12 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Data
 @Builder
-public class WishListDto {
+public class WishListDto implements Serializable {
     private Long userId;
     private Set<Long> productsIds;
 
