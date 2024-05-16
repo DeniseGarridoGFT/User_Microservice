@@ -85,7 +85,7 @@ public class InitializerControllerTests {
                 assertThat(exception).isInstanceOf(ResponseStatusException.class);
                 ResponseStatusException responseStatusException = (ResponseStatusException) exception;
                 assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
+                assertThat(responseStatusException.getReason()).isEqualTo("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
             }
             verify(validations, times(1)).checkAllMethods(userNotRegistered);
         }
