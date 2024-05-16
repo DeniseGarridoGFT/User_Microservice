@@ -23,14 +23,14 @@ public class Validations {
 
     boolean checkPassword(UserDto userToCheck) throws ResponseStatusException {
         if (!userToCheck.checkSecurityPassword()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character.");
         }
         return true;
     }
 
     boolean checkDateFormat(UserDto userToCheck) throws ResponseStatusException {
         if (!userToCheck.checkBirthDateFormat()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The format of the birthd date is not valid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The format of the birth date is not valid.");
         }
         return true;
     }
@@ -57,14 +57,14 @@ public class Validations {
         } catch (RuntimeException e) {
             return false;
         }
-        if (isExistsEmailAndNotIsFromTheUser(userToCheck, userDto)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your email is already registered");
+        if (userDto!=null&&isExistsEmailAndNotIsFromTheUser(userToCheck, userDto)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your email is already registered.");
         }
         return false;
     }
 
     boolean isExistsEmailAndNotIsFromTheUser(UserDto userToCheck, UserDto userDto) {
-        return userToCheck.getId() != null && userDto.getId() != userToCheck.getId();
+        return userToCheck.getId() == null || userDto.getId() != userToCheck.getId();
     }
 
     boolean checkAllMethods(UserDto userToCheck) throws ResponseStatusException {

@@ -73,7 +73,7 @@ public class InitializerControllerTests {
             UserDto userNotRegistered = DataInitzializerController.USER_WITHOUT_ID;
             when(validations.checkAllMethods(userNotRegistered))
                     .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must" +
-                            " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character"));
+                            " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character."));
             try {
                 // When
                 ResponseEntity<UserDto> responseStatusException = initializerController.addUser(userNotRegistered);
@@ -82,7 +82,7 @@ public class InitializerControllerTests {
                 assertThat(exception).isInstanceOf(ResponseStatusException.class);
                 ResponseStatusException responseStatusException = (ResponseStatusException) exception;
                 assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(responseStatusException.getReason()).isEqualTo("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
+                assertThat(responseStatusException.getReason()).isEqualTo("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character.");
             }
             verify(validations, times(1)).checkAllMethods(userNotRegistered);
         }

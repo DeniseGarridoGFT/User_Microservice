@@ -40,6 +40,7 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto updatedUserDto) throws ParseException {
+        updatedUserDto.setId(id);
         validations.checkAllMethods(updatedUserDto);
         AddressDto updatedUserAddress;
         try {

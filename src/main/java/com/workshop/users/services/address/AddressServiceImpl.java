@@ -46,7 +46,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
 
-
     @Override
     public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws ParseException {
         AddressEntity addressEntity = addressDAORepository.findById(updatedAddressDto.getId()).orElseThrow();
