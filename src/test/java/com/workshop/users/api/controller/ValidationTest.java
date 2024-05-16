@@ -35,8 +35,8 @@ class ValidationTest {
     void setUp() {
         userService = Mockito.mock(UserService.class);
         addressService = mock(AddressService.class);
-        initializerController = new InitializerController(userService, addressService);
         validations = new Validations(userService);
+        initializerController = new InitializerController(userService, addressService,validations);
         countryDto = DataInitzializerController.COUNTRY_SPAIN;
         addressDto = DataInitzializerController.ADDRESS_VALLECAS;
         userDto = DataInitzializerController.USER_LOGGED;

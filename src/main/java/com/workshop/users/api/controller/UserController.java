@@ -41,18 +41,20 @@ public class UserController {
     @PutMapping("/users/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto updatedUserDto) throws ParseException {
         validations.checkAllMethods(updatedUserDto);
-        try{
-            if (updatedUserDto == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
-            AddressDto updatedUserAddress = addressService.updateAddress(updatedUserDto.getAddress().getId(), updatedUserDto.getAddress());
-            updatedUserDto.setAddress(updatedUserAddress);
-            UserDto updatedUser = userService.updateUser(id,updatedUserDto);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex);
+        AddressDto updatedUserAddress;
+        try {
+            updatedUserAddress = addressService.updateAddress(updatedUserDto.getAddress().getId(), updatedUserDto.getAddress());
+        }catch (Exception exception){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Address not found");
         }
+        try {
+            updatedUserDto.setAddress(updatedUserAddress);
+            UserDto updatedUser = userService.updateUser(id, updatedUserDto);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }catch (Exception exception){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+        }
+
 
     }
 }
