@@ -136,14 +136,14 @@ class WishListDtoTest {
         }
 
         @Test
-        @DisplayName("Given a null Set Then throws error 400")
+        @DisplayName("Given a null  Set Then throws error 400")
         void isNullUserIdGivenNullTest() {
             WishListDto wishListDto = WishListDto.builder().userId(null).productsIds(new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L))).build();
             try{
                 wishListDto.isNullUserId();
             }catch (ResponseStatusException exception){
                 assertThat(exception).isInstanceOf(ResponseStatusException.class)
-                        .hasMessage("400 BAD_REQUEST \"You have to send one productId\"");
+                        .hasMessage("400 BAD_REQUEST \"You have to send one userId\"");
                 assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             }
         }
