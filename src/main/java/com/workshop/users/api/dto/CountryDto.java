@@ -14,7 +14,6 @@ public class CountryDto {
     private String prefix;
     private String timeZone;
 
-
     public static CountryEntity toEntity(CountryDto dto) {
         CountryEntity entity = new CountryEntity();
         entity.setId(dto.getId());
@@ -24,6 +23,5 @@ public class CountryDto {
         entity.setTimeZone(dto.getTimeZone());
         return entity;
     }
-
 
 }

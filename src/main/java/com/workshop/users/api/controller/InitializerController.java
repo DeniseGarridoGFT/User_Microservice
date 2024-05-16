@@ -18,21 +18,20 @@ import java.text.ParseException;
 
 @RestController
 public class InitializerController {
-    private final UserService userService;
+    private UserService userService = null;
     private final AddressService addressService;
-    private Validations validations = new Validations();
+    private Validations validations;
 
     public InitializerController(UserService userService, AddressService addressService) {
         this.addressService = addressService;
         this.userService = userService;
+        Validations validations = new Validations(userService);
     }
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws ParseException {
 
-        if (!validations.checkAllMethods(user)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        validations.checkAllMethods(user);
 
         AddressDto addressDto = user.getAddress();
         if (addressDto != null) {
@@ -53,7 +52,6 @@ public class InitializerController {
 
     @PostMapping("login")
     public ResponseEntity<UserDto> loginUser(@Validated @RequestBody Login userToLogIn) throws ResponseStatusException {
-
         try {
             UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
             if (userToLogIn.passwordMatch(userToRespones.getPassword())) {

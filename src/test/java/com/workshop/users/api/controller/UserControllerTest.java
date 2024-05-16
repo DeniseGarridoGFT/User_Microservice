@@ -1,67 +1,120 @@
 package com.workshop.users.api.controller;
 
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
+import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 
+import static com.workshop.users.api.controller.Data.DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS;
+import static com.workshop.users.api.controller.Data.DataToUserControllerTesting.USER_ID_2;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserControllerTest {
-
     private UserService userService;
     private UserController userController;
     private AddressService addressService;
-    private int port;
+
+    private Validations validations;
 
     @BeforeEach
     void setUp() {
+        validations = mock(Validations.class);
         userService  = Mockito.mock(UserService.class);
         addressService = Mockito.mock(AddressService.class);
-        userController = new UserController(userService, addressService);
+        userController = new UserController(userService, addressService, validations);
     }
 
-    @Test
-    void getUser() {
-        when(userService.getUserById(2L)).thenReturn(DataToUserControllerTesting.USER_ID_2);
-        ResponseEntity<UserDto> responseEntity = userController.getUser(2L);
-        UserDto userDto = responseEntity.getBody();
-        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
-        assertEquals("Denise",userDto.getName());
-        assertNotEquals("Tarraga",userDto.getLastName());
-        assertEquals("denise@gmail.com",userDto.getEmail());
-        assertEquals("C/VarajasNavaja", userDto.getAddress().getStreet());
-        assertNotEquals("41458", userDto.getPhone());
-        assertNotEquals("123456789",userDto.getPassword());
-        assertEquals(100, userDto.getFidelityPoints());
+    @AfterEach
+    void tearDown() {
+        UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
+        userDtoChecked.setEmail("denise@gmail.com");
     }
 
+    @Nested
+    @DisplayName("Checking get method")
+    class Get {
+        @DisplayName("Checking the correct functioning of get method")
+        @Order(1)
+        @Test
+        void getUser() {
+            UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
+            when(userService.getUserById(2L)).thenReturn(userDtoChecked);
+            ResponseEntity<UserDto> responseEntity = userController.getUser(2L);
+            UserDto userDto = responseEntity.getBody();
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals("Denise", userDto.getName());
+            assertNotEquals("Tarraga", userDto.getLastName());
+            assertEquals("denise@gmail.com", userDto.getEmail());
+            assertEquals("C/VarajasNavaja", userDto.getAddress().getStreet());
+            assertNotEquals("41458", userDto.getPhone());
+            assertNotEquals("123456789", userDto.getPassword());
+            assertEquals(100, userDto.getFidelityPoints());
+        }
+    }
 
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @DisplayName("When try to update a user")
+    class PutTest {
+        @Test
+        @Order(1)
+        @DisplayName("Given a valid user")
+        void putMappingTest() throws ParseException {
 
-    @Test
-    void testPutMapping() throws ParseException {
-        port = 8080;
-        when(userService.getUserById(2L))
-                .thenReturn(DataToUserControllerTesting.USER_ID_2);
-        when(userService.addUser(DataToUserControllerTesting.USER_ID_2_MODIFIED)).thenReturn(DataToUserControllerTesting.USER_ID_2_MODIFIED);
+            UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
+            userDtoChecked.setEmail("paquito@gmail.com");
+            AddressDto addressDto = ADDRESS_CALLE_VARAJAS;
 
-        ResponseEntity<UserDto> responseEntity = userController.updateUser(2L,DataToUserControllerTesting.USER_ID_2_MODIFIED);
+            when(validations.checkAllMethods(userDtoChecked)).thenReturn(true);
+            when(addressService.updateAddress(3L, userDtoChecked.getAddress())).thenReturn(ADDRESS_CALLE_VARAJAS);
+            when(userService.updateUser(2L, userDtoChecked)).thenReturn(userDtoChecked);
 
-        assertThat(responseEntity.getBody()).isEqualTo(DataToUserControllerTesting.USER_ID_2_MODIFIED);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getHeaders()).hasSize(0);
-        assertThat(responseEntity.getBody().checkOver18()).isTrue();
+            ResponseEntity<UserDto> responseEntity = userController.updateUser(2L, userDtoChecked);
+            UserDto userResponse = responseEntity.getBody();
 
+            assertThat(userResponse).isEqualTo(userDtoChecked);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(responseEntity.getHeaders()).hasSize(0);
+            verify(validations, times(1)).checkAllMethods(userDtoChecked);
+            verify(addressService, times(1)).updateAddress(addressDto.getId(),addressDto);
+            verify(userService, times(1)).updateUser(userDtoChecked.getId(), userDtoChecked);
+        }
+
+        @Test
+        @Order(2)
+        @DisplayName("Given an existing user with incorrect values Then return the BAD_REQUEST ")
+        void updateUserErrorPasswordTest() {
+            UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
+            userDtoChecked.setPassword("wArong@.com");
+            when(validations.checkAllMethods(USER_ID_2))
+                    .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must" +
+                            " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character"));
+            UserDto userDto = userDtoChecked;
+
+            try {
+                //When
+                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
+            } catch (Exception exception) {
+                //Then
+                assertThat(exception).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                assertThat(responseStatusException.getReason()).isEqualTo("The password must" +
+                        " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
+            }
+
+        }
     }
 
 }

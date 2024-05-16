@@ -28,8 +28,7 @@ public class InitializerControllerTests {
     private AddressDto addressDto;
     private CountryDto countryDto;
     private UserDto userDto;
-
-
+    
     @BeforeEach
     void setUp() {
         userService = mock(UserService.class);
