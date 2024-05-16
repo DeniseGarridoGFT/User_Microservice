@@ -27,9 +27,6 @@ public class InitializerControllerTests {
     private UserService userService;
     private AddressService addressService;
     private InitializerController initializerController;
-    private AddressDto addressDto;
-    private CountryDto countryDto;
-    private UserDto userDto;
     private Validations validations;
 
     @BeforeEach
