@@ -11,8 +11,8 @@ import reactor.core.publisher.Mono;
 public class ProductRepositoryImpl implements ProductRepository{
     private final WebClient webClient;
 
-    public ProductRepositoryImpl() {
-        this.webClient = WebClient.builder().baseUrl("http://url_producto/api").build();
+    public ProductRepositoryImpl(WebClient.Builder builder) {
+        this.webClient =  builder.build();
     }
 
     @Override

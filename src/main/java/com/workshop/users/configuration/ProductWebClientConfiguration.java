@@ -1,0 +1,13 @@
+package com.workshop.users.configuration;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
+public class ProductWebClientConfiguration {
+    @Bean
+    public WebClient.Builder webClientBuilder(){
+        return WebClient.builder().baseUrl("http://localhost:8081");
+    }
+}

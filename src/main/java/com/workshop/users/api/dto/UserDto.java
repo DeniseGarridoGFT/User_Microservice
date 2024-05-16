@@ -44,7 +44,6 @@ public class UserDto implements Serializable {
         entity.setAddress(dto.getAddress()!=null?AddressDto.toEntity(dto.getAddress()):null);
         entity.setCountry(CountryDto.toEntity(dto.getCountry()));
 
-
         return entity;
     }
 
@@ -78,7 +77,6 @@ public class UserDto implements Serializable {
     }
 
 
-
     public boolean checkBirthDateFormat(){
         String dateFormat = "^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[12]\\d|3[01])$";
         return getBirthDate().matches(dateFormat);
@@ -87,7 +85,6 @@ public class UserDto implements Serializable {
         String dateFormat = "^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[12]\\d|3[01])$";
         return birthDate.matches(dateFormat);
     }
-
 
     public boolean checkOver18() {
         String[] array = getBirthDate().split("/");
@@ -101,13 +98,13 @@ public class UserDto implements Serializable {
         return  Period.between(LocalDate.of(Integer.parseInt(array[0]), Integer.parseInt(array[1]),Integer.parseInt(array[2])), now).getYears() >= 18;
     }
 
-
     public void setValidBirthDate(String birthDate) throws Exception{
         if (UserDto.checkBirthDateFormat(birthDate))
             setOver18BirthDate(birthDate);
         else
             throw new Exception("The format of the birthd date is not valid");
     }
+
     public void setOver18BirthDate(String birthDate) throws Exception{
         if (UserDto.checkOver18(birthDate))
             setBirthDate(birthDate);
@@ -121,16 +118,19 @@ public class UserDto implements Serializable {
         else
             throw new Exception("The password is not secure");
     }
+
     public void setValidEmail(String email) throws Exception{
         if (UserDto.checkFormatEmail(email))
             setEmail(email);
         else
             throw new Exception("The email is not valid");
     }
+
     public void setValidPhone(String phone) throws Exception{
         if (UserDto.checkPhoneFormat(phone))
             setPhone(phone);
         else
             throw new Exception("The email is not valid");
     }
+
 }
