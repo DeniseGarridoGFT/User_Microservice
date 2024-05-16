@@ -113,8 +113,56 @@ class UserControllerTest {
                 assertThat(responseStatusException.getReason()).isEqualTo("The password must" +
                         " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
             }
+        }
+        @Test
+        @Order(2)
+        @DisplayName("Given an non associated address Then return the NOT_FOUND exception ")
+        void updateUserErrorNotFoundAddress() throws ParseException {
+            UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
+            when(validations.checkAllMethods(USER_ID_2))
+                    .thenReturn(true);
+            when(addressService.updateAddress(userDtoChecked.getAddress().getId(),userDtoChecked.getAddress())).thenThrow(new RuntimeException());
+            UserDto userDto = userDtoChecked;
+
+            try {
+                //When
+                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
+            } catch (Exception exception) {
+                //Then
+                assertThat(exception).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                assertThat(responseStatusException.getReason()).isEqualTo("Address not found");
+            }
 
         }
+
+        @Test
+        @Order(2)
+        @DisplayName("Given an non associated user Then return the NOT_FOUND exception ")
+        void updateUserErrorNotFoundUser() throws ParseException {
+            UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
+            when(validations.checkAllMethods(USER_ID_2))
+                    .thenReturn(true);
+            when(addressService.updateAddress(userDtoChecked.getAddress().getId(),userDtoChecked.getAddress())).thenReturn(userDtoChecked.getAddress());
+            when(userService.updateUser(userDtoChecked.getId(),userDtoChecked)).thenThrow(new RuntimeException());
+            UserDto userDto = userDtoChecked;
+
+            try {
+                //When
+                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
+            } catch (Exception exception) {
+                //Then
+                assertThat(exception).isInstanceOf(ResponseStatusException.class);
+                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
+                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                assertThat(responseStatusException.getReason()).isEqualTo("User not found");
+            }
+
+        }
+
+
+
     }
 
 }
