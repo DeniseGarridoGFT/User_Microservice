@@ -18,7 +18,7 @@ public class DataInitzializerController {
     public final static UserDto USER_SAME_EMAIL;
     public final static AddressDto ADDRESS_VALLECAS_WITHOUT_ID;
     public final static UserDto USER_WITHOUT_ID;
-
+    public final static UserDto INVALID_USER;
 
     static {
         ADDRESS_VALLECAS = AddressDto.builder()
@@ -90,6 +90,19 @@ public class DataInitzializerController {
                 .lastName("Salamanca")
                 .phone("839234012")
                 .birthDate("2000/12/01")
+                .fidelityPoints(50)
+                .country(COUNTRY_SPAIN)
+                .address(ADDRESS_VALLECAS_WITHOUT_ID)
+                .build();
+
+        INVALID_USER = UserDto.builder()
+                .id(3L)
+                .email("manuelaexample.com")
+                .name("Manuela")
+                .password("12345678sXD")
+                .lastName("Salamanca")
+                .phone("83923401234243242342342")
+                .birthDate("2020/2/01")
                 .fidelityPoints(50)
                 .country(COUNTRY_SPAIN)
                 .address(ADDRESS_VALLECAS_WITHOUT_ID)

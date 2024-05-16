@@ -45,13 +45,6 @@ public class AddressServiceImpl implements AddressService {
         }
     }
 
-    @Override
-    public AddressDto deleteAddress(AddressDto address) throws ParseException {
-        AddressEntity addressEntity = AddressDto.toEntity(address);
-        addressDAORepository.delete(addressEntity);
-        return AddressEntity.fromEntity(addressEntity);
-    }
-
 
     @Override
     public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws ParseException {

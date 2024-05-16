@@ -8,6 +8,7 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.Test;
 
 
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 
@@ -33,10 +37,10 @@ class ValidationTest {
 
     @BeforeEach
     void setUp() {
-        userService = Mockito.mock(UserService.class);
+        userService = mock(UserService.class);
         addressService = mock(AddressService.class);
-        initializerController = new InitializerController(userService, addressService);
         validations = new Validations(userService);
+        initializerController = new InitializerController(userService, addressService,validations);
         countryDto = DataInitzializerController.COUNTRY_SPAIN;
         addressDto = DataInitzializerController.ADDRESS_VALLECAS;
         userDto = DataInitzializerController.USER_LOGGED;
@@ -51,8 +55,6 @@ class ValidationTest {
             Assertions.assertThat(validations.checkEmail(userDto))
                     .isTrue();
         }
-
-
 
         @DisplayName("Checking the correct format of the password")
         @Test
@@ -120,6 +122,79 @@ class ValidationTest {
 
             boolean resultOnceModified = validations.isExistsEmailAndNotIsFromTheUser(userToCheck, userDto);
             Assertions.assertThat(resultOnceModified).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("Checking the incorrect work of the valiedation methods")
+    class CheckingInvalidFormat {
+        @Test
+        @DisplayName("Checking the incorrect format of the email")
+        void testEmailFormatInvalid(){
+            UserDto userToCheck = DataInitzializerController.INVALID_USER;
+            ResponseStatusException responseStatusException = null;
+            try {
+                validations.checkEmail(userToCheck);
+            }catch (ResponseStatusException exception){
+                responseStatusException = exception;
+            }
+            Assertions.assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            Assertions.assertThat(responseStatusException.getReason()).isEqualTo("Invalid email format.");
+        }
+
+        @Test
+        @DisplayName("Checking the incorrect format of the password")
+        void testPasswordFormatInvalid(){
+            UserDto userToCheck = DataInitzializerController.INVALID_USER;
+            ResponseStatusException responseStatusException = null;
+            try {
+                validations.checkPassword(userToCheck);
+            }catch (ResponseStatusException exception){
+                responseStatusException = exception;
+            }
+            Assertions.assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            Assertions.assertThat(responseStatusException.getReason()).isEqualTo("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character.");
+        }
+
+        @Test
+        @DisplayName("Checking the incorrect format of the birth date")
+        void testBirthDateFormatInvalid(){
+            UserDto userToCheck = DataInitzializerController.INVALID_USER;
+            ResponseStatusException responseStatusException = null;
+            try {
+                validations.checkDateFormat(userToCheck);
+            }catch (ResponseStatusException exception){
+                responseStatusException = exception;
+            }
+            Assertions.assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            Assertions.assertThat(responseStatusException.getReason()).isEqualTo("The format of the birth date is not valid.");
+        }
+
+        @Test
+        @DisplayName("Checking the incorrect format of the phone")
+        void testPhoneFormatInvalid(){
+            UserDto userToCheck = DataInitzializerController.INVALID_USER;
+            ResponseStatusException responseStatusException = null;
+            try {
+                validations.checkPhone(userToCheck);
+            }catch (ResponseStatusException exception){
+                responseStatusException = exception;
+            }
+            Assertions.assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            Assertions.assertThat(responseStatusException.getReason()).isEqualTo("The phone must contain 9 numeric characters.");
+        }
+        @Test
+        @DisplayName("Checking the user is under 18")
+        void testIllegalAgeFormatInvalid(){
+            UserDto userToCheck = DataInitzializerController.INVALID_USER;
+            ResponseStatusException responseStatusException = null;
+            try {
+                validations.checkAge(userToCheck);
+            }catch (ResponseStatusException exception){
+                responseStatusException = exception;
+            }
+            Assertions.assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            Assertions.assertThat(responseStatusException.getReason()).isEqualTo("The user must be of legal age.");
         }
     }
 }

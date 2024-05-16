@@ -11,6 +11,4 @@ public interface AddressService {
     AddressDto addAddress(AddressDto address) throws ParseException;
     AddressDto getAddressById(Long id) throws RuntimeException;
     AddressDto updateAddress(Long id, AddressDto addressDto) throws ParseException;
-    AddressDto deleteAddress(AddressDto address) throws ParseException;
-
 }
