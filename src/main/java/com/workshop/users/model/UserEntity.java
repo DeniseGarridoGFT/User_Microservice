@@ -44,7 +44,6 @@ public class UserEntity implements Serializable {
     private String phone;
     @OneToOne
     @JoinColumn(name = "ADDRESS_ID", referencedColumnName = "ID")
-    @NotNull
     private AddressEntity address;
 
 
@@ -59,7 +58,7 @@ public class UserEntity implements Serializable {
                 .fidelityPoints(userEntity.getFidelityPoints())
                 .birthDate(parseDate(userEntity.getBirthDate()))
                 .phone(userEntity.getPhone())
-                .address(AddressEntity.fromEntity(userEntity.getAddress()))
+                .address(userEntity.getAddress()!=null?AddressEntity.fromEntity(userEntity.getAddress()):null)
                 .country(CountryEntity.fromEntity(userEntity.getCountry()))
                 .build();
     }
