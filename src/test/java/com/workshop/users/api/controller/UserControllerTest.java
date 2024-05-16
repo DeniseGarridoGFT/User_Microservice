@@ -99,7 +99,7 @@ class UserControllerTest {
             userDtoChecked.setPassword("wArong@.com");
             when(validations.checkAllMethods(USER_ID_2))
                     .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must" +
-                            " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character"));
+                            " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character."));
             UserDto userDto = userDtoChecked;
 
             try {
@@ -111,7 +111,7 @@ class UserControllerTest {
                 ResponseStatusException responseStatusException = (ResponseStatusException) exception;
                 assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
                 assertThat(responseStatusException.getReason()).isEqualTo("The password must" +
-                        " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character");
+                        " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character.");
             }
         }
         @Test
