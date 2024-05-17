@@ -90,4 +90,18 @@ public class AddressServiceImplTest {
             assertThat(exceptionThrowIt).isInstanceOf(RuntimeException.class);
         }
     }
+
+    @Nested
+    @DisplayName("When try to updated Address")
+    class updateAddress{
+        @Test
+        @DisplayName("Given a address to change then return the address updated")
+        void updateAddress() throws ParseException {
+            addressDto.setId(1L);
+            when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
+            when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
+            assertThat(addressService.updateAddress(addressDto.getId(),addressDto)).isEqualTo(addressDto);
+        }
+    }
+
 }
