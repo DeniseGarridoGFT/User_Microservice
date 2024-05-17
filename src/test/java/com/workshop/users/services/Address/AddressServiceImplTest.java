@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddressServiceImplTest {
+class AddressServiceImplTest {
 
     private AddressDAORepository addressDAORepository;
     private AddressService addressService;
@@ -60,13 +60,13 @@ public class AddressServiceImplTest {
     class GetAddress{
         @Test
         @DisplayName("Given a valid Id then return a user")
-        public void getAddress() {
+        void getAddress() {
             when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
             assertThat(addressService.getAddressById(1L)).isEqualTo(AddressEntity.fromEntity(addressEntityWithId));
         }
         @Test
         @DisplayName("Given a null Id then throw a error")
-        public void getAddressErrorIdNull() {
+        void getAddressErrorIdNull() {
             RuntimeException runtimeException = null;
 
             try {
@@ -79,7 +79,7 @@ public class AddressServiceImplTest {
 
         @Test
         @DisplayName("Given a non valid Id then throw a error")
-        public void getAddressErrorNotExistUserl() {
+        void getAddressErrorNotExistUserl() {
             Exception exceptionThrowIt = new Exception();
             when(addressDAORepository.findById(anyLong())).thenReturn(Optional.empty());
             try {
@@ -88,6 +88,19 @@ public class AddressServiceImplTest {
                 exceptionThrowIt = exception;
             }
             assertThat(exceptionThrowIt).isInstanceOf(RuntimeException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("When try to updated Address")
+    class updateAddress{
+        @Test
+        @DisplayName("Given a address to change then return the address updated")
+        void updateAddress() throws ParseException {
+            addressDto.setId(1L);
+            when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
+            when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
+            assertThat(addressService.updateAddress(addressDto.getId(),addressDto)).isEqualTo(addressDto);
         }
     }
 }
