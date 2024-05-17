@@ -9,6 +9,8 @@ import java.util.Date;
 
 public class DataToMockInUserServiceImplTest {
     public final static AddressEntity ADDRESS_VALLECAS;
+
+
     public final static CountryEntity COUNTRY_SPAIN;
     public final static UserEntity USER_1;
 
@@ -39,6 +41,8 @@ public class DataToMockInUserServiceImplTest {
         USER_1.setFidelityPoints(50);
         USER_1.setCountry(COUNTRY_SPAIN);
         USER_1.setAddress(ADDRESS_VALLECAS);
+
+
     }
 
 }

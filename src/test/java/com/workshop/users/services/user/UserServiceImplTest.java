@@ -1,17 +1,26 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
+import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
+import org.assertj.core.api.Assertions;
+import org.h2.engine.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static org.assertj.core.api.Assertions.*;
@@ -39,7 +48,7 @@ class UserServiceImplTest {
                     .thenThrow(new RuntimeException("User not found"));
             //When and Then
             assertThrows(RuntimeException.class, () -> userService.getUserById(3L));
-            Mockito.verify(userDAORepository).findById(Mockito.anyLong());
+            verify(userDAORepository).findById(Mockito.anyLong());
         }
         @Test
         @DisplayName("givenNull_whenGetUserById_thenThrowsRunTimeException")
@@ -61,8 +70,45 @@ class UserServiceImplTest {
             assertEquals("Manuel", user_id_2.getName());
             assertEquals(3L, user_id_2.getAddress().getId());
             assertEquals(1L, user_id_2.getCountry().getId());
-            Mockito.verify(userDAORepository).findById(Mockito.anyLong());
+            verify(userDAORepository).findById(Mockito.anyLong());
         }
+
+
+
+
+    @Test
+    @DisplayName("Given an user to update when update user then return the user dto updated")
+    void testUpdateUser() {
+        UserEntity userEntity = DataToMockInUserServiceImplTest.USER_1;
+
+        UserDto userDtoUpdated = UserDto.builder()
+                .name("Manuel updated")
+                .lastName("Salamanca updated")
+                .password("2B8sda2?_")
+                .phone("963258741")
+                .email("manuelupdated@example.com")
+                .birthDate("2000/01/14")
+                .fidelityPoints(60)
+                .country(DataToUserControllerTesting.COUNTRY_ESPANYA)
+                .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
+                .build();
+
+        Mockito.when(userDAORepository.findById(2L)).thenReturn(Optional.of(userEntity));
+        Mockito.when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoUpdated));
+        UserDto updatedUser = userService.updateUser(2L, userDtoUpdated);
+
+        Assertions.assertThat(updatedUser.getName()).isEqualTo("Manuel updated");
+        Assertions.assertThat(updatedUser.getLastName()).isEqualTo("Salamanca updated");
+        Assertions.assertThat(updatedUser.getEmail()).isEqualTo("manuelupdated@example.com");
+        Assertions.assertThat(updatedUser.getBirthDate()).isEqualTo(userDtoUpdated.getBirthDate());
+        Assertions.assertThat(updatedUser.getPassword()).isEqualTo("2B8sda2?_");
+        Assertions.assertThat(updatedUser.getFidelityPoints()).isEqualTo(60);
+        Assertions.assertThat(updatedUser.getPhone()).isEqualTo("963258741");
+        Assertions.assertThat(updatedUser.getAddress()).isNotNull();
+
+        verify(userDAORepository).findById(2L);
+        verify(userDAORepository).save(any(UserEntity.class));
+    }
     }
 
 
@@ -105,5 +151,33 @@ class UserServiceImplTest {
         }
     }
 
+    @Test
+    @DisplayName("Given an userdto when add user then save the user")
+    void addUser() throws ParseException {
+        UserDto userDtoToSave = UserDto.builder()
+                .name("Manuel updated")
+                .lastName("Salamanca updated")
+                .password("2B8sda2?_")
+                .phone("963258741")
+                .email("manuelupdated@example.com")
+                .birthDate("2000/01/14")
+                .fidelityPoints(60)
+                .country(DataToUserControllerTesting.COUNTRY_ESPANYA)
+                .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
+                .build();
+        UserDto userDtoAux = userDtoToSave;
+        userDtoAux.setId(1L);
+        when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoAux));
+        UserDto userSaved = userService.addUser(userDtoToSave);
+
+        Assertions.assertThat(userSaved.getName()).isEqualTo("Manuel updated");
+        Assertions.assertThat(userSaved.getLastName()).isEqualTo("Salamanca updated");
+        Assertions.assertThat(userSaved.getEmail()).isEqualTo("manuelupdated@example.com");
+        Assertions.assertThat(userSaved.getBirthDate()).isEqualTo(userSaved.getBirthDate());
+        Assertions.assertThat(Login.BCRYPT.matches(userSaved.getPassword(),userDtoToSave.getPassword())).isTrue();
+        Assertions.assertThat(userSaved.getFidelityPoints()).isEqualTo(60);
+        Assertions.assertThat(userSaved.getPhone()).isEqualTo("963258741");
+        Assertions.assertThat(userSaved.getAddress()).isNotNull();
+    }
 
 }
