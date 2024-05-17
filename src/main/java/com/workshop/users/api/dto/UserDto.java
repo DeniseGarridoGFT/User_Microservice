@@ -34,7 +34,6 @@ public class UserDto implements Serializable {
 
     public static UserEntity toEntity(UserDto dto) {
         UserEntity entity = new UserEntity();
-        entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());

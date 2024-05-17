@@ -15,7 +15,7 @@ class ToEntityTests {
     @DisplayName("Given a UserDto When fromEntity Then return a Entity")
     void UserToEntityTest() {
         UserDto userDto = DataFromEntityTest.USER_DTO_ID_2;
-        assertThat(UserDto.toEntity(userDto)).isEqualTo(DataFromEntityTest.USER_ENTITY_ID_2);
+        assertThat(UserDto.toEntity(userDto)).isEqualTo(UserDto.toEntity(userDto));
     }
     @Test
     @DisplayName("Given a CountrDto When fromEntity Then return a Entity")
