@@ -8,10 +8,7 @@ import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
 import org.assertj.core.api.Assertions;
 import org.h2.engine.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.text.ParseException;
@@ -34,6 +31,19 @@ class UserServiceImplTest {
     void setUp() {
         userDAORepository = Mockito.mock(UserDAORepository.class);
         userService = new UserServiceImpl(userDAORepository);
+    }
+
+    @AfterEach
+    void tearDown() {
+        DataToMockInUserServiceImplTest.USER_1.setName("Manuel");
+        DataToMockInUserServiceImplTest.USER_1.setId(2L);
+        DataToMockInUserServiceImplTest.USER_1.setEmail("manuel@example.com");
+        DataToMockInUserServiceImplTest.USER_1.setName("Manuel");
+        DataToMockInUserServiceImplTest.USER_1.setPassword("2B8sda2?_");
+        DataToMockInUserServiceImplTest.USER_1.setLastName("Salamanca");
+        DataToMockInUserServiceImplTest.USER_1.setPhone("839234012");
+        DataToMockInUserServiceImplTest.USER_1.setBirthDate(new Date("2000/14/01"));
+        DataToMockInUserServiceImplTest.USER_1.setFidelityPoints(50);
     }
 
     @Nested
