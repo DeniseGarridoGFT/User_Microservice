@@ -1,4 +1,4 @@
-package com.workshop.users.services;
+package com.workshop.users.services.country;
 
 import org.springframework.stereotype.Service;
 

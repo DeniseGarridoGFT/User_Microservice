@@ -28,4 +28,5 @@ public class AddressDto implements Serializable {
         entity.setDoor(dto.getDoor());
         return entity;
     }
+
 }

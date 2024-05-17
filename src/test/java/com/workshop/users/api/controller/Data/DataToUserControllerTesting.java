@@ -5,8 +5,6 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.UserDto;
 
 public class DataToUserControllerTesting {
-
-
     public final static AddressDto ADDRESS_CALLE_VARAJAS = AddressDto.builder()
                     .id(3L)
                     .cityName("Madrid")
@@ -30,22 +28,22 @@ public class DataToUserControllerTesting {
             .lastName("Garrido")
             .email("denise@gmail.com")
             .address(ADDRESS_CALLE_VARAJAS)
-            .birthDate("2004/14/04")
-            .password("passwordAS123")
-            .phone("12346789")
+            .birthDate("2004/12/04")
+            .password("asñlfkW2@")
+            .phone("123456789")
             .fidelityPoints(100)
             .country(COUNTRY_ESPANYA)
             .build();
 
-    public final static UserDto USER_ID_2_MODIFIED =  UserDto.builder()
-            .id(2L)
-            .name("Denise")
-            .lastName("Garrido")
-            .email("denisegarridogmail.com")
+    public final static UserDto USER_ID_3 =  UserDto.builder()
+            .id(3L)
+            .name("Raphael")
+            .lastName("De la Ghetto")
+            .email("denise@gmail.com")
             .address(ADDRESS_CALLE_VARAJAS)
-            .birthDate("2004/12/04")
-            .password("passwordAS123")
-            .phone("12346789")
+            .birthDate("1985/10/14")
+            .password("sakjdA32@")
+            .phone("961254789")
             .fidelityPoints(100)
             .country(COUNTRY_ESPANYA)
             .build();

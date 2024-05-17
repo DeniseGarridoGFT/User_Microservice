@@ -14,12 +14,10 @@ public class Login implements Serializable {
     private String email;
     @NonNull
     private String password;
+
     public static final BCryptPasswordEncoder BCRYPT = new BCryptPasswordEncoder();
 
     public boolean passwordMatch(String passwordHash){
         return BCRYPT.matches(getPassword(),passwordHash);
     }
-
-
-
 }

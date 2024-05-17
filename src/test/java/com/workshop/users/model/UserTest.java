@@ -300,7 +300,8 @@ class UserTest {
             // Then
             assertEquals("test@example.com", userDto.getEmail());
         }
-
     }
+
+
 }
 
