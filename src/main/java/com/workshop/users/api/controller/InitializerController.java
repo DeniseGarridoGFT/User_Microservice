@@ -39,6 +39,8 @@ public class InitializerController {
             }
             UserDto createdUser = userService.addUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex);
         }
@@ -57,5 +59,4 @@ public class InitializerController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect");
         }
     }
-
 }

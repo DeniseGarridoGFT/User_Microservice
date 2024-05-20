@@ -55,7 +55,5 @@ public class UserController {
         }catch (Exception exception){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
         }
-
-
     }
 }

@@ -5,6 +5,7 @@ import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
+import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
 import org.assertj.core.api.Assertions;
 import org.h2.engine.User;
@@ -25,12 +26,14 @@ import static org.assertj.core.api.Assertions.*;
 class UserServiceImplTest {
 
     private UserDAORepository userDAORepository;
+    private CountryDAORepository countryDAORepository;
     private UserService userService;
 
     @BeforeEach
     void setUp() {
         userDAORepository = Mockito.mock(UserDAORepository.class);
-        userService = new UserServiceImpl(userDAORepository);
+        countryDAORepository = Mockito.mock(CountryDAORepository.class);
+        userService = new UserServiceImpl(userDAORepository, countryDAORepository);
     }
 
     @AfterEach
