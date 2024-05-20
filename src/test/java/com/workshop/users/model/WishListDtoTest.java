@@ -54,6 +54,23 @@ class WishListDtoTest {
         }
     }
 
+    @Test
+    @DisplayName("Given a userid and product id " +
+            "When getEntity WishListDto" +
+            "Then return WishPoductEntity")
+    void getEntity(){
+        WishProductEntity wishProductEntity = new WishProductEntity();
+        WishProductPK wishProductPK = new WishProductPK();
+        wishProductPK.setUserId(1L);
+        wishProductPK.setProductId(2L);
+        wishProductEntity.setWishProductPK(wishProductPK);
+        assertThat(WishListDto.getEntity(1L,2L))
+                .isInstanceOf(WishProductEntity.class)
+                .isEqualTo(wishProductEntity);
+    }
+
+
+
     @Nested
     @DisplayName("Given a not empty set When comprobe is empty user")
     class isEmptyGoodSettTest {
@@ -78,26 +95,7 @@ class WishListDtoTest {
         }
     }
 
-    @Test
-    @DisplayName("Given a WishListDto When to entity Then return a list of wish product pk")
-    void testsToEntity() {
-        WishListDto wishListDto = WishListDto.builder().userId(1L).productsIds(new HashSet<Long>(Arrays.asList(1L,2L,3L))).build();
-        List<WishProductPK> wishProductPKList = wishListDto.toEntity();
-        assertThat(wishProductPKList)
-                .contains(DataWishProductPK.WISH_PRODUCT_PK_USER_1_PRODUCT_1)
-                .contains(DataWishProductPK.WISH_PRODUCT_PK_USER_1_PRODUCT_2)
-                .contains(DataWishProductPK.WISH_PRODUCT_PK_USER_1_PRODUCT_3);
-    }
-    @Test
-    @DisplayName("Given a WishListDto When divide Then return a list of wish list")
-    void testsDivideWishLists() {
-        WishListDto wishListDto = WishListDto.builder().userId(1L).productsIds(new HashSet<Long>(Arrays.asList(1L,2L,3L))).build();
-        List<WishListDto> wishProductPKList = wishListDto.toDividedWisListDtos();
-        assertThat(wishProductPKList)
-                .contains(DataWishListDto.WISH_LIST_USER_1_PRODUCT_1)
-                .contains(DataWishListDto.WISH_LIST_USER_1_PRODUCT_2)
-                .contains(DataWishListDto.WISH_LIST_USER_1_PRODUCT_3);
-    }
+
 
     @Nested
     @DisplayName("When comprobe is null product")

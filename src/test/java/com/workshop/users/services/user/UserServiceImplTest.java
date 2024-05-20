@@ -1,6 +1,7 @@
 package com.workshop.users.services.user;
 
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ class UserServiceImplTest {
             Mockito.when(userDAORepository.findById(3L))
                     .thenThrow(new RuntimeException("User not found"));
             //When and Then
-            assertThrows(RuntimeException.class, () -> userService.getUserById(3L));
+            assertThrows(NotFoundUserException.class, () -> userService.getUserById(3L));
             Mockito.verify(userDAORepository).findById(Mockito.anyLong());
         }
         @Test
@@ -46,11 +47,11 @@ class UserServiceImplTest {
         void getUserByIdAddingNull() {
 
             //When and Then
-            assertThrows(RuntimeException.class, () -> userService.getUserById(null));
+            assertThrows(NotFoundUserException.class, () -> userService.getUserById(null));
         }
         @Test
         @DisplayName("givenId_whenGetUserById_thenReturnTheAssociatedUser")
-        void getUserById() {
+        void getUserById() throws NotFoundUserException {
             //Given
             Mockito.when(userDAORepository.findById(2L))
                     .thenReturn(Optional.of(DataToMockInUserServiceImplTest.USER_1));

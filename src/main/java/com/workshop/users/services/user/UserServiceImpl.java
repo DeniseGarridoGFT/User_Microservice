@@ -3,6 +3,7 @@ package com.workshop.users.services.user;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,13 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public UserDto getUserById(Long id) throws RuntimeException {
-        isNotNull(id);
-        return UserEntity.fromEntity(userDAORepository.findById(id).orElseThrow());
+    public UserDto getUserById(Long id) throws  NotFoundUserException {
+        try{
+            return UserEntity.fromEntity(userDAORepository.findById(id).orElseThrow());
+        }catch (RuntimeException runtimeException){
+            throw new NotFoundUserException("Not found user");
+        }
+
     }
 
     @Override

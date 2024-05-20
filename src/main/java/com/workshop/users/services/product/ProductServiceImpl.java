@@ -1,10 +1,11 @@
 package com.workshop.users.services.product;
 
 import com.workshop.users.api.dto.Product;
+import com.workshop.users.exceptions.NotFoundProductException;
 import com.workshop.users.repositories.ProductRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -14,11 +15,11 @@ public class ProductServiceImpl implements ProductService{
         this.productRepository = productRepository;
     }
 
-    public Product findProductById(Long id) throws ResponseStatusException {
-        Product product = productRepository.findProductById(id).block();
-        if (product==null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists");
+    public List<Product> findProductsByIds(List<Long> ids) throws NotFoundProductException {
+        try{
+            return productRepository.findProductsByIds(ids);
+        }catch (Exception exception){
+            throw new NotFoundProductException("Not found any product");
         }
-        return product;
     }
 }

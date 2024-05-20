@@ -14,7 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TestEnd2EndLoginTest {
+class TestIntegrationLoginTest {
 
     @Autowired
     private WebTestClient webTestClient;

@@ -1,27 +1,29 @@
 package com.workshop.users.repositories;
 
 import com.workshop.users.api.dto.Product;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
+
+import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository{
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public ProductRepositoryImpl(WebClient.Builder builder) {
-        this.webClient =  builder.build();
+    public ProductRepositoryImpl(RestClient.Builder builder) {
+        this.restClient =  builder.build();
     }
 
+
     @Override
-    public Mono<Product> findProductById(Long id) throws ResponseStatusException {
-        return webClient.get()
-                .uri("/products/{id}", id)
+    public List<Product> findProductsByIds(List<Long> ids) {
+        return List.of(Objects.requireNonNull(restClient.post()
+                .uri("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ids)
                 .retrieve()
-                .bodyToMono(Product.class).onErrorMap(throwable -> {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists");
-                });
+                .body(Product[].class)));
     }
 }
