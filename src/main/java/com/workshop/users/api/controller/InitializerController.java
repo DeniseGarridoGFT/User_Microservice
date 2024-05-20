@@ -4,6 +4,7 @@ import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
-import java.text.ParseException;
 
 @RestController
 public class InitializerController {
@@ -58,15 +58,11 @@ public class InitializerController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> loginUser(@Validated @RequestBody Login userToLogIn) throws ResponseStatusException {
-        try {
-            UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
-            if (userToLogIn.passwordMatch(userToRespones.getPassword())) {
-                return new ResponseEntity<>(userToRespones, HttpStatus.OK);
-            }
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect");
-        }catch (RuntimeException runtimeException){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect");
+    public ResponseEntity<UserDto> loginUser(@Validated @RequestBody Login userToLogIn) throws AuthenticateException {
+        UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());
+        if (userToLogIn.passwordMatch(userToRespones.getPassword())) {
+            return new ResponseEntity<>(userToRespones, HttpStatus.OK);
         }
+        throw new AuthenticateException("Can't authenticate");
     }
 }

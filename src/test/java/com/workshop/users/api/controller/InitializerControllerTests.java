@@ -2,6 +2,7 @@ package com.workshop.users.api.controller;
 
 import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.dto.*;
+import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
@@ -160,16 +161,10 @@ public class InitializerControllerTests {
                 //Given
                 when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
                 Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
-                try {
-                    //When
-                    ResponseEntity<UserDto> responseStatusException = initializerController.loginUser(userToLogin);
-                } catch (Exception exception) {
-                    //Then
-                    assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                    assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-                    assertThat(responseStatusException.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password is incorrect\"");
-                }
+
+                assertThatThrownBy(()->{
+                    initializerController.loginUser(userToLogin);
+                }).isInstanceOf(AuthenticateException.class);
 
                 verify(userService, times(1)).getUserByEmail(anyString());
             }
@@ -178,19 +173,14 @@ public class InitializerControllerTests {
             @DisplayName("Given non-existing email and correct password Then return the email error")
             void loginUserErrorEmail() {
                 //Given
-                when(userService.getUserByEmail("denipse@gmail.com")).thenThrow(new RuntimeException());
+                when(userService.getUserByEmail("denipse@gmail.com"))
+                        .thenThrow(new AuthenticateException("Can't authenticate"));
+
                 Login userToLogin = Login.builder().email("denipse@gmail.com").password("3214").build();
 
-                try {
-                    //When
-                    ResponseEntity<UserDto> responseStatusException = initializerController.loginUser(userToLogin);
-                } catch (Exception exception) {
-                    //Then
-                    assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                    assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-                    assertThat(responseStatusException.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password is incorrect\"");
-                }
+                assertThatThrownBy(()->{
+                    initializerController.loginUser(userToLogin);
+                }).isInstanceOf(AuthenticateException.class);
 
                 verify(userService, times(1)).getUserByEmail(anyString());
             }

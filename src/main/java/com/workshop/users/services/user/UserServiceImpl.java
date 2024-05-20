@@ -4,6 +4,7 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.model.CountryEntity;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.model.UserEntity;
@@ -51,9 +52,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto getUserByEmail(String email) throws RuntimeException{
-        isNotNull(email);
-        return UserEntity.fromEntity(userDAORepository.findByEmail(email).orElseThrow());
+    public UserDto getUserByEmail(String email) throws AuthenticateException {
+        try {
+            return UserEntity.fromEntity(userDAORepository.findByEmail(email).orElseThrow());
+        }catch (RuntimeException runtimeException){
+            throw new AuthenticateException("Can't authenticate");
+        }
     }
 
     @Override

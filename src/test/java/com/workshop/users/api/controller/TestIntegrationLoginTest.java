@@ -4,10 +4,12 @@ import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.MyResponseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -81,7 +83,15 @@ class TestIntegrationLoginTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(validLogin)
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus().isNotFound()
+                .expectBody(MyResponseException.class)
+                .value(exception -> {
+                    //Then
+                    assertThat(exception).isEqualTo(MyResponseException.builder()
+                            .code(HttpStatus.NOT_FOUND)
+                            .message("The email or the password are incorrect.")
+                            .build());
+                });
     }
     @Test
     @DisplayName("Given an bad password user when call to login endpoint Then return uauthorized status")
@@ -97,6 +107,14 @@ class TestIntegrationLoginTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(validLogin)
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus().isNotFound()
+                .expectBody(MyResponseException.class)
+                .value(exception -> {
+                    //Then
+                    assertThat(exception).isEqualTo(MyResponseException.builder()
+                            .code(HttpStatus.NOT_FOUND)
+                            .message("The email or the password are incorrect.")
+                            .build());
+                });
     }
 }

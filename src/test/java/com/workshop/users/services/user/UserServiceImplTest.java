@@ -4,6 +4,7 @@ import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
@@ -149,19 +150,9 @@ class UserServiceImplTest {
             //When and Then
             assertThatThrownBy(()->{
                 userService.getUserByEmail("paquito@perez.com");
-            }).isInstanceOf(RuntimeException.class);
+            }).isInstanceOf(AuthenticateException.class);
         }
 
-        @Test
-        @DisplayName("Given a null email return null")
-        void getUserByNullEmail() {
-            //Given null
-            //When and Then
-            assertThatThrownBy(()->{
-                userService.getUserByEmail(null);
-            }).isInstanceOf(RuntimeException.class)
-                    .hasMessageContaining("Request not valid");
-        }
     }
 
     @Test
