@@ -21,7 +21,6 @@ import java.text.ParseException;
 public class InitializerController {
     private final UserService userService;
     private final AddressService addressService;
-
     private CountryService countryService;
     private Validations validations;
 
@@ -37,20 +36,21 @@ public class InitializerController {
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws ResponseStatusException {
         validations.checkAllMethods(user);
         try {
+
             AddressDto addressDto = user.getAddress();
             if (addressDto != null) {
                 AddressDto createdAddress = addressService.addAddress(addressDto);
                 user.setAddress(createdAddress);
             }
+
             CountryDto countryDto = user.getCountry();
             if (countryDto != null) {
                 CountryDto country = countryService.getCountryByName(countryDto.getName());
                 user.setCountry(country);
             }
+
             UserDto createdUser = userService.addUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex);
         }

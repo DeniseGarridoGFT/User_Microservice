@@ -26,13 +26,10 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto getCountryByName(String name) throws CountryNotFoundException   {
         try {
             return CountryEntity.fromEntity(countryDAORepository.findByName(name).orElseThrow());
-
         }catch (RuntimeException ex){
             throw  new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finalndia");
         }
     }
-
-
 
     public void isNotNull(Object id) throws RuntimeException{
         if (id==null){
