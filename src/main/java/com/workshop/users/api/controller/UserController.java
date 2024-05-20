@@ -2,6 +2,7 @@ package com.workshop.users.api.controller;
 
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 
@@ -29,13 +30,10 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDto> getUser(@Validated @PathVariable("id") Long id) {
-        try {
-            UserDto user = userService.getUserById(id);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<UserDto> getUser(@Validated @PathVariable("id") Long id) throws NotFoundUserException {
+        UserDto user = userService.getUserById(id);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/users/{id}")

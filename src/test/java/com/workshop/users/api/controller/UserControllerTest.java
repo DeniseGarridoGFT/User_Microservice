@@ -3,6 +3,7 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.MyResponseException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
@@ -62,6 +63,14 @@ class UserControllerTest {
             assertNotEquals("123456789", userDto.getPassword());
             assertEquals(100, userDto.getFidelityPoints());
         }
+        @DisplayName("Checking the correct functioning of get method Then throw an exception")
+        @Order(2)
+        @Test
+        void getUserNotFoundExceptions() throws NotFoundUserException {
+            when(userService.getUserById(2L)).thenThrow(new NotFoundUserException("Can't found user with this id"));
+            assertThatThrownBy(()->userController.getUser(2L))
+                    .isInstanceOf(NotFoundUserException.class);
+        }
     }
 
     @Nested
@@ -86,7 +95,7 @@ class UserControllerTest {
 
             assertThat(userResponse).isEqualTo(userDtoChecked);
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(responseEntity.getHeaders()).hasSize(0);
+            assertThat(responseEntity.getHeaders()).isEmpty();
             verify(validations, times(1)).checkAllMethods(userDtoChecked);
             verify(addressService, times(1)).updateAddress(addressDto.getId(),addressDto);
             verify(userService, times(1)).updateUser(userDtoChecked.getId(), userDtoChecked);
