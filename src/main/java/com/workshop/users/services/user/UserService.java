@@ -11,5 +11,5 @@ public interface UserService {
     UserDto addUser(UserDto user) throws ParseException;
     UserDto getUserById(Long id) throws RuntimeException, NotFoundUserException;
     UserDto getUserByEmail(String email) throws RuntimeException;
-    UserDto updateUser(Long id, UserDto userDto);
+    UserDto updateUser(Long id, UserDto userDto) throws Exception;
 }

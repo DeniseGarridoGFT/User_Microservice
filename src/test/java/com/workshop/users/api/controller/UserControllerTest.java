@@ -3,6 +3,7 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.UserNotFoundException;
 import com.workshop.users.exceptions.MyResponseException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.services.address.AddressService;
@@ -49,7 +50,7 @@ class UserControllerTest {
         @DisplayName("Checking the correct functioning of get method")
         @Order(1)
         @Test
-        void getUser() throws NotFoundUserException {
+        void getUser() {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             when(userService.getUserById(2L)).thenReturn(userDtoChecked);
             ResponseEntity<UserDto> responseEntity = userController.getUser(2L);
@@ -80,7 +81,7 @@ class UserControllerTest {
         @Test
         @Order(1)
         @DisplayName("Given a valid user")
-        void putMappingTest() throws ParseException {
+        void putMappingTest() throws Exception {
 
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             userDtoChecked.setEmail("paquito@gmail.com");
@@ -150,7 +151,7 @@ class UserControllerTest {
         @Test
         @Order(2)
         @DisplayName("Given an non associated user Then return the NOT_FOUND exception ")
-        void updateUserErrorNotFoundUser() throws ParseException {
+        void updateUserErrorNotFoundUser() throws Exception {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             when(validations.checkAllMethods(USER_ID_2))
                     .thenReturn(true);

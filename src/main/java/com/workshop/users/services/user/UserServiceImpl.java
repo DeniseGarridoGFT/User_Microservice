@@ -5,6 +5,8 @@ import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.InternalServerException;
+import com.workshop.users.exceptions.UserNotFoundException;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
@@ -59,18 +61,26 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) {
-        UserEntity userEntity = userDAORepository.findById(id).orElseThrow();
-        userEntity.setName(userDto.getName());
-        userEntity.setLastName(userDto.getLastName());
-        userEntity.setEmail(userDto.getEmail());
-        userEntity.setBirthDate(new Date(userDto.getBirthDate()));
-        userEntity.setPassword(userDto.getPassword());
-        userEntity.setFidelityPoints(userDto.getFidelityPoints());
-        userEntity.setPhone(userDto.getPhone());
-        userEntity.setAddress(AddressDto.toEntity(userDto.getAddress()));
+    public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, InternalServerException{
+        try {
+            UserEntity userEntity = userDAORepository.findById(id).orElseThrow();
+            userEntity.setName(userDto.getName());
+            userEntity.setLastName(userDto.getLastName());
+            userEntity.setEmail(userDto.getEmail());
+            userEntity.setBirthDate(new Date(userDto.getBirthDate()));
+            userEntity.setPassword(userDto.getPassword());
+            userEntity.setFidelityPoints(userDto.getFidelityPoints());
+            userEntity.setPhone(userDto.getPhone());
+            userEntity.setAddress(AddressDto.toEntity(userDto.getAddress()));
+            userEntity.setCountry(CountryDto.toEntity(userDto.getCountry()));
 
-        return UserEntity.fromEntity(userDAORepository.save(userEntity));
+            return UserEntity.fromEntity(userDAORepository.save(userEntity));
+        } catch (RuntimeException e) {
+            throw new UserNotFoundException("The user with id " + id + " was not found.");
+        }catch (Exception e) {
+            throw new InternalServerException("Can not update the user.");
+        }
+
     }
 
 
