@@ -24,11 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class InitializerControllerTests {
-
-
     private UserService userService;
     private AddressService addressService;
-
     private CountryService countryService;
     private InitializerController initializerController;
     private Validations validations;

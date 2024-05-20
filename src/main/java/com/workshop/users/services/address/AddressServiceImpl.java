@@ -22,7 +22,6 @@ public class AddressServiceImpl implements AddressService {
     private AddressDAORepository addressDAORepository;
 
     public AddressServiceImpl(AddressDAORepository addressDAORepository){
-
         this.addressDAORepository = addressDAORepository;
     }
 

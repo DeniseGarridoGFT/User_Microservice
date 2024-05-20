@@ -42,4 +42,14 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(CountryNotFoundException.class)
+    public ResponseEntity<MyResponseException> handleCountryNotFoundException(CountryNotFoundException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
+    }
+
 }

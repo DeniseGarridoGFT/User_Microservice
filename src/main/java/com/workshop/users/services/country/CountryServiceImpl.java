@@ -24,15 +24,18 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public CountryDto getCountryByName(String name) throws CountryNotFoundException   {
-        try {
+        isNotNull(name);
             return CountryEntity.fromEntity(countryDAORepository.findByName(name).orElseThrow());
-        }catch (RuntimeException ex){
-            throw  new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finalndia");
-        }
     }
 
     public void isNotNull(Object id) throws RuntimeException{
         if (id==null){
+            throw new RuntimeException("Request not valid");
+        }
+    }
+
+    public void isNotNull(String name) throws RuntimeException{
+        if (name==null){
             throw new RuntimeException("Request not valid");
         }
     }
