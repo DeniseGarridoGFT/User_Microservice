@@ -1,5 +1,6 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
@@ -175,7 +176,7 @@ class UserServiceImplTest {
                 .email("manuelupdated@example.com")
                 .birthDate("2000/01/14")
                 .fidelityPoints(60)
-                .country(DataToUserControllerTesting.COUNTRY_ESPANYA)
+                .country(DataInitzializerController.COUNTRY_SPAIN)
                 .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
                 .build();
         UserDto userDtoAux = userDtoToSave;

@@ -6,5 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CountryService {
     CountryDto getCountryById(Long id) throws RuntimeException;
+    CountryDto getCountryByName(String name) throws RuntimeException;
 
 }

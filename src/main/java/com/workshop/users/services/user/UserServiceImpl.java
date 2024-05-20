@@ -31,12 +31,8 @@ public class UserServiceImpl implements UserService{
         if (user.getFidelityPoints() == null) {
             user.setFidelityPoints(0);
         }
-        CountryEntity countryEntity = countryDAORepository.findByName(user.getCountry().getName())
-                .orElseThrow(() -> new IllegalArgumentException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finalndia, Francia, Italia, Portugal, Grecia"));
         String encryptedPassword = loginDto.BCRYPT.encode(user.getPassword());
-        user.setCountry(CountryEntity.fromEntity(countryEntity));
         user.setPassword(encryptedPassword);
-
         return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
     }
 
