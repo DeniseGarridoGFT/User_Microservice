@@ -239,16 +239,17 @@ class TestEnd2EndRegisterTest {
 
             //When
             webTestClient.get()
-                    .uri("/users/5")
+                    .uri("/users/1")
                     .exchange()
-                    .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
-                    .value(exception -> {
+                    .expectStatus().isOk()
+                    .expectBody(UserDto.class)
+                    .value(userDto -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
-                                .code(HttpStatus.NOT_FOUND)
-                                .message("The user with this id don't exists.")
-                                .build());
+                        assertThat(userDto.getName()).isEqualTo("Juan");
+                        assertThat(userDto)
+                                .hasFieldOrPropertyWithValue("email","juangarcia@example.com")
+                                .hasFieldOrPropertyWithValue("name","Juan")
+                                .hasFieldOrPropertyWithValue("lastName","García");
                     });
         }
 
