@@ -32,7 +32,6 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDto> getUser(@Validated @PathVariable("id") Long id) throws NotFoundUserException {
         UserDto user = userService.getUserById(id);
-
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
