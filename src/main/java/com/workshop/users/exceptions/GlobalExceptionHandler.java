@@ -25,14 +25,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ConflictWishListException.class)
-    public ResponseEntity<MyResponseException> handleGeneralException(ConflictWishListException ex) {
-        MyResponseException myResponseException = MyResponseException.builder()
-                .code(HttpStatus.CONFLICT)
-                .message("One product is already on the wish list.")
-                .build();
-        return new ResponseEntity<>(myResponseException, HttpStatus.CONFLICT);
-    }
 
     @ExceptionHandler(NotFoundProductException.class)
     public ResponseEntity<MyResponseException> handleGeneralException(NotFoundProductException ex) {

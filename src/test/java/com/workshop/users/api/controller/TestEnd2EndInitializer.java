@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workshop.users.api.dto.*;
 import com.workshop.users.exceptions.MyResponseException;
+import com.workshop.users.model.WishProductEntity;
+import com.workshop.users.model.WishProductPK;
 import com.workshop.users.repositories.WishProductDAORepository;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -31,6 +33,9 @@ class TestEnd2EndRegisterTest {
     private static ObjectMapper objectMapper;
 
     private static MockWebServer mockWebServer;
+
+    @Autowired
+    private WishProductDAORepository wishProductDAORepository;
 
 
     @BeforeAll
@@ -396,44 +401,6 @@ class TestEnd2EndRegisterTest {
                     .value(myResponseException -> {
                         //Then
                         assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
-                    });
-        }
-
-
-        @Test
-        @DisplayName("Given a Wish List that is already saved When post wish list Then throw conflict error")
-        void postWishListConflictError() throws JsonProcessingException {
-            //Given
-            WishListDto wishListDto = WishListDto.builder()
-                    .userId(1L)
-                    .productsIds(new HashSet<>(List.of(1L, 5L, 8L, 3L)))
-                    .build();
-
-            mockWebServer.enqueue(new MockResponse()
-                    .setBody(objectMapper.writeValueAsString(List.of(Product.builder()
-                                    .id(1L)
-                                    .build(),
-                            Product.builder()
-                                    .id(8L)
-                                    .build(),
-                            Product.builder()
-                                    .id(5L)
-                                    .build(), Product.builder()
-                                    .id(5L)
-                                    .build())))
-                    .setHeader("Content-Type", "application/json"));
-
-            //When
-            webTestClient.post()
-                    .uri("/wishlist")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(wishListDto)
-                    .exchange()
-                    .expectStatus().is4xxClientError()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
-                        //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("One product is already on the wish list.");
                     });
         }
 

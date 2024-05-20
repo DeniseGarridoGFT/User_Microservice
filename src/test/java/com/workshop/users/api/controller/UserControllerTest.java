@@ -50,7 +50,7 @@ class UserControllerTest {
         @DisplayName("Checking the correct functioning of get method")
         @Order(1)
         @Test
-        void getUser() {
+        void getUser() throws NotFoundUserException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             when(userService.getUserById(2L)).thenReturn(userDtoChecked);
             ResponseEntity<UserDto> responseEntity = userController.getUser(2L);

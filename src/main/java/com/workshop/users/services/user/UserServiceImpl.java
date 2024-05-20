@@ -1,5 +1,6 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, InternalServerException{
+    public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, InternalServerException {
         try {
             UserEntity userEntity = userDAORepository.findById(id).orElseThrow();
             userEntity.setName(userDto.getName());
