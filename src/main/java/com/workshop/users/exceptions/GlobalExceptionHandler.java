@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MyResponseException> handleGeneralException(ConflictWishListException ex) {
         MyResponseException myResponseException = MyResponseException.builder()
                 .code(HttpStatus.CONFLICT)
-                .message("One product already on the wish list.")
+                .message("One product is already on the wish list.")
                 .build();
         return new ResponseEntity<>(myResponseException, HttpStatus.CONFLICT);
     }
