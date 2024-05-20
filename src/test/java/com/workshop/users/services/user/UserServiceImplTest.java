@@ -4,12 +4,11 @@ import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.model.AddressEntity;
+import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
 import org.assertj.core.api.Assertions;
-import org.h2.engine.User;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -61,7 +60,7 @@ class UserServiceImplTest {
             Mockito.when(userDAORepository.findById(3L))
                     .thenThrow(new RuntimeException("User not found"));
             //When and Then
-            assertThrows(RuntimeException.class, () -> userService.getUserById(3L));
+            assertThrows(NotFoundUserException.class, () -> userService.getUserById(3L));
             verify(userDAORepository).findById(Mockito.anyLong());
         }
         @Test
