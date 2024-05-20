@@ -6,6 +6,7 @@ import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
@@ -29,6 +30,8 @@ class ValidationTest {
 
     private UserService userService;
     private AddressService addressService;
+
+    private CountryService countryService;
     private InitializerController initializerController;
     private AddressDto addressDto;
     private CountryDto countryDto;
@@ -40,7 +43,8 @@ class ValidationTest {
         userService = mock(UserService.class);
         addressService = mock(AddressService.class);
         validations = new Validations(userService);
-        initializerController = new InitializerController(userService, addressService,validations);
+        countryService = mock(CountryService.class);
+        initializerController = new InitializerController(userService, addressService,validations, countryService);
         countryDto = DataInitzializerController.COUNTRY_SPAIN;
         addressDto = DataInitzializerController.ADDRESS_VALLECAS;
         userDto = DataInitzializerController.USER_LOGGED;

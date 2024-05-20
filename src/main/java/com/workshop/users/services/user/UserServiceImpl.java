@@ -1,10 +1,13 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.model.CountryEntity;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.model.UserEntity;
+import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +17,13 @@ import java.util.Date;
 public class UserServiceImpl implements UserService{
 
     private UserDAORepository userDAORepository;
+    private CountryDAORepository countryDAORepository;
+
     private Login loginDto;
 
-    public UserServiceImpl(UserDAORepository userDAORepository){
+    public UserServiceImpl(UserDAORepository userDAORepository, CountryDAORepository countryDAORepository){
         this.userDAORepository=userDAORepository;
+        this.countryDAORepository = countryDAORepository;
     }
 
 

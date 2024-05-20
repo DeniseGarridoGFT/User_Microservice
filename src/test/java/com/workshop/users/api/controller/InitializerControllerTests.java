@@ -3,6 +3,7 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.dto.*;
 import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 
 import static org.assertj.core.api.Assertions.*;
@@ -26,6 +27,8 @@ public class InitializerControllerTests {
 
     private UserService userService;
     private AddressService addressService;
+
+    private CountryService countryService;
     private InitializerController initializerController;
     private Validations validations;
 
@@ -34,7 +37,8 @@ public class InitializerControllerTests {
         userService = mock(UserService.class);
         addressService = mock(AddressService.class);
         validations = mock(Validations.class);
-        initializerController = new InitializerController(userService, addressService, validations);
+        countryService = mock(CountryService.class);
+        initializerController = new InitializerController(userService, addressService, validations, countryService);
 
     }
 

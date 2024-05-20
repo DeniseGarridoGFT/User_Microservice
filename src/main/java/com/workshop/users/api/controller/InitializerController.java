@@ -1,9 +1,11 @@
 package com.workshop.users.api.controller;
 
 import com.workshop.users.api.dto.AddressDto;
+import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +21,15 @@ import java.text.ParseException;
 public class InitializerController {
     private final UserService userService;
     private final AddressService addressService;
+
+    private CountryService countryService;
     private Validations validations;
 
-    public InitializerController(UserService userService, AddressService addressService,Validations validations) {
+    public InitializerController(UserService userService, AddressService addressService,Validations validations, CountryService countryService) {
         this.addressService = addressService;
         this.userService = userService;
         this.validations =validations;
+        this.countryService = countryService;
     }
 
     @PostMapping("/register")
@@ -37,8 +42,15 @@ public class InitializerController {
                 AddressDto createdAddress = addressService.addAddress(addressDto);
                 user.setAddress(createdAddress);
             }
+            CountryDto countryDto = user.getCountry();
+            if (countryDto != null) {
+                CountryDto country = countryService.getCountryByName(countryDto.getName());
+                user.setCountry(country);
+            }
             UserDto createdUser = userService.addUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex);
         }
@@ -57,5 +69,4 @@ public class InitializerController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect");
         }
     }
-
 }

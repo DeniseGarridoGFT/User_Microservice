@@ -34,6 +34,4 @@ public class CountryEntity implements Serializable {
                 .timeZone(entity.getTimeZone())
                 .build();
     }
-
-
 }
