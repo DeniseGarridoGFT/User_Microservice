@@ -42,7 +42,6 @@ public class WishProductController {
     }
 
     @DeleteMapping("/wishlist/{user_id}/{product_id}")
-    @Transactional(rollbackFor = NotFoundWishProductException.class)
     public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,
                                                       @PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {
