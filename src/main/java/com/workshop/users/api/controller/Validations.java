@@ -67,7 +67,7 @@ public class Validations {
         return userToCheck.getId() == null || userDto.getId() != userToCheck.getId();
     }
 
-    boolean checkAllMethods(UserDto userToCheck) throws ResponseStatusException {
+     boolean checkAllMethods(UserDto userToCheck) throws ResponseStatusException {
         return checkEmail(userToCheck)
                 && checkPassword(userToCheck)
                 && checkDateFormat(userToCheck)

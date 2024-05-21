@@ -1,15 +1,16 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.controller.Validations;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.exceptions.AuthenticateException;
-import com.workshop.users.exceptions.NotFoundUserException;
-import com.workshop.users.exceptions.InternalServerException;
-import com.workshop.users.exceptions.UserNotFoundException;
+import com.workshop.users.api.dto.CountryDto;
+import com.workshop.users.exceptions.*;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
+import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,6 +20,9 @@ public class UserServiceImpl implements UserService{
 
     private UserDAORepository userDAORepository;
     private CountryDAORepository countryDAORepository;
+    private Validations validations;
+    AddressService addressService;
+    CountryService countryService;
 
     private Login loginDto;
 
@@ -27,16 +31,13 @@ public class UserServiceImpl implements UserService{
         this.countryDAORepository = countryDAORepository;
     }
 
-
     @Override
     public UserDto addUser(UserDto user) {
         if (user.getFidelityPoints() == null) {
             user.setFidelityPoints(0);
         }
-
         String encryptedPassword = loginDto.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);
-
         return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
     }
 
@@ -48,7 +49,6 @@ public class UserServiceImpl implements UserService{
         }catch (RuntimeException runtimeException){
             throw new NotFoundUserException("Not found user");
         }
-
     }
 
     @Override
@@ -82,7 +82,6 @@ public class UserServiceImpl implements UserService{
         }
 
     }
-
 
     public void isNotNull(Object id) throws RuntimeException{
         if (id==null){

@@ -5,9 +5,11 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.AuthenticateException;
+import com.workshop.users.model.AddressEntity;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
 
 @RestController
 public class InitializerController {
@@ -33,27 +37,21 @@ public class InitializerController {
 
     @PostMapping("/register")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws ResponseStatusException {
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws ResponseStatusException, ParseException {
         validations.checkAllMethods(user);
-        try {
 
-            AddressDto addressDto = user.getAddress();
-            if (addressDto != null) {
-                AddressDto createdAddress = addressService.addAddress(addressDto);
-                user.setAddress(createdAddress);
-            }
+        AddressDto addressDto = user.getAddress();
+        System.out.println();
+        CountryDto countryDto = user.getCountry();
+        AddressDto createdAddress = addressService.addAddress(addressDto);
+        CountryDto createdCountry = countryService.getCountryByName(countryDto.getName());
+        System.out.println(createdCountry);
 
-            CountryDto countryDto = user.getCountry();
-            if (countryDto != null) {
-                CountryDto country = countryService.getCountryByName(countryDto.getName());
-                user.setCountry(country);
-            }
+        user.setAddress(createdAddress);
+        user.setCountry(createdCountry);
+        UserDto createdUser = userService.addUser(user);
 
-            UserDto createdUser = userService.addUser(user);
-            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex);
-        }
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
 
