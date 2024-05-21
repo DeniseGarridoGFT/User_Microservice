@@ -118,11 +118,11 @@ public class WishProductControllerTest {
             //Given
             doNothing().when(wishProductService).deleteWishProducts(any(WishProductEntity.class));
             //When
-            ResponseEntity<WishListDto> responseEntity = wishProductController.deleteWishList(wishListDto);
+            ResponseEntity<WishListDto> responseEntity = wishProductController.deleteWishList(1L,2L);
             //Then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-            verify(wishProductService,times(4)).deleteWishProducts(any(WishProductEntity.class));
+            verify(wishProductService,times(1)).deleteWishProducts(any(WishProductEntity.class));
         }
 
         @Test
@@ -132,7 +132,7 @@ public class WishProductControllerTest {
             doThrow(new NotFoundWishProductException("Not found product")).when(wishProductService).deleteWishProducts(any(WishProductEntity.class));
 
             //When Then
-            assertThatThrownBy(()->wishProductController.deleteWishList(wishListDto)).isInstanceOf(NotFoundWishProductException.class);
+            assertThatThrownBy(()->wishProductController.deleteWishList(1L,2L)).isInstanceOf(NotFoundWishProductException.class);
 
             verify(wishProductService,times(1)).deleteWishProducts(any(WishProductEntity.class));
         }
