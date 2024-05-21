@@ -1,7 +1,5 @@
 package com.workshop.users.api.controller;
 
-import com.workshop.users.api.dto.Login;
-import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.api.dto.WishListDto;
 import com.workshop.users.exceptions.ConflictWishListException;
 import com.workshop.users.exceptions.NotFoundProductException;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class WishProductController {
@@ -46,10 +43,11 @@ public class WishProductController {
 
     @DeleteMapping("/wishlist/{user_id}/{product_id}")
     @Transactional(rollbackFor = NotFoundWishProductException.class)
-    public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,@PathVariable(name = "product_id") Long productId)
+    public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,
+                                                      @PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {
         wishProductService.deleteWishProducts(WishListDto.getEntity(userId,productId));
-        return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

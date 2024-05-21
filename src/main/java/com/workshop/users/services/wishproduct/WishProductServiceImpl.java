@@ -4,6 +4,7 @@ import com.workshop.users.exceptions.ConflictWishListException;
 import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.repositories.WishProductDAORepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class WishProductServiceImpl implements WishProductService {
         try {
             return wishProductDAORepository.save(wishProductEntity)
                     .getWishProductPK().getProductId();
-        }catch (Exception exception){
+        }catch (EntityExistsException exception){
             throw new ConflictWishListException("The user with id "+
                                     wishProductEntity.getWishProductPK().getUserId()+
                                     " already have the product with id "+

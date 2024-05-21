@@ -7,6 +7,7 @@ import com.workshop.users.model.WishProductPK;
 import com.workshop.users.repositories.WishProductDAORepository;
 import static org.assertj.core.api.Assertions.*;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -54,7 +55,7 @@ public class WishProductServiceImplTests {
         void addWishListThrowError() {
             //Given
             when(wishProductDAORepository.save(wishProductEntity))
-                    .thenThrow(new Exception());
+                    .thenThrow(new EntityExistsException());
             //When and Then
             assertThatThrownBy(() -> {
                 wishProductService.addWishProducts(wishProductEntity);
