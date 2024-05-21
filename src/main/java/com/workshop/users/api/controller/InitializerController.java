@@ -41,11 +41,9 @@ public class InitializerController {
         validations.checkAllMethods(user);
 
         AddressDto addressDto = user.getAddress();
-        System.out.println();
         CountryDto countryDto = user.getCountry();
         AddressDto createdAddress = addressService.addAddress(addressDto);
         CountryDto createdCountry = countryService.getCountryByName(countryDto.getName());
-        System.out.println(createdCountry);
 
         user.setAddress(createdAddress);
         user.setCountry(createdCountry);

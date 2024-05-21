@@ -5,7 +5,6 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.exceptions.*;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
