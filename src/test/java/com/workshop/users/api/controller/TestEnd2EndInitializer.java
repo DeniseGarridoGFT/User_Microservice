@@ -16,24 +16,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 class TestEnd2EndRegisterTest {
     @Autowired
     private WebTestClient webTestClient;
-
     private static ObjectMapper objectMapper;
-
     private static MockWebServer mockWebServer;
-
 
     @BeforeAll
     static void beforeAll() throws IOException {
@@ -294,6 +290,7 @@ class TestEnd2EndRegisterTest {
                                 .build());
                     });
         }
+    }
 
     }
 
