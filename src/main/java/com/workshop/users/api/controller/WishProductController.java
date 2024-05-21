@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,13 +44,11 @@ public class WishProductController {
         return new ResponseEntity<>(wishListDto,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/wishlist")
+    @DeleteMapping("/wishlist/{user_id}/{product_id}")
     @Transactional(rollbackFor = NotFoundWishProductException.class)
-    public ResponseEntity<WishListDto> deleteWishList(@Validated @RequestBody WishListDto wishListDto)
+    public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,@PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {
-        for (Long productId: wishListDto.getProductsIds()){
-            wishProductService.deleteWishProducts(WishListDto.getEntity(wishListDto.getUserId(),productId));
-        }
+        wishProductService.deleteWishProducts(WishListDto.getEntity(userId,productId));
         return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
     }
 

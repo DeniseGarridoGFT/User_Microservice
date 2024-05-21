@@ -416,17 +416,10 @@ class TestEnd2EndRegisterTest {
                     .build();
 
             //When
-//            webTestClient.delete()
-//                    .uri("/wishlist")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .bodyValue(wishListDto)
-//                    .exchange()
-//                    .expectStatus().isCreated()
-//                    .expectBody(WishListDto.class)
-//                    .value(wishListDtoResponse -> {
-//                        //Then
-//                        assertThat(wishListDtoResponse).isEqualTo(wishListDto);
-//                    });
+            webTestClient.delete()
+                    .uri("/wishlist/1/8")
+                    .exchange()
+                    .expectStatus().isNoContent();
 
         }
 
