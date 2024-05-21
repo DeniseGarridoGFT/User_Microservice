@@ -1,35 +1,48 @@
 package com.workshop.users.api.controller;
 
-import com.workshop.users.api.dto.AddressDto;
-import com.workshop.users.api.dto.CountryDto;
-import com.workshop.users.api.dto.Login;
-import com.workshop.users.api.dto.UserDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.workshop.users.api.dto.*;
 import com.workshop.users.exceptions.MyResponseException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import com.workshop.users.model.WishProductEntity;
+import com.workshop.users.model.WishProductPK;
+import com.workshop.users.repositories.WishProductDAORepository;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
 class TestEnd2EndRegisterTest {
     @Autowired
     private WebTestClient webTestClient;
+    private static ObjectMapper objectMapper;
+    private static MockWebServer mockWebServer;
 
+    @BeforeAll
+    static void beforeAll() throws IOException {
+        objectMapper = new ObjectMapper();
+        mockWebServer = new MockWebServer();
+        mockWebServer.start(8081);
+    }
+    @AfterAll
+    static void afterAll() throws IOException {
+        mockWebServer.close();
+    }
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     @Nested
     @DisplayName("Register")
     class Register {
-
         @Test
         @DisplayName("Given correct credentials a user is registered. Then return that user")
         void registerUser() {
@@ -56,7 +69,6 @@ class TestEnd2EndRegisterTest {
                             .timeZone("Europe/Madrid")
                             .build())
                     .build();
-
             // When
             webTestClient.post()
                     .uri("/register")
@@ -74,20 +86,17 @@ class TestEnd2EndRegisterTest {
                         assertThat(userDto.getBirthDate()).isEqualTo(newUser.getBirthDate());
                         assertThat(userDto.getFidelityPoints()).isEqualTo(newUser.getFidelityPoints());
                         assertThat(userDto.getPhone()).isEqualTo(newUser.getPhone());
-
                         assertThat(userDto.getAddress().getCityName()).isEqualTo(newUser.getAddress().getCityName());
                         assertThat(userDto.getAddress().getZipCode()).isEqualTo(newUser.getAddress().getZipCode());
                         assertThat(userDto.getAddress().getStreet()).isEqualTo(newUser.getAddress().getStreet());
                         assertThat(userDto.getAddress().getNumber()).isEqualTo(newUser.getAddress().getNumber());
                         assertThat(userDto.getAddress().getDoor()).isEqualTo(newUser.getAddress().getDoor());
-
                         assertThat(userDto.getCountry().getName()).isEqualTo(newUser.getCountry().getName());
                         assertThat(userDto.getCountry().getTax()).isEqualTo(newUser.getCountry().getTax());
                         assertThat(userDto.getCountry().getPrefix()).isEqualTo(newUser.getCountry().getPrefix());
                         assertThat(userDto.getCountry().getTimeZone()).isEqualTo(newUser.getCountry().getTimeZone());
                     });
         }
-
         @Test
         @DisplayName("Given incorrect credentials a user can't be registered. Then return BAD_REQUEST status")
         void invalidUserRegister() {
@@ -124,11 +133,9 @@ class TestEnd2EndRegisterTest {
         }
     }
 
-
     @Nested
     @DisplayName("Login")
     class TestEnd2EndLoginTest {
-
 
         @Test
         @DisplayName("Given an logged user when call to login endpoint Then return associated user")
@@ -176,7 +183,6 @@ class TestEnd2EndRegisterTest {
                         assertThat(userDto).isEqualTo(expectedUserDto);
                     });
         }
-
         @Test
         @DisplayName("Given an bad email user when call to login endpoint Then return uauthorized status")
         void postLoginIncorrectEmail() {
@@ -201,7 +207,6 @@ class TestEnd2EndRegisterTest {
                                 .build());
                     });
         }
-
         @Test
         @DisplayName("Given an bad password user when call to login endpoint Then return uauthorized status")
         void postLoginIncorrectPassword() {
@@ -227,16 +232,12 @@ class TestEnd2EndRegisterTest {
                     });
         }
     }
-
     @Nested
     @DisplayName("Get user by Id")
     class TestEnd2EndGetUserTest {
-
-
         @Test
         @DisplayName("Given an  associated user id when call to get users endpoint Then return the correct user")
         void getUserById() {
-
             //When
             webTestClient.get()
                     .uri("/users/1")
@@ -247,17 +248,15 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(userDto.getName()).isEqualTo("Juan");
                         assertThat(userDto)
-                                .hasFieldOrPropertyWithValue("email","juangarcia@example.com")
-                                .hasFieldOrPropertyWithValue("name","Juan")
-                                .hasFieldOrPropertyWithValue("lastName","García");
+                                .hasFieldOrPropertyWithValue("email", "juangarcia@example.com")
+                                .hasFieldOrPropertyWithValue("name", "Juan")
+                                .hasFieldOrPropertyWithValue("lastName", "García");
                     });
         }
-
 
         @Test
         @DisplayName("Given a non associated user id when call to get users endpoint Then not found exceptions")
         void getUserByIdNonAssociatedId() {
-
             //When
             webTestClient.get()
                     .uri("/users/5")
@@ -272,6 +271,100 @@ class TestEnd2EndRegisterTest {
                                 .build());
                     });
         }
+    }
 
+    @Nested
+    @DisplayName("Post WishList ")
+    class TestEnd2EndPostWishList {
+        @Test
+        @DisplayName("Given a good Wish List When post wish list Then return the same wishlist")
+        void postWishList() throws JsonProcessingException {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(1L)
+                    .productsIds(new HashSet<>(List.of(1L, 2L, 3L)))
+                    .build();
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody(objectMapper.writeValueAsString(List.of(Product.builder()
+                                    .id(1L)
+                                    .build(),
+                            Product.builder()
+                                    .id(2L)
+                                    .build(),
+                            Product.builder()
+                                    .id(3L)
+                                    .build())))
+                    .setHeader("Content-Type", "application/json"));
+            //When
+            webTestClient.post()
+                    .uri("/wishlist")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(wishListDto)
+                    .exchange()
+                    .expectStatus().isCreated()
+                    .expectBody(WishListDto.class)
+                    .value(wishListDtoResponse -> {
+                        //Then
+                        assertThat(wishListDtoResponse).isEqualTo(wishListDto);
+                    });
+        }
+
+        @Test
+        @DisplayName("Given a Wish List but the user not exists When post wish list Then throw not found exception")
+        void postWishListNotFoundUserException() throws JsonProcessingException {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(3L)
+                    .productsIds(new HashSet<>(List.of(1L, 2L, 3L)))
+                    .build();
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody(objectMapper.writeValueAsString(List.of(Product.builder()
+                                    .id(1L)
+                                    .build(),
+                            Product.builder()
+                                    .id(2L)
+                                    .build(),
+                            Product.builder()
+                                    .id(3L)
+                                    .build())))
+                    .setHeader("Content-Type", "application/json"));
+            //When
+            webTestClient.post()
+                    .uri("/wishlist")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(wishListDto)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        //Then
+                        assertThat(myResponseException.getMessage()).isEqualTo("The user with this id don't exists.");
+                    });
+        }
+        @Test
+        @DisplayName("Given a Wish List but the products not exists When post wish list Then throw not found exception")
+        void postWishListNotFoundProductException() {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(1L)
+                    .productsIds(new HashSet<>(List.of(9999L, 3333L, 55555L)))
+                    .build();
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Not found product with this ids\"}")
+                    .setHeader("Content-Type", "application/json"));
+            //When
+            webTestClient.post()
+                    .uri("/wishlist")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(wishListDto)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        //Then
+                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
+                    });
+        }
     }
 }
+ 

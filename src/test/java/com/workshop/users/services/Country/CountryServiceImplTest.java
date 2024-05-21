@@ -1,24 +1,19 @@
 package com.workshop.users.services.Country;
 
-
-import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
-import com.workshop.users.model.AddressEntity;
+import com.workshop.users.exceptions.CountryNotFoundException;
 import com.workshop.users.model.CountryEntity;
-import com.workshop.users.repositories.AddressDAORepository;
 import com.workshop.users.repositories.CountryDAORepository;
-import com.workshop.users.services.address.AddressServiceImpl;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.country.CountryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,12 +28,12 @@ public class CountryServiceImplTest {
         countryDAORepository = mock(CountryDAORepository.class);
         countryService = new CountryServiceImpl(countryDAORepository);
         countryDto = CountryDto.builder()
-                .id(1L).
-                tax(21F).
-                name("España").
-                prefix("+34").
-                timeZone("Europe/Madrid").
-                build();
+                .id(1L)
+                .tax(21F)
+                .name("España")
+                .prefix("+34")
+                .timeZone("Europe/Madrid")
+                .build();
 
         countryEntity = new CountryEntity();
         countryEntity.setId(1L);
@@ -65,27 +60,18 @@ public class CountryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a null Id then throw a error")
+    @DisplayName("Given a null Id then throw an error")
     void getCountryErrorIdNull() {
-        RuntimeException runtimeException = null;
-        try {
-            countryService.getCountryById(null);
-        }catch (Exception exception){
-            runtimeException = (RuntimeException) exception;
-        }
-        assertThat(runtimeException.getMessage()).isEqualTo("Request not valid");
+        assertThatThrownBy(() -> countryService.getCountryById(null))
+                .isInstanceOf(CountryNotFoundException.class)
+                .hasMessage("Country not found");
     }
 
     @Test
-    @DisplayName("Given a null name then throw a error")
+    @DisplayName("Given a null name then throw an error")
     void getCountryErrorNameNull() {
-        RuntimeException runtimeException = null;
-        try {
-            countryService.getCountryByName(null);
-        }catch (Exception exception){
-            runtimeException = (RuntimeException) exception;
-        }
-        assertThat(runtimeException.getMessage()).isEqualTo("Request not valid");
+        assertThatThrownBy(() -> countryService.getCountryByName(null))
+                .isInstanceOf(CountryNotFoundException.class)
+                .hasMessage("Country not found");
     }
-
 }
