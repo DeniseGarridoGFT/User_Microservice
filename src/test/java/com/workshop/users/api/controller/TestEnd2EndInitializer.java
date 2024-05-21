@@ -292,9 +292,6 @@ class TestEnd2EndRegisterTest {
         }
     }
 
-    }
-
-
     @Nested
     @DisplayName("Post WishList ")
     class TestEnd2EndPostWishList {
