@@ -25,6 +25,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(NotFoundWishProductException.class)
+    public ResponseEntity<MyResponseException> handleNotFoundWishProductException(NotFoundWishProductException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
+    }
+
 
     @ExceptionHandler(NotFoundProductException.class)
     public ResponseEntity<MyResponseException> handleGeneralException(NotFoundProductException ex) {

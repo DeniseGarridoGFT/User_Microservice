@@ -13,9 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 
 public class ValidationsWishList {
-    private ValidationsWishList(){
 
-    }
 
     public static void validateExistsProduct(WishListDto wishListDto, ProductService productService)
             throws NotFoundProductException {

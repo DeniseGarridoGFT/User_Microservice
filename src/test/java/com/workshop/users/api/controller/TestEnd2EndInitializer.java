@@ -34,9 +34,6 @@ class TestEnd2EndRegisterTest {
 
     private static MockWebServer mockWebServer;
 
-    @Autowired
-    private WishProductDAORepository wishProductDAORepository;
-
 
     @BeforeAll
     static void beforeAll() throws IOException {
@@ -403,7 +400,70 @@ class TestEnd2EndRegisterTest {
                         assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
                     });
         }
+    }
+
+    @Nested
+    @DisplayName("Post WishList ")
+    class TestEnd2EndDeleteWishList {
+
+        @Test
+        @DisplayName("Given a good Wish List When post wish list Then return the same wishlist")
+        void deleteWishList() throws JsonProcessingException {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(1L)
+                    .productsIds(new HashSet<>(List.of(5L, 8L)))
+                    .build();
+
+            //When
+//            webTestClient.delete()
+//                    .uri("/wishlist")
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .bodyValue(wishListDto)
+//                    .exchange()
+//                    .expectStatus().isCreated()
+//                    .expectBody(WishListDto.class)
+//                    .value(wishListDtoResponse -> {
+//                        //Then
+//                        assertThat(wishListDtoResponse).isEqualTo(wishListDto);
+//                    });
+
+        }
 
 
+        @Test
+        @DisplayName("Given a Wish List but the user not exists When post wish list Then throw not found exception")
+        void postWishListNotFoundUserException() throws JsonProcessingException {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(3L)
+                    .productsIds(new HashSet<>(List.of(1L, 2L, 3L)))
+                    .build();
+
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody(objectMapper.writeValueAsString(List.of(Product.builder()
+                                    .id(1L)
+                                    .build(),
+                            Product.builder()
+                                    .id(2L)
+                                    .build(),
+                            Product.builder()
+                                    .id(3L)
+                                    .build())))
+                    .setHeader("Content-Type", "application/json"));
+
+            //When
+            webTestClient.post()
+                    .uri("/wishlist")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(wishListDto)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        //Then
+                        assertThat(myResponseException.getMessage()).isEqualTo("The user with this id don't exists.");
+                    });
+        }
     }
 }

@@ -1,16 +1,19 @@
 package com.workshop.users.services.wishproduct;
 
 import com.workshop.users.exceptions.ConflictWishListException;
+import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.model.WishProductPK;
 import com.workshop.users.repositories.WishProductDAORepository;
 import static org.assertj.core.api.Assertions.*;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WishProductServiceImplTests {
     private WishProductDAORepository wishProductDAORepository;
@@ -32,7 +35,7 @@ public class WishProductServiceImplTests {
 
 
     @Nested
-    @DisplayName("When exists WishProduct")
+    @DisplayName("When add WishProduct")
     class AddWishProduct{
         @Test
         @DisplayName("Given wishList to add " +
@@ -51,11 +54,41 @@ public class WishProductServiceImplTests {
         void addWishListThrowError() {
             //Given
             when(wishProductDAORepository.save(wishProductEntity))
-                    .thenThrow(new RuntimeException());
+                    .thenThrow(new Exception());
             //When and Then
             assertThatThrownBy(() -> {
                 wishProductService.addWishProducts(wishProductEntity);
             }).isInstanceOf(ConflictWishListException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("When delete WishProduct")
+    class DeleteWishProduct{
+        @Test
+        @DisplayName("Given wish product to delete " +
+                "Then delete the item")
+        void addWishList() throws  NotFoundWishProductException {
+            //Given
+            doNothing().when(wishProductDAORepository)
+                        .delete(wishProductEntity);
+            //When and Then
+            wishProductService.deleteWishProducts(wishProductEntity);
+
+            verify(wishProductDAORepository).delete(wishProductEntity);
+        }
+        @Test
+        @DisplayName("Given wish product that not exists " +
+                "Then throw NotFoundWishProductException")
+        void addWishListThrowError() {
+            //Given
+            doThrow(new EntityNotFoundException())
+                    .when(wishProductDAORepository)
+                    .delete(wishProductEntity);
+            //When and Then
+            assertThatThrownBy(() -> {
+                wishProductService.deleteWishProducts(wishProductEntity);
+            }).isInstanceOf(NotFoundWishProductException.class);
         }
     }
 
