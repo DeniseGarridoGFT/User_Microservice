@@ -130,50 +130,39 @@ class UserControllerTest {
         @DisplayName("Given an non associated address Then return the NOT_FOUND exception ")
         void updateUserErrorNotFoundAddress() throws ParseException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
-            when(validations.checkAllMethods(USER_ID_2))
-                    .thenReturn(true);
-            when(addressService.updateAddress(userDtoChecked.getAddress().getId(),userDtoChecked.getAddress())).thenThrow(new RuntimeException());
+            when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
+            when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress()))
+                    .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Address not found"));
             UserDto userDto = userDtoChecked;
 
-            try {
-                //When
-                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
-            } catch (Exception exception) {
-                //Then
-                assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                assertThat(responseStatusException.getReason()).isEqualTo("Address not found");
-            }
-
+            //When
+            assertThrows(ResponseStatusException.class, () -> {
+                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L, userDto);
+            });
         }
 
         @Test
         @Order(2)
-        @DisplayName("Given an non associated user Then return the NOT_FOUND exception ")
+        @DisplayName("Given a non-associated user, then return the NOT_FOUND exception")
         void updateUserErrorNotFoundUser() throws Exception {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
-            when(validations.checkAllMethods(USER_ID_2))
-                    .thenReturn(true);
-            when(addressService.updateAddress(userDtoChecked.getAddress().getId(),userDtoChecked.getAddress())).thenReturn(userDtoChecked.getAddress());
-            when(userService.updateUser(userDtoChecked.getId(),userDtoChecked)).thenThrow(new RuntimeException());
+            when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
+            when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress())).thenReturn(userDtoChecked.getAddress());
+            when(userService.updateUser(userDtoChecked.getId(), userDtoChecked))
+                    .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
             UserDto userDto = userDtoChecked;
 
             try {
-                //When
-                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
+                // When
+                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L, userDto);
             } catch (Exception exception) {
-                //Then
+                // Then
                 assertThat(exception).isInstanceOf(ResponseStatusException.class);
                 ResponseStatusException responseStatusException = (ResponseStatusException) exception;
                 assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
                 assertThat(responseStatusException.getReason()).isEqualTo("User not found");
             }
-
         }
-
-
-
     }
 
 }

@@ -4,9 +4,11 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.exceptions.CountryNotFoundException;
 import com.workshop.users.model.CountryEntity;
 import com.workshop.users.repositories.CountryDAORepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class CountryServiceImpl implements CountryService {
 
     private final CountryDAORepository countryDAORepository;
