@@ -397,11 +397,11 @@ class TestEnd2EndRegisterTest {
     }
 
     @Nested
-    @DisplayName("Post WishList ")
+    @DisplayName("Delete WishList ")
     class TestEnd2EndDeleteWishList {
 
         @Test
-        @DisplayName("Given a good Wish List When post wish list Then return the same wishlist")
+        @DisplayName("Given an user id an product When delete wish product Then delete wish product")
         void deleteWishList() throws JsonProcessingException {
             //When
             webTestClient.delete()
@@ -413,18 +413,19 @@ class TestEnd2EndRegisterTest {
 
 
         @Test
-        @DisplayName("Given a Wish List but the user not exists When post wish list Then throw not found exception")
+        @DisplayName("Given a user id and product id which are no associated" +
+                " When delete wish product Then throw not found exception")
         void postWishListNotFoundUserException() throws JsonProcessingException {
 
             //When
             webTestClient.delete()
-                    .uri("/wishlist/1/655")
+                    .uri("/wishlist/54/655")
                     .exchange()
                     .expectStatus().isNotFound()
                     .expectBody(MyResponseException.class)
                     .value(myResponseException -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("The user with id 1" +
+                        assertThat(myResponseException.getMessage()).isEqualTo("The user with id 54" +
                                                                 " already have the product with id 655" +
                                                                 " in wishes");
                     });;
