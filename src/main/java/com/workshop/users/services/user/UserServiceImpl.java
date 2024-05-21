@@ -83,13 +83,5 @@ public class UserServiceImpl implements UserService{
         }catch (Exception e) {
             throw new InternalServerException("Can not update the user.");
         }
-
-    }
-
-
-    public void isNotNull(Object id) throws RuntimeException{
-        if (id==null){
-            throw new RuntimeException("Request not valid");
-        }
     }
 }
