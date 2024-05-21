@@ -54,7 +54,6 @@ public class InitializerController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<UserDto> loginUser(@Validated @RequestBody Login userToLogIn) throws AuthenticateException {
         UserDto userToRespones = userService.getUserByEmail(userToLogIn.getEmail());

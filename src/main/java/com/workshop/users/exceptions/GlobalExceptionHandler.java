@@ -25,14 +25,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ConflictWishListException.class)
-    public ResponseEntity<MyResponseException> handleGeneralException(ConflictWishListException ex) {
+    @ExceptionHandler(NotFoundWishProductException.class)
+    public ResponseEntity<MyResponseException> handleNotFoundWishProductException(NotFoundWishProductException ex) {
         MyResponseException myResponseException = MyResponseException.builder()
-                .code(HttpStatus.CONFLICT)
-                .message("One product already on the wish list.")
+                .code(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
                 .build();
-        return new ResponseEntity<>(myResponseException, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
+
 
     @ExceptionHandler(NotFoundProductException.class)
     public ResponseEntity<MyResponseException> handleGeneralException(NotFoundProductException ex) {
@@ -42,4 +43,23 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ConflictWishListException.class)
+    public ResponseEntity<MyResponseException> handleConflictWishListException(ConflictWishListException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.CONFLICT)
+                .message("One id of product not exists.")
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CountryNotFoundException.class)
+    public ResponseEntity<MyResponseException> handleCountryNotFoundException(CountryNotFoundException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.NOT_FOUND)
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
+    }
+
 }

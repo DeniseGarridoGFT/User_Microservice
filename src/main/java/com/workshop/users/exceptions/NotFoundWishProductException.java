@@ -1,9 +1,9 @@
 package com.workshop.users.exceptions;
 
-public class CountryNotFoundException extends RuntimeException{
+public class NotFoundWishProductException extends Exception{
     private String message;
 
-    public CountryNotFoundException(String message) {
+    public NotFoundWishProductException(String message) {
         super(message);
         this.message = message;
     }

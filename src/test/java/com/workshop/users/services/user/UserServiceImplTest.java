@@ -92,7 +92,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("Given an user to update when update user then return the user dto updated")
-    void testUpdateUser() {
+    void testUpdateUser() throws Exception {
         UserEntity userEntity = DataToMockInUserServiceImplTest.USER_1;
 
         UserDto userDtoUpdated = UserDto.builder()

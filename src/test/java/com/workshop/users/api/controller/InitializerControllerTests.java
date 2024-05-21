@@ -24,11 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class InitializerControllerTests {
-
-
     private UserService userService;
     private AddressService addressService;
-
     private CountryService countryService;
     private InitializerController initializerController;
     private Validations validations;
@@ -112,8 +109,8 @@ public class InitializerControllerTests {
                 assertThat(exception.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR \"Internal Server Error\"");
                 verify(addressService, times(1)).addAddress(addressDto);
             }
-            verify(addressService,times(1)).addAddress(addressDto);
-            verify(userService,times(0)).addUser(userWithAddress);
+            verify(addressService, times(1)).addAddress(addressDto);
+            verify(userService, times(0)).addUser(userWithAddress);
         }
 
         @Test
@@ -132,7 +129,7 @@ public class InitializerControllerTests {
                 assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
                 assertThat(exception.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR \"Internal Server Error\"");
             }
-            verify(userService,times(0)).addUser(createdUser);
+            verify(userService, times(0)).addUser(createdUser);
         }
 
         @Nested
@@ -164,7 +161,7 @@ public class InitializerControllerTests {
                 when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
                 Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
 
-                assertThatThrownBy(()->{
+                assertThatThrownBy(() -> {
                     initializerController.loginUser(userToLogin);
                 }).isInstanceOf(AuthenticateException.class);
 
@@ -180,7 +177,7 @@ public class InitializerControllerTests {
 
                 Login userToLogin = Login.builder().email("denipse@gmail.com").password("3214").build();
 
-                assertThatThrownBy(()->{
+                assertThatThrownBy(() -> {
                     initializerController.loginUser(userToLogin);
                 }).isInstanceOf(AuthenticateException.class);
 

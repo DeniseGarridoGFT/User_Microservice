@@ -1,6 +1,7 @@
 package com.workshop.users.services.user;
 
 import com.workshop.users.api.controller.Validations;
+import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
@@ -31,13 +32,16 @@ public class UserServiceImpl implements UserService{
         this.countryDAORepository = countryDAORepository;
     }
 
+
     @Override
     public UserDto addUser(UserDto user) {
         if (user.getFidelityPoints() == null) {
             user.setFidelityPoints(0);
         }
+
         String encryptedPassword = loginDto.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);
+
         return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
     }
 
@@ -49,6 +53,7 @@ public class UserServiceImpl implements UserService{
         }catch (RuntimeException runtimeException){
             throw new NotFoundUserException("Not found user");
         }
+
     }
 
     @Override
@@ -61,7 +66,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, InternalServerException{
+    public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, InternalServerException {
         try {
             UserEntity userEntity = userDAORepository.findById(id).orElseThrow();
             userEntity.setName(userDto.getName());
@@ -82,6 +87,7 @@ public class UserServiceImpl implements UserService{
         }
 
     }
+
 
     public void isNotNull(Object id) throws RuntimeException{
         if (id==null){
