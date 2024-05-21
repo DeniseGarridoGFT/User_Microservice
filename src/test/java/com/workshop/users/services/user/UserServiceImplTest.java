@@ -59,7 +59,7 @@ class UserServiceImplTest {
         void getUserByIdAddingNotExistingUser() {
             //Given
             Mockito.when(userDAORepository.findById(3L))
-                    .thenThrow(new RuntimeException("User not found"));
+                    .thenReturn(Optional.empty());
             //When and Then
             assertThrows(NotFoundUserException.class, () -> userService.getUserById(3L));
             verify(userDAORepository).findById(Mockito.anyLong());
@@ -146,7 +146,7 @@ class UserServiceImplTest {
         @DisplayName("Given a non-existent email return null")
         void getUserByNonExistingEmail() {
             //Given
-            when(userDAORepository.findByEmail("paquito@perez.com")).thenReturn(null);
+                when(userDAORepository.findByEmail("paquito@perez.com")).thenReturn(Optional.empty());
             //When and Then
             assertThatThrownBy(()->{
                 userService.getUserByEmail("paquito@perez.com");

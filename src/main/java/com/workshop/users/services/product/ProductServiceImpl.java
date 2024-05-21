@@ -16,10 +16,6 @@ public class ProductServiceImpl implements ProductService{
     }
 
     public List<Product> findProductsByIds(List<Long> ids) throws NotFoundProductException {
-        try{
-            return productRepository.findProductsByIds(ids);
-        }catch (Exception exception){
-            throw new NotFoundProductException("Not found any product");
-        }
+        return productRepository.findProductsByIds(ids);
     }
 }

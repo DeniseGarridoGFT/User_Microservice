@@ -1,11 +1,11 @@
 package com.workshop.users.exceptions;
 
 
-public class NotFoundProductException extends Exception{
+public class NotFoundProductException extends RuntimeException{
     private String message;
 
     public NotFoundProductException(String message){
-        super();
+        super(message);
         this.message = message;
     }
 

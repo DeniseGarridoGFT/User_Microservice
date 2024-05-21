@@ -72,7 +72,7 @@ class ProductServiceImplTest {
                 "Then throw not found product exception")
         void findProductByIdInvalid() {
             when(productRepository.findProductsByIds(ids))
-                    .thenThrow(new RuntimeException("Not found product"));
+                    .thenThrow(new NotFoundProductException("Not found product"));
 
             assertThatThrownBy(() -> {
                 productService.findProductsByIds(ids);
