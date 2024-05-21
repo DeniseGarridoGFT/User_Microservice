@@ -47,21 +47,14 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto getUserById(Long id) throws  NotFoundUserException {
-        try{
-            return UserEntity.fromEntity(userDAORepository.findById(id).orElseThrow());
-        }catch (RuntimeException runtimeException){
-            throw new NotFoundUserException("Not found user");
-        }
+        return UserEntity.fromEntity(userDAORepository.findById(id)
+                .orElseThrow(()->new NotFoundUserException("Not found user")));
 
     }
 
     @Override
     public UserDto getUserByEmail(String email) throws AuthenticateException {
-        try {
-            return UserEntity.fromEntity(userDAORepository.findByEmail(email).orElseThrow());
-        }catch (RuntimeException runtimeException){
-            throw new AuthenticateException("Can't authenticate");
-        }
+        return UserEntity.fromEntity(userDAORepository.findByEmail(email).orElseThrow(()-> new AuthenticateException("Can't authenticate")));
     }
 
     @Override

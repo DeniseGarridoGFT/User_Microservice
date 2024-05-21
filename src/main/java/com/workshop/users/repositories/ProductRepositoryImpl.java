@@ -1,6 +1,8 @@
 package com.workshop.users.repositories;
 
 import com.workshop.users.api.dto.Product;
+import com.workshop.users.exceptions.NotFoundProductException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClient;
@@ -18,12 +20,18 @@ public class ProductRepositoryImpl implements ProductRepository{
 
 
     @Override
-    public List<Product> findProductsByIds(List<Long> ids) {
+    public List<Product> findProductsByIds(List<Long> ids)
+            throws NotFoundProductException  {
+
         return List.of(Objects.requireNonNull(restClient.post()
                 .uri("/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ids)
                 .retrieve()
+
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new NotFoundProductException("Can't found one id of one product");
+                })
                 .body(Product[].class)));
     }
 }

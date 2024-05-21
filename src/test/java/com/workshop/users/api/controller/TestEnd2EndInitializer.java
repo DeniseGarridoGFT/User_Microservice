@@ -379,6 +379,7 @@ class TestEnd2EndRegisterTest {
 
             mockWebServer.enqueue(new MockResponse()
                     .setBody("{\"message\":\"Not found product with this ids\"}")
+                    .setStatus("HTTP/1.1 404 Not Found")
                     .setHeader("Content-Type", "application/json"));
 
             //When

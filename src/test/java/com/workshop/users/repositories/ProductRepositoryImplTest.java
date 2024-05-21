@@ -1,6 +1,7 @@
 package com.workshop.users.repositories;
 
 import com.workshop.users.api.dto.Product;
+import com.workshop.users.exceptions.NotFoundProductException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -9,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -24,8 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ProductRepositoryImplTest {
 
@@ -78,7 +79,7 @@ class ProductRepositoryImplTest {
     @DisplayName("When findProductById")
     class FindUserById {
         @Test
-        @DisplayName("Given a good id then return a Mono<Product> product ")
+        @DisplayName("Given a good id then return a List product of products ")
         void findProductById() {
             //Given
             when(restClient.post()).thenReturn(request);
@@ -86,6 +87,10 @@ class ProductRepositoryImplTest {
             Mockito.when(request.contentType(Mockito.any())).thenReturn(request);
             Mockito.when(request.body(ids)).thenReturn(request);
             Mockito.when(request.retrieve()).thenReturn(response);
+           when(response.onStatus(
+                    Mockito.any(),
+                    Mockito.any()
+            )).thenReturn(response);
             Mockito.when(response.body(Product[].class)).thenReturn(products);
             //When
             List<Product> result = productRepository.findProductsByIds(ids);
@@ -105,13 +110,15 @@ class ProductRepositoryImplTest {
             Mockito.when(request.contentType(Mockito.any())).thenReturn(request);
             Mockito.when(request.body(ids)).thenReturn(request);
             Mockito.when(request.retrieve()).thenReturn(response);
-            Mockito.when(response.body(Product[].class)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"The product does not exist"));
+            when(response.onStatus(
+                    Mockito.any(),
+                    Mockito.any()
+            )).thenThrow(new NotFoundProductException("Can't found one id of one product"));
             //When and Then
             assertThatThrownBy(() -> {
                 productRepository.findProductsByIds(ids);
-            }).isInstanceOf(ResponseStatusException.class)
-                    .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND)
-                    .hasMessageContaining("404 NOT_FOUND \"The product does not exist\"");
+            }).isInstanceOf(NotFoundProductException.class)
+                    .hasFieldOrPropertyWithValue("message", "Can't found one id of one product");
         }
     }
 }
