@@ -394,6 +394,43 @@ class TestEnd2EndRegisterTest {
                         assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
                     });
         }
+
+        @Test
+        @DisplayName("Given a Wish List but the products is already in  wishes of the user When post wish list Then throw not found exception")
+        void postWishListConflictWishListException() throws JsonProcessingException {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(1L)
+                    .productsIds(new HashSet<>(List.of(1L, 2L, 8L)))
+                    .build();
+
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody(objectMapper.writeValueAsString(List.of(Product.builder()
+                                    .id(1L)
+                                    .build(),
+                            Product.builder()
+                                    .id(2L)
+                                    .build(),
+                            Product.builder()
+                                    .id(3L)
+                                    .build())))
+                    .setHeader("Content-Type", "application/json"));
+
+            //When
+            webTestClient.post()
+                    .uri("/wishlist")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(wishListDto)
+                    .exchange()
+                    .expectStatus().is4xxClientError()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        //Then
+                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
+                    });
+
+
+        }
     }
 
     @Nested
@@ -425,9 +462,8 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseException.class)
                     .value(myResponseException -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("The user with id 54" +
-                                                                " already have the product with id 655" +
-                                                                " in wishes");
+                        assertThat(myResponseException.getMessage()).isEqualTo("The product with id 655 " +
+                                                                                    "is not in your wishes");
                     });;
 
         }

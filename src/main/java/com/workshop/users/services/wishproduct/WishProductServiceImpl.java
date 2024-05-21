@@ -13,32 +13,33 @@ import org.springframework.stereotype.Service;
 public class WishProductServiceImpl implements WishProductService {
     private final WishProductDAORepository wishProductDAORepository;
 
-    public WishProductServiceImpl(WishProductDAORepository wishProductDAORepository){
+    public WishProductServiceImpl(WishProductDAORepository wishProductDAORepository) {
         this.wishProductDAORepository = wishProductDAORepository;
     }
 
+
     @Override
     public Long addWishProducts(WishProductEntity wishProductEntity) throws ConflictWishListException {
-        try {
+
+        if (wishProductDAORepository.findById(wishProductEntity.getWishProductPK()).isPresent())
+            throw new ConflictWishListException("The user with id " +
+                    wishProductEntity.getWishProductPK().getUserId() +
+                    " already have the product with id " +
+                    wishProductEntity.getWishProductPK().getProductId() +
+                    " in wishes");
+        else
             return wishProductDAORepository.save(wishProductEntity)
                     .getWishProductPK().getProductId();
-        }catch (EntityExistsException exception){
-            throw new ConflictWishListException("The user with id "+
-                                    wishProductEntity.getWishProductPK().getUserId()+
-                                    " already have the product with id "+
-                                    wishProductEntity.getWishProductPK().getProductId()+
-                                    " in wishes");
-        }
+
     }
 
     @Override
     public void deleteWishProducts(WishProductEntity wishProductEntity) throws NotFoundWishProductException {
-        try{
+        if (wishProductDAORepository.findById(wishProductEntity.getWishProductPK()).isPresent())
             wishProductDAORepository.delete(wishProductEntity);
-        }catch (EntityNotFoundException exception){
+        else
             throw new NotFoundWishProductException("The product with id "
-                    +wishProductEntity.getWishProductPK().getProductId()
-                    +" is not in your wishes");
-        }
+                    + wishProductEntity.getWishProductPK().getProductId()
+                    + " is not in your wishes");
     }
 }

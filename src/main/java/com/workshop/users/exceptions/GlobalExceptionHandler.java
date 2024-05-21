@@ -44,6 +44,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ConflictWishListException.class)
+    public ResponseEntity<MyResponseException> handleConflictWishListException(ConflictWishListException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.CONFLICT)
+                .message("One id of product not exists.")
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(CountryNotFoundException.class)
     public ResponseEntity<MyResponseException> handleCountryNotFoundException(CountryNotFoundException ex) {
         MyResponseException myResponseException = MyResponseException.builder()

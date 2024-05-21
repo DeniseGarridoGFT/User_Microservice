@@ -13,6 +13,8 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -43,6 +45,8 @@ public class WishProductServiceImplTests {
                 "Then return the same wishList")
         void addWishList() throws ConflictWishListException {
             //Given
+            when(wishProductDAORepository.findById(any(WishProductPK.class)))
+                    .thenReturn(Optional.empty());
             when(wishProductDAORepository.save(wishProductEntity))
                     .thenReturn(wishProductEntity);
             //When and Then
@@ -54,6 +58,8 @@ public class WishProductServiceImplTests {
                 "Then throw Exception")
         void addWishListThrowError() {
             //Given
+            when(wishProductDAORepository.findById(any(WishProductPK.class)))
+                    .thenReturn(Optional.of(wishProductEntity));
             when(wishProductDAORepository.save(wishProductEntity))
                     .thenThrow(new EntityExistsException());
             //When and Then
@@ -73,6 +79,8 @@ public class WishProductServiceImplTests {
             //Given
             doNothing().when(wishProductDAORepository)
                         .delete(wishProductEntity);
+            when(wishProductDAORepository.findById(any(WishProductPK.class)))
+                    .thenReturn(Optional.of(wishProductEntity));
             //When and Then
             wishProductService.deleteWishProducts(wishProductEntity);
 
@@ -83,9 +91,8 @@ public class WishProductServiceImplTests {
                 "Then throw NotFoundWishProductException")
         void addWishListThrowError() {
             //Given
-            doThrow(new EntityNotFoundException())
-                    .when(wishProductDAORepository)
-                    .delete(wishProductEntity);
+            when(wishProductDAORepository.findById(any(WishProductPK.class)))
+                    .thenReturn(Optional.empty());
             //When and Then
             assertThatThrownBy(() -> {
                 wishProductService.deleteWishProducts(wishProductEntity);
