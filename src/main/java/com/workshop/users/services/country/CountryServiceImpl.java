@@ -21,7 +21,7 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto getCountryById(Long id) {
         isNotNull(id);
         CountryEntity countryEntity = countryDAORepository.findById(id)
-                .orElseThrow(() -> new CountryNotFoundException("Country not found"));
+                .orElseThrow(() -> new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia"));
         return CountryEntity.fromEntity(countryEntity);
     }
 
@@ -29,13 +29,13 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto getCountryByName(String name) throws CountryNotFoundException {
         isNotNull(name);
         CountryEntity countryEntity = countryDAORepository.findByName(name)
-                .orElseThrow(() -> new CountryNotFoundException("Country not found"));
+                .orElseThrow(() -> new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia"));
         return CountryEntity.fromEntity(countryEntity);
     }
 
     private void isNotNull(Object obj) throws CountryNotFoundException  {
         if (obj == null) {
-            throw new CountryNotFoundException("Country not found");
+            throw new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia");
         }
     }
 }

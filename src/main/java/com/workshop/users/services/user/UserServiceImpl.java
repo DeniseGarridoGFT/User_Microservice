@@ -6,6 +6,7 @@ import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.*;
+import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
@@ -13,6 +14,7 @@ import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.Date;
 
 @Service
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public UserDto addUser(UserDto user) {
+    public UserDto addUser(UserDto user) throws AuthenticateException, RegisterException {
         if (user.getFidelityPoints() == null) {
             user.setFidelityPoints(0);
         }
@@ -41,7 +43,11 @@ public class UserServiceImpl implements UserService{
         String encryptedPassword = loginDto.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);
 
+        if (user.getId()!=null&&userDAORepository.findById(user.getId()).isPresent()){
+            throw new RegisterException("There's an error registering the user");
+        }
         return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
+
     }
 
 
