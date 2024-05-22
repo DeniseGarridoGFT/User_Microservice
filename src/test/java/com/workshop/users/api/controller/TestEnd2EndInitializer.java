@@ -9,6 +9,7 @@ import com.workshop.users.model.WishProductPK;
 import com.workshop.users.repositories.WishProductDAORepository;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.h2.engine.User;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -114,7 +115,7 @@ class TestEnd2EndRegisterTest {
             UserDto newUser = UserDto.builder()
                     .name("Aria")
                     .lastName("Fei")
-                    .email("aria2@example.com")
+                    .email("manolita@example.com")
                     .password("Ar1a@31234.")
                     .fidelityPoints(40)
                     .birthDate("1994/04/14")
@@ -348,7 +349,7 @@ class TestEnd2EndRegisterTest {
 
 
         @Test
-        @DisplayName("Given a non associated user id when call to get users endpoint Then not found exceptions")
+        @DisplayName("Given a non associated user id when call to get users endpoint Then throw not found exceptions")
         void getUserByIdNonAssociatedId() {
 
             //When
@@ -366,6 +367,195 @@ class TestEnd2EndRegisterTest {
                     });
         }
     }
+
+
+
+    @Nested
+    @DisplayName("Put user by Id")
+    class TestEnd2EndPutUserTest {
+        private  UserDto newUser;
+        public TestEnd2EndPutUserTest(){
+            newUser = UserDto.builder()
+                    .id(2L)
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("ramoncita@example.com")
+                    .password("Ar1a@31234.")
+                    .fidelityPoints(40)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .address(AddressDto.builder()
+                            .id(2L)
+                            .cityName("Valencia")
+                            .zipCode("46360")
+                            .street("C/ La Calle")
+                            .number(32)
+                            .door("2A")
+                            .build())
+                    .country(CountryDto.builder()
+                            .id(2L)
+                            .build())
+                    .build();
+        }
+
+        @Test
+        @DisplayName("Given an associated user id " +
+                "when call to put users endpoint " +
+                "Then return the user updated")
+        void putUserById() {
+
+            //When
+            webTestClient.put()
+                    .uri("/users/2")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(newUser)
+                    .exchange()
+                    .expectStatus().isCreated()
+                    .expectBody(UserDto.class)
+                    .value(userDto -> {
+                        // Then
+                        assertThat(passwordEncoder.matches(newUser.getPassword(), userDto.getPassword())).isTrue();
+                        assertThat(userDto.getName()).isEqualTo(newUser.getName());
+                        assertThat(userDto.getLastName()).isEqualTo(newUser.getLastName());
+                        assertThat(userDto.getEmail()).isEqualTo(newUser.getEmail());
+                        assertThat(userDto.getBirthDate()).isEqualTo(newUser.getBirthDate());
+                        assertThat(userDto.getFidelityPoints()).isEqualTo(newUser.getFidelityPoints());
+                        assertThat(userDto.getPhone()).isEqualTo(newUser.getPhone());
+
+                        assertThat(userDto.getAddress().getCityName()).isEqualTo(newUser.getAddress().getCityName());
+                        assertThat(userDto.getAddress().getZipCode()).isEqualTo(newUser.getAddress().getZipCode());
+                        assertThat(userDto.getAddress().getStreet()).isEqualTo(newUser.getAddress().getStreet());
+                        assertThat(userDto.getAddress().getNumber()).isEqualTo(newUser.getAddress().getNumber());
+                        assertThat(userDto.getAddress().getDoor()).isEqualTo(newUser.getAddress().getDoor());
+
+                        assertThat(userDto.getCountry().getId()).isEqualTo(2L);
+                    });
+        }
+
+
+        @Test
+        @DisplayName("Given a non associated user id " +
+                "when call to put users endpoint " +
+                "Then throw not found user exceptions")
+        void putUserByIdNonAssociatedUserId() {
+            UserDto userWithNoExistingId = UserDto.builder()
+                    .id(9999999L)
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("alfonsita@example.com")
+                    .password("Ar1a@31234.")
+                    .fidelityPoints(40)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .address(AddressDto.builder()
+                            .id(2L)
+                            .cityName("Valencia")
+                            .zipCode("46360")
+                            .street("C/ La Calle")
+                            .number(32)
+                            .door("2A")
+                            .build())
+                    .country(CountryDto.builder()
+                            .id(2L)
+                            .build())
+                    .build();
+            //When
+            webTestClient.put()
+                    .uri("/users/999999")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(userWithNoExistingId)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(exception -> {
+                        //Then
+                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                                .code(HttpStatus.NOT_FOUND)
+                                .message("The user with this id don't exists.")
+                                .build());
+                    });
+        }
+
+        @Test
+        @DisplayName("Given a password with wrong format " +
+                "when call to put users endpoint " +
+                "Then throw bad request exceptions")
+        void putUserByIdBadRequest() {
+            UserDto userWithBadCredentials = UserDto.builder()
+                    .id(2L)
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("aria2@example.com")
+                    .password("ar1a@31234.")
+                    .fidelityPoints(40)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .build();
+            //When
+            webTestClient.put()
+                    .uri("/users/2")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(userWithBadCredentials)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody(MyResponseException.class)
+                    .value(exception -> {
+                        //Then
+                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                                .code(HttpStatus.BAD_REQUEST)
+                                .message("The password must contain, at least," +
+                                        " 8 alphanumeric characters, uppercase, " +
+                                        "lowercase an special character.")
+                                .build());
+                    });
+        }
+
+        @Test
+        @DisplayName("Given a non associated address id " +
+                "when call to put users endpoint " +
+                "Then throw not found address exceptions")
+        void putUserByIdNonAssociatedAddressId() {
+            UserDto userWithBadCredentials = UserDto.builder()
+                    .id(2L)
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("aria2@example.com")
+                    .password("Ar1a@31234.")
+                    .fidelityPoints(40)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .address(AddressDto.builder()
+                            .id(999999L)
+                            .cityName("Valencia")
+                            .zipCode("46360")
+                            .street("C/ La Calle")
+                            .number(32)
+                            .door("2A")
+                            .build())
+                    .country(CountryDto.builder()
+                            .id(2L)
+                            .build())
+                    .build();
+            //When
+            webTestClient.put()
+                    .uri("/users/2")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(userWithBadCredentials)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(exception -> {
+                        //Then
+                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                                .code(HttpStatus.NOT_FOUND)
+                                .message("The address with this id don't exists.")
+                                .build());
+                    });
+        }
+
+    }
+
+
 
     @Nested
     @DisplayName("Post WishList ")

@@ -117,6 +117,17 @@ class AddressServiceImplTest {
                 when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
                 assertThat(addressService.updateAddress(addressDto.getId(), addressDto)).isEqualTo(addressDto);
             }
+
+            @Test
+            @DisplayName("Given a address to change that not exists then throw not found address exception")
+            void updateAddressThrowError() {
+                addressDto.setId(1L);
+                when(addressDAORepository.findById(anyLong())).thenReturn(Optional.empty());
+                when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
+                assertThatThrownBy(()->addressService.updateAddress(addressDto.getId(),addressDto))
+                        .isInstanceOf(NotFoundAddressException.class)
+                        .hasMessage("Address not found");
+            }
         }
     }
 }
