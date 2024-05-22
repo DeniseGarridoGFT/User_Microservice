@@ -139,7 +139,11 @@ class TestEnd2EndRegisterTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(invalidUser)
                     .exchange()
-                    .expectStatus().isBadRequest();
+                    .expectStatus().isBadRequest()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    });
         }
     }
 

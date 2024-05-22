@@ -8,15 +8,17 @@ import com.workshop.users.exceptions.*;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
+import com.workshop.users.services.country.CountryService;
 import org.springframework.stereotype.Service;
+
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     private UserDAORepository userDAORepository;
-    CountryDAORepository countryDAORepository;
-    private static Login loginDto;
+    private static CountryDAORepository countryDAORepository;
 
     public UserServiceImpl(UserDAORepository userDAORepository, CountryDAORepository countryDAORepository){
         this.userDAORepository=userDAORepository;
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService{
             user.setFidelityPoints(0);
         }
 
-        String encryptedPassword = loginDto.BCRYPT.encode(user.getPassword());
+        String encryptedPassword = Login.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);
 
         if (user.getId()!=null&&userDAORepository.findById(user.getId()).isPresent()){
@@ -50,7 +52,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto getUserByEmail(String email) throws AuthenticateException {
-        return UserEntity.fromEntity(userDAORepository.findByEmail(email).orElseThrow(()-> new AuthenticateException("Can't authenticate")));
+        return UserEntity.fromEntity(userDAORepository.findByEmail(email)
+                .orElseThrow(()-> new AuthenticateException("Can't authenticate")));
+    }
+    @Override
+    public Optional<UserEntity> getUserByEmailOptional(String email) {
+        return userDAORepository.findByEmail(email);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.dto.*;
 import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.exceptions.RegisterException;
+import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
@@ -45,7 +46,7 @@ public class InitializerControllerTests {
     class RegisterTest {
         @Test
         @DisplayName("Given correct credentials the user is created and registered")
-        void testRegisterUser() throws ParseException {
+        void testRegisterUser() throws ParseException, UserValidationException {
 
             // Given
             UserDto userRegistered = DataInitzializerController.USER_REGISTERED;
@@ -69,7 +70,7 @@ public class InitializerControllerTests {
 
         @Test
         @DisplayName("Given incorrect credentials the user can't be registered")
-        void testRegisterUserIncorrect() {
+        void testRegisterUserIncorrect() throws UserValidationException {
             // Given
             UserDto userNotRegistered = DataInitzializerController.USER_WITHOUT_ID;
             when(validations.checkAllMethods(userNotRegistered))
@@ -90,7 +91,7 @@ public class InitializerControllerTests {
 
         @Test
         @DisplayName("The address can't be added to the user, so it gives server error")
-        void testAddressUserIncorrect() throws RegisterException, ParseException {
+        void testAddressUserIncorrect() throws RegisterException, ParseException, UserValidationException {
             // Given
             UserDto userWithAddress = DataInitzializerController.USER_WITHOUT_ID;
             AddressDto addressDto = userWithAddress.getAddress();
@@ -111,7 +112,7 @@ public class InitializerControllerTests {
 
         @Test
         @DisplayName("There's an error creating the user")
-        void testAddUserIncorrect() throws RegisterException, ParseException {
+        void testAddUserIncorrect() throws RegisterException, ParseException, UserValidationException {
             // Given
             UserDto createdUser = DataInitzializerController.USER_WITHOUT_ID;
             when(validations.checkAllMethods(createdUser)).thenReturn(true);
