@@ -33,7 +33,7 @@ public class CountryServiceImpl implements CountryService {
 
     private void isNotNull(Object obj) throws CountryNotFoundException  {
         if (obj == null) {
-            throw new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia");
+            throw new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia");
         }
     }
 }

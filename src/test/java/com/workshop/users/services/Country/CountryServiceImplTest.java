@@ -64,7 +64,7 @@ public class CountryServiceImplTest {
     void getCountryByIncorrectName() {
         assertThatThrownBy(() -> countryService.getCountryByName("Gftlandia"))
                 .isInstanceOf(CountryNotFoundException.class)
-                .hasMessage("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia");
+                .hasMessage("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia");
     }
 
     @Test
@@ -72,7 +72,7 @@ public class CountryServiceImplTest {
     void getCountryErrorIdNull() {
         assertThatThrownBy(() -> countryService.getCountryById(null))
                 .isInstanceOf(CountryNotFoundException.class)
-                .hasMessage("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia");
+                .hasMessage("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia");
     }
 
     @Test
@@ -80,6 +80,6 @@ public class CountryServiceImplTest {
     void getCountryErrorNameNull() {
         assertThatThrownBy(() -> countryService.getCountryByName(null))
                 .isInstanceOf(CountryNotFoundException.class)
-                .hasMessage("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia");
+                .hasMessage("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia");
     }
 }
