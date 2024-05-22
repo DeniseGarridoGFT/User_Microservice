@@ -1,32 +1,22 @@
 package com.workshop.users.services.user;
 
-import com.workshop.users.api.controller.Validations;
 import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.*;
-import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
-import com.workshop.users.services.address.AddressService;
-import com.workshop.users.services.country.CountryService;
 import org.springframework.stereotype.Service;
-
-import java.text.ParseException;
 import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     private UserDAORepository userDAORepository;
-    private CountryDAORepository countryDAORepository;
-    private Validations validations;
-    AddressService addressService;
-    CountryService countryService;
-
-    private Login loginDto;
+    CountryDAORepository countryDAORepository;
+    private static Login loginDto;
 
     public UserServiceImpl(UserDAORepository userDAORepository, CountryDAORepository countryDAORepository){
         this.userDAORepository=userDAORepository;

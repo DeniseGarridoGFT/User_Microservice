@@ -2,10 +2,14 @@ package com.workshop.users.services.user;
 
 import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
+import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AddressServiceException;
 import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.RegisterException;
+import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
@@ -64,13 +68,14 @@ class UserServiceImplTest {
             assertThrows(NotFoundUserException.class, () -> userService.getUserById(3L));
             verify(userDAORepository).findById(Mockito.anyLong());
         }
+
         @Test
         @DisplayName("givenNull_whenGetUserById_thenThrowsRunTimeException")
         void getUserByIdAddingNull() {
-
-            //When and Then
+            //When
             assertThrows(NotFoundUserException.class, () -> userService.getUserById(null));
         }
+
         @Test
         @DisplayName("givenId_whenGetUserById_thenReturnTheAssociatedUser")
         void getUserById() throws NotFoundUserException {
@@ -86,8 +91,6 @@ class UserServiceImplTest {
             assertEquals(1L, user_id_2.getCountry().getId());
             verify(userDAORepository).findById(Mockito.anyLong());
         }
-
-
 
 
     @Test
@@ -123,7 +126,7 @@ class UserServiceImplTest {
         verify(userDAORepository).findById(2L);
         verify(userDAORepository).save(any(UserEntity.class));
     }
-    }
+}
 
 
     @Nested
@@ -139,7 +142,6 @@ class UserServiceImplTest {
             UserDto userDto = userService.getUserByEmail("manuel@example.com");
             //Then
             assertThat(userDto).isEqualTo(userExpected);
-
         }
 
         @Test
@@ -147,11 +149,40 @@ class UserServiceImplTest {
         void getUserByNonExistingEmail() {
             //Given
                 when(userDAORepository.findByEmail("paquito@perez.com")).thenReturn(Optional.empty());
-            //When and Then
+            //When
             assertThatThrownBy(()->{
                 userService.getUserByEmail("paquito@perez.com");
             }).isInstanceOf(AuthenticateException.class);
         }
+
+        @Test
+        @DisplayName("Given a user with null FidelityPoints, when added, then set FidelityPoints to 0")
+        void addUserWithNullFidelityPointsSetsToZero() throws RegisterException, ParseException {
+            // Given
+            UserDto userWithNullFidelityPoints = DataInitzializerController.USER_REGISTERED;
+            userWithNullFidelityPoints.setFidelityPoints(null);
+
+            //When
+            when(userDAORepository.save(any(UserEntity.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            //Then
+            UserDto result = userService.addUser(userWithNullFidelityPoints);
+            assertThat(result.getFidelityPoints()).isEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("Given an existing Id then throw a RegisterException")
+        void addUserWithExistingId() {
+            UserDto userWithExistingId = DataInitzializerController.USER_REGISTERED;
+            userWithExistingId.setId(1L);
+            when(userDAORepository.findById(userWithExistingId.getId())).thenReturn(Optional.of(new UserEntity()));
+
+            assertThatThrownBy(() -> userService.addUser(userWithExistingId))
+                    .isInstanceOf(RegisterException.class)
+                    .hasMessage("User can't be registered");
+        }
+
 
     }
 

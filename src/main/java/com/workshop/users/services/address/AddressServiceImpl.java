@@ -2,6 +2,8 @@ package com.workshop.users.services.address;
 
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AddressServiceException;
+import com.workshop.users.exceptions.NotFoundAddressException;
 import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
@@ -29,13 +31,13 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDto addAddress(AddressDto address) throws RegisterException {
         if (address.getId()!=null && addressDAORepository.findById(address.getId()).isPresent()){
-            throw new RegisterException("There's an error registering the address");
+            throw new AddressServiceException("There's an error registering the address");
         }
         return AddressEntity.fromEntity(addressDAORepository.save(AddressDto.toEntity(address)));
     }
 
     @Override
-    public AddressDto getAddressById(Long id) throws RuntimeException {
+    public AddressDto getAddressById(Long id) throws NotFoundAddressException {
         isNotNull(id);
         return AddressEntity.fromEntity(addressDAORepository.findById(id).orElseThrow());
     }
@@ -44,7 +46,7 @@ public class AddressServiceImpl implements AddressService {
 
     private void isNotNull(Long id) {
         if (id == null){
-            throw new RuntimeException("Request not valid");
+            throw new NotFoundAddressException("Request not valid. The address Id is null");
         }
     }
 
