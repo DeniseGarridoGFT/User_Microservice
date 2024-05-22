@@ -1,14 +1,13 @@
 package com.workshop.users.services.wishproduct;
 
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.NotFoundWishProductException;
+import com.workshop.users.exceptions.WishProductNotFoundException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.model.WishProductPK;
 import com.workshop.users.repositories.WishProductDAORepository;
 import static org.assertj.core.api.Assertions.*;
 
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -75,7 +74,7 @@ public class WishProductServiceImplTests {
         @Test
         @DisplayName("Given wish product to delete " +
                 "Then delete the item")
-        void addWishList() throws  NotFoundWishProductException {
+        void addWishList() throws WishProductNotFoundException {
             //Given
             doNothing().when(wishProductDAORepository)
                         .delete(wishProductEntity);
@@ -96,7 +95,7 @@ public class WishProductServiceImplTests {
             //When and Then
             assertThatThrownBy(() -> {
                 wishProductService.deleteWishProducts(wishProductEntity);
-            }).isInstanceOf(NotFoundWishProductException.class);
+            }).isInstanceOf(WishProductNotFoundException.class);
         }
     }
 

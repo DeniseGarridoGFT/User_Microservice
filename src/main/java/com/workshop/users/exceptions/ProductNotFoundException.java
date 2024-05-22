@@ -1,10 +1,10 @@
 package com.workshop.users.exceptions;
 
 
-public class NotFoundProductException extends Exception{
+public class ProductNotFoundException extends Exception{
     private String message;
 
-    public NotFoundProductException(String message){
+    public ProductNotFoundException(String message){
         super();
         this.message = message;
     }

@@ -66,8 +66,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, InternalServerException {
-        try {
-            UserEntity userEntity = userDAORepository.findById(id).orElseThrow();
+
+            UserEntity userEntity = userDAORepository.findById(id).orElseThrow(() -> new UserNotFoundException("The user with the id " + id + " was not found"));
             userEntity.setName(userDto.getName());
             userEntity.setLastName(userDto.getLastName());
             userEntity.setEmail(userDto.getEmail());
@@ -79,11 +79,8 @@ public class UserServiceImpl implements UserService{
             userEntity.setCountry(CountryDto.toEntity(userDto.getCountry()));
 
             return UserEntity.fromEntity(userDAORepository.save(userEntity));
-        } catch (RuntimeException e) {
-            throw new UserNotFoundException("The user with id " + id + " was not found.");
-        }catch (Exception e) {
-            throw new InternalServerException("Can not update the user.");
-        }
+
+
 
     }
 

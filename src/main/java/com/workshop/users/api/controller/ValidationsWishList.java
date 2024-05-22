@@ -2,21 +2,17 @@ package com.workshop.users.api.controller;
 
 import com.workshop.users.api.dto.WishListDto;
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.NotFoundProductException;
+import com.workshop.users.exceptions.ProductNotFoundException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.services.product.ProductService;
 import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.*;
 
 public class ValidationsWishList {
 
 
     public static void validateExistsProduct(WishListDto wishListDto, ProductService productService)
-            throws NotFoundProductException {
+            throws ProductNotFoundException {
         productService.findProductsByIds(wishListDto.getProductsIds().stream().toList());
     }
 

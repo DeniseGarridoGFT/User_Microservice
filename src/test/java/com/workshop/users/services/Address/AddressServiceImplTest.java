@@ -1,6 +1,7 @@
 package com.workshop.users.services.Address;
 
 import com.workshop.users.api.dto.AddressDto;
+import com.workshop.users.exceptions.AddressNotFoundException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.repositories.AddressDAORepository;
 import com.workshop.users.services.address.AddressService;
@@ -96,7 +97,7 @@ class AddressServiceImplTest {
     class updateAddress{
         @Test
         @DisplayName("Given a address to change then return the address updated")
-        void updateAddress() throws ParseException {
+        void updateAddress() throws ParseException, AddressNotFoundException {
             addressDto.setId(1L);
             when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
             when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);

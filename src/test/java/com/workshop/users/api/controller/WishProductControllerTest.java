@@ -2,9 +2,9 @@ package com.workshop.users.api.controller;
 
 import com.workshop.users.api.dto.WishListDto;
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.NotFoundProductException;
+import com.workshop.users.exceptions.ProductNotFoundException;
 import com.workshop.users.exceptions.NotFoundUserException;
-import com.workshop.users.exceptions.NotFoundWishProductException;
+import com.workshop.users.exceptions.WishProductNotFoundException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.services.product.ProductService;
 import com.workshop.users.services.user.UserService;
@@ -51,7 +51,7 @@ public class WishProductControllerTest {
     class PostWishList{
         @Test
         @DisplayName("Given a good list Then throw the wish list created")
-        void postWishList() throws NotFoundProductException, ConflictWishListException, NotFoundUserException {
+        void postWishList() throws ProductNotFoundException, ConflictWishListException, NotFoundUserException {
             //Given
             validationsWishListMock.when(() -> ValidationsWishList.validateExistsProduct(any(WishListDto.class), any(ProductService.class)))
                     .thenCallRealMethod();
@@ -86,12 +86,12 @@ public class WishProductControllerTest {
             validationsWishListMock.when(() -> ValidationsWishList.validateUserId(any(WishListDto.class), any(UserService.class)))
                     .thenCallRealMethod();
             validationsWishListMock.when(() -> ValidationsWishList.validateExistsProduct(any(WishListDto.class), any(ProductService.class)))
-                    .thenThrow(new NotFoundProductException("Not found product"));
+                    .thenThrow(new ProductNotFoundException("Not found product"));
             validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
                     .thenCallRealMethod();
             assertThatThrownBy(()->{
                 wishProductController.postWishList(wishListDto);
-            }).isInstanceOf(NotFoundProductException.class);
+            }).isInstanceOf(ProductNotFoundException.class);
         }
 
         @Test
@@ -114,7 +114,7 @@ public class WishProductControllerTest {
     class DeleteWishList {
         @Test
         @DisplayName("Given a good list to delete Then return a response with no content")
-        void postWishList() throws NotFoundWishProductException {
+        void postWishList() throws WishProductNotFoundException {
             //Given
             doNothing().when(wishProductService).deleteWishProducts(any(WishProductEntity.class));
             //When
@@ -127,12 +127,12 @@ public class WishProductControllerTest {
 
         @Test
         @DisplayName("Given a list with non associated wish product with this id then throw not found error")
-        void postWishListNotFoundUser() throws NotFoundWishProductException {
+        void postWishListNotFoundUser() throws WishProductNotFoundException {
             //Given
-            doThrow(new NotFoundWishProductException("Not found product")).when(wishProductService).deleteWishProducts(any(WishProductEntity.class));
+            doThrow(new WishProductNotFoundException("Not found product")).when(wishProductService).deleteWishProducts(any(WishProductEntity.class));
 
             //When Then
-            assertThatThrownBy(()->wishProductController.deleteWishList(1L,2L)).isInstanceOf(NotFoundWishProductException.class);
+            assertThatThrownBy(()->wishProductController.deleteWishList(1L,2L)).isInstanceOf(WishProductNotFoundException.class);
 
             verify(wishProductService,times(1)).deleteWishProducts(any(WishProductEntity.class));
         }

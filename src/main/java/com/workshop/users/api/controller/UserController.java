@@ -1,9 +1,8 @@
 package com.workshop.users.api.controller;
 
+import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.exceptions.InternalServerException;
-import com.workshop.users.exceptions.UserNotFoundException;
-import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.*;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 
@@ -40,7 +39,10 @@ public class UserController {
         updatedUserDto.setId(id);
         validations.checkAllMethods(updatedUserDto);
 
+        AddressDto updatedAddress = addressService.updateAddress(updatedUserDto.getAddress().getId(), updatedUserDto.getAddress());
+        updatedUserDto.setAddress(updatedAddress);
         UserDto updatedUser = userService.updateUser(id, updatedUserDto);
+
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }

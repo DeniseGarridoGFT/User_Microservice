@@ -1,18 +1,15 @@
 package com.workshop.users.api.controller;
 
-import com.workshop.users.api.dto.Product;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.api.dto.WishListDto;
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.NotFoundProductException;
+import com.workshop.users.exceptions.ProductNotFoundException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.services.product.ProductService;
 import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -69,7 +66,7 @@ class ValidationsWishListTest {
     class ValidateTheProductExists{
         @DisplayName("Given an existed products Then don't have an error")
         @Test
-        void validateIfExitsProduct() throws NotFoundProductException {
+        void validateIfExitsProduct() throws ProductNotFoundException {
             when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
                     .thenReturn(anyList());
             ValidationsWishList.validateExistsProduct(wishListDto,productService);
@@ -77,13 +74,13 @@ class ValidationsWishListTest {
 
         @DisplayName("Given a non existed product Then throw error")
         @Test
-        void nonProductId() throws NotFoundProductException {
+        void nonProductId() throws ProductNotFoundException {
             when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
-                    .thenThrow(new NotFoundProductException("Not found product"));
+                    .thenThrow(new ProductNotFoundException("Not found product"));
 
             assertThatThrownBy(()->{
                 ValidationsWishList.validateExistsProduct(wishListDto,productService);
-            }).isInstanceOf(NotFoundProductException.class);
+            }).isInstanceOf(ProductNotFoundException.class);
         }
     }
 

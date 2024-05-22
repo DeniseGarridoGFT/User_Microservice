@@ -1,7 +1,7 @@
 package com.workshop.users.services.product;
 
 import com.workshop.users.api.dto.Product;
-import com.workshop.users.exceptions.NotFoundProductException;
+import com.workshop.users.exceptions.ProductNotFoundException;
 import com.workshop.users.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +15,11 @@ public class ProductServiceImpl implements ProductService{
         this.productRepository = productRepository;
     }
 
-    public List<Product> findProductsByIds(List<Long> ids) throws NotFoundProductException {
+    public List<Product> findProductsByIds(List<Long> ids) throws ProductNotFoundException {
         try{
             return productRepository.findProductsByIds(ids);
         }catch (Exception exception){
-            throw new NotFoundProductException("Not found any product");
+            throw new ProductNotFoundException("Not found any product");
         }
     }
 }

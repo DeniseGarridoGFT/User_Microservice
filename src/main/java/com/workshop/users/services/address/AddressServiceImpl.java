@@ -2,6 +2,7 @@ package com.workshop.users.services.address;
 
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AddressNotFoundException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.AddressDAORepository;
@@ -46,8 +47,9 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
-    public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws ParseException {
-        AddressEntity addressEntity = addressDAORepository.findById(updatedAddressDto.getId()).orElseThrow();
+    public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws ParseException, AddressNotFoundException {
+        AddressEntity addressEntity = addressDAORepository.findById(updatedAddressDto.getId())
+                .orElseThrow(() -> new AddressNotFoundException("The addres was not found")) ;
         addressEntity.setCityName(updatedAddressDto.getCityName());
         addressEntity.setZipCode(updatedAddressDto.getZipCode());
         addressEntity.setStreet(updatedAddressDto.getStreet());

@@ -1,10 +1,11 @@
 package com.workshop.users.exceptions;
 
-public class NotFoundWishProductException extends Exception{
+public class AddressNotFoundException extends Exception {
     private String message;
 
-    public NotFoundWishProductException(String message) {
+    public AddressNotFoundException(String message) {
         super(message);
         this.message = message;
     }
+
 }
