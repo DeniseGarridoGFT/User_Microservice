@@ -65,6 +65,7 @@ class UserControllerTest {
             assertNotEquals("123456789", userDto.getPassword());
             assertEquals(100, userDto.getFidelityPoints());
         }
+
         @DisplayName("Checking the correct functioning of get method Then throw an exception")
         @Order(2)
         @Test
