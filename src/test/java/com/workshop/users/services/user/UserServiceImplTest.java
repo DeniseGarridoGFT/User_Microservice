@@ -168,7 +168,7 @@ class UserServiceImplTest {
 
             //Then
             UserDto result = userService.addUser(userWithNullFidelityPoints);
-            assertThat(result.getFidelityPoints()).isEqualTo(0);
+            assertThat(result.getFidelityPoints()).isZero();
         }
 
         @Test
