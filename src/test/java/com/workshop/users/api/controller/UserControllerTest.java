@@ -6,6 +6,7 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.UserNotFoundException;
 import com.workshop.users.exceptions.MyResponseException;
 import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 
@@ -105,7 +106,7 @@ class UserControllerTest {
         @Test
         @Order(2)
         @DisplayName("Given an existing user with incorrect values Then return the BAD_REQUEST ")
-        void updateUserErrorPasswordTest() {
+        void updateUserErrorPasswordTest() throws UserValidationException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             userDtoChecked.setPassword("wArong@.com");
             when(validations.checkAllMethods(USER_ID_2))
@@ -128,7 +129,7 @@ class UserControllerTest {
         @Test
         @Order(2)
         @DisplayName("Given an non associated address Then return the NOT_FOUND exception ")
-        void updateUserErrorNotFoundAddress() throws ParseException {
+        void updateUserErrorNotFoundAddress() throws ParseException, UserValidationException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
             when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress()))

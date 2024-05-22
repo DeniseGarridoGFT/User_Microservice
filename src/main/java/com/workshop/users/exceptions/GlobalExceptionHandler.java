@@ -34,6 +34,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UserValidationException.class)
+    public ResponseEntity<MyResponseException> handleUserValidationException(UserValidationException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.BAD_REQUEST)
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(NotFoundProductException.class)
     public ResponseEntity<MyResponseException> handleGeneralException(NotFoundProductException ex) {

@@ -5,6 +5,7 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.InternalServerException;
 import com.workshop.users.exceptions.UserNotFoundException;
 import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 
