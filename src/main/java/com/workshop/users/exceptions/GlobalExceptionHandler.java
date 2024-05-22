@@ -16,6 +16,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(NotFoundAddressException.class)
+    public ResponseEntity<MyResponseException> handleProductNotFoundAddressException(NotFoundAddressException ex) {
+        MyResponseException myResponseException = MyResponseException.builder()
+                .code(HttpStatus.NOT_FOUND)
+                .message("The address with this id don't exists.")
+                .build();
+        return new ResponseEntity<>(myResponseException, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(AuthenticateException.class)
     public ResponseEntity<MyResponseException> handleInvalidProductIdException(AuthenticateException ex) {
         MyResponseException myResponseException = MyResponseException.builder()

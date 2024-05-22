@@ -1,9 +1,10 @@
 package com.workshop.users.exceptions;
 
 public class NotFoundUserException extends Exception{
-    private String message;
+    private final String message;
 
     public NotFoundUserException(String message){
+        super(message);
         this.message = message;
     }
 }

@@ -3,14 +3,15 @@ package com.workshop.users.services.address;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.NotFoundAddressException;
+import com.workshop.users.exceptions.RegisterException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 
 @Service
 public interface AddressService {
-    AddressDto addAddress(AddressDto address) throws ParseException;
+    AddressDto addAddress(AddressDto address) throws RegisterException;
     AddressDto getAddressById(Long id) throws NotFoundAddressException;
-    AddressDto updateAddress(Long id, AddressDto addressDto) throws ParseException;
+    AddressDto updateAddress(Long id, AddressDto addressDto) throws NotFoundAddressException;
 
 }

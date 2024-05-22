@@ -7,21 +7,17 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.exceptions.UserValidationException;
-import com.workshop.users.model.AddressEntity;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 
 @RestController
 public class InitializerController {
@@ -39,7 +35,8 @@ public class InitializerController {
 
     @PostMapping("/register")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws RegisterException, ParseException, UserValidationException {
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user)
+            throws RegisterException, UserValidationException {
         validations.checkAllMethods(user);
 
         AddressDto addressDto = user.getAddress();
