@@ -180,7 +180,7 @@ class UserServiceImplTest {
 
             assertThatThrownBy(() -> userService.addUser(userWithExistingId))
                     .isInstanceOf(RegisterException.class)
-                    .hasMessage("User can't be registered");
+                    .hasMessage("There's an error registering the user");
         }
 
 
