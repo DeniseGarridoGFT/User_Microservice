@@ -1,7 +1,7 @@
 package com.workshop.users.services.wishproduct;
 
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.WishProductNotFoundException;
+import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.repositories.WishProductDAORepository;
 import org.springframework.stereotype.Service;
@@ -32,11 +32,11 @@ public class WishProductServiceImpl implements WishProductService {
     }
 
     @Override
-    public void deleteWishProducts(WishProductEntity wishProductEntity) throws WishProductNotFoundException {
+    public void deleteWishProducts(WishProductEntity wishProductEntity) throws NotFoundWishProductException {
         if (wishProductDAORepository.findById(wishProductEntity.getWishProductPK()).isPresent())
             wishProductDAORepository.delete(wishProductEntity);
         else
-            throw new WishProductNotFoundException("The product with id "
+            throw new NotFoundWishProductException("The product with id "
                     + wishProductEntity.getWishProductPK().getProductId()
                     + " is not in your wishes");
     }

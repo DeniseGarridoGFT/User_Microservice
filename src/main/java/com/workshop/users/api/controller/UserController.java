@@ -44,4 +44,9 @@ public class UserController {
         UserDto updatedUser = userService.updateUser(id, updatedUserDto);
         return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }
+
+    @PatchMapping("/fidelitypoints/{id}")
+    public ResponseEntity<UserDto> incrementFidelityPoints(@PathVariable Long id, @RequestBody Integer points) throws NotFoundUserException {
+        return new ResponseEntity<>(userService.updateFidelityPoints(id, points), HttpStatus.CREATED);
+    }
 }

@@ -247,4 +247,33 @@ class UpdateUser{
         Assertions.assertThat(userSaved.getAddress()).isNotNull();
     }
 
+    @Nested
+    @DisplayName("When try to update fildelity points")
+    class UpdateFidelityPoints {
+        @Test
+        @DisplayName("Given a valid user then update fidelity points")
+        void updateFidelityPointsTest() throws NotFoundUserException {
+            UserEntity userUpdated = DataToMockInUserServiceImplTest.USER_1_UPDATED;
+            when(userDAORepository.findById(1L)).thenReturn(Optional.of(DataToMockInUserServiceImplTest.USER_1));
+            when(userDAORepository.save(any(UserEntity.class))).thenReturn(userUpdated);
+
+            UserDto userDto = userService.updateFidelityPoints(1L, 70);
+            assertThat(userDto.getFidelityPoints()).isEqualTo(120);
+
+        }
+        @Test
+        @DisplayName("Given a non exist user then throw notFoundUserException")
+        void updateFidelityPointsTestThrowNotFoundError() throws NotFoundUserException {
+            when(userDAORepository.findById(9999L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> userService.updateFidelityPoints(9999L, 70))
+                    .isInstanceOf(NotFoundUserException.class)
+                    .hasMessage("Not found user");
+
+        }
+
+    }
+
+
+
 }

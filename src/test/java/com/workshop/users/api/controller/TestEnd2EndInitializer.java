@@ -362,7 +362,7 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(exception).isEqualTo(MyResponseException.builder()
                                 .code(HttpStatus.NOT_FOUND)
-                                .message("The user with this id doesn't exist.")
+                                .message("The user with this id don't exists.")
                                 .build());
                     });
         }
@@ -629,7 +629,7 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseException.class)
                     .value(myResponseException -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("The user with this id doesn't exist.");
+                        assertThat(myResponseException.getMessage()).isEqualTo("The user with this id don't exists.");
                     });
         }
 
@@ -657,7 +657,7 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseException.class)
                     .value(myResponseException -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product doesn't exist.");
+                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
                     });
         }
 
@@ -692,7 +692,7 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseException.class)
                     .value(myResponseException -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product doesn't exist.");
+                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
                     });
 
 

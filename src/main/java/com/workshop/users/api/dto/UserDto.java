@@ -133,4 +133,12 @@ public class UserDto implements Serializable {
             throw new Exception("The email is not valid");
     }
 
+    public static Integer setSaveFidelityPoints(Integer userPoints, Integer addPoints) {
+        Integer totalPoints = userPoints + addPoints;
+        if (totalPoints < 0) {
+            totalPoints = 0;
+        }
+        return  totalPoints;
+    }
+
 }

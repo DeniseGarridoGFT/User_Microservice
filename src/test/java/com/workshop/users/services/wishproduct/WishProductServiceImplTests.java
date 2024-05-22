@@ -1,7 +1,7 @@
 package com.workshop.users.services.wishproduct;
 
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.WishProductNotFoundException;
+import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.model.WishProductPK;
 import com.workshop.users.repositories.WishProductDAORepository;
@@ -74,7 +74,7 @@ public class WishProductServiceImplTests {
         @Test
         @DisplayName("Given wish product to delete " +
                 "Then delete the item")
-        void addWishList() throws WishProductNotFoundException {
+        void addWishList() throws NotFoundWishProductException {
             //Given
             doNothing().when(wishProductDAORepository)
                         .delete(wishProductEntity);
@@ -95,7 +95,7 @@ public class WishProductServiceImplTests {
             //When and Then
             assertThatThrownBy(() -> {
                 wishProductService.deleteWishProducts(wishProductEntity);
-            }).isInstanceOf(WishProductNotFoundException.class);
+            }).isInstanceOf(NotFoundWishProductException.class);
         }
     }
 

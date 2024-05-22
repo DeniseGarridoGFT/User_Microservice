@@ -153,4 +153,33 @@ class UserControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("When try to increment fidelity")
+    class FidelityPoints {
+        @Test
+        @DisplayName("Given a good id user and fidelity points to increment " +
+                "then return a response entity with the user modify")
+        void incrementFidelityPointsTest() throws NotFoundUserException {
+            when(userService.updateFidelityPoints(anyLong(), anyInt()))
+                    .thenReturn(USER_ID_2);
+            ResponseEntity<UserDto> responseEntity = userController.incrementFidelityPoints(1L, 1);
+
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(responseEntity.getBody()).isEqualTo(USER_ID_2);
+        }
+
+        @Test
+        @DisplayName("Given a non existed id user and fidelity points to increment " +
+                "then throw a NotFoundUserException")
+        void incrementFidelityPointsTestError() throws NotFoundUserException {
+            when(userService.updateFidelityPoints(anyLong(), anyInt()))
+                    .thenThrow(new NotFoundUserException("The user with this id not exists"));
+
+            assertThatThrownBy(() -> userController.incrementFidelityPoints(1L, 1))
+                    .isInstanceOf(NotFoundUserException.class)
+                    .hasMessage("The user with this id not exists");
+
+        }
+    }
+
  }

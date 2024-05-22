@@ -1,7 +1,7 @@
 package com.workshop.users.services.product;
 
 import com.workshop.users.api.dto.Product;
-import com.workshop.users.exceptions.ProductNotFoundException;
+import com.workshop.users.exceptions.NotFoundProductException;
 import com.workshop.users.repositories.ProductRepository;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -59,7 +59,7 @@ class ProductServiceImplTest {
         @Test
         @DisplayName("Given a valid Ids " +
                 "Then return the associated Products")
-        void findProductByIdGood() throws ProductNotFoundException {
+        void findProductByIdGood() throws NotFoundProductException {
             when(productRepository.findProductsByIds(ids))
                     .thenReturn(product);
 
@@ -76,7 +76,7 @@ class ProductServiceImplTest {
 
             assertThatThrownBy(() -> {
                 productService.findProductsByIds(ids);
-            }).isInstanceOf(ProductNotFoundException.class);
+            }).isInstanceOf(NotFoundProductException.class);
         }
     }
 

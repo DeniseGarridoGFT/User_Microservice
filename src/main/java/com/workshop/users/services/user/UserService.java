@@ -16,4 +16,5 @@ public interface UserService {
     UserDto getUserByEmail(String email) throws RuntimeException;
     UserDto updateUser(Long id, UserDto userDto) throws NotFoundUserException;
     Optional<UserEntity> getUserByEmailOptional(String email);
+    UserDto updateFidelityPoints(Long id, Integer points) throws NotFoundUserException;
 }

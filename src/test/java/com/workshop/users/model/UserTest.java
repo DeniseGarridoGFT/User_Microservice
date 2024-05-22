@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.*;
+
+
 class UserTest {
     @Nested
     @DisplayName("WhenCheckEmail")
@@ -299,6 +302,24 @@ class UserTest {
 
             // Then
             assertEquals("test@example.com", userDto.getEmail());
+        }
+    }
+
+    @Nested
+    @DisplayName("Set save fidelity points")
+    class FidelityPoints {
+        @Test
+        @DisplayName("Given a valid fidelity points then update them")
+        void setSaveFidelityPointsTest() {
+            Integer result = UserDto.setSaveFidelityPoints(2, 2);
+            assertThat(result).isNotNull().isEqualTo(4);
+        }
+
+        @Test
+        @DisplayName("Given a non valid fidelity points then return0")
+        void setSaveFidelityPointsTestReturnZero() {
+            Integer result = UserDto.setSaveFidelityPoints(2, -50);
+            assertThat(result).isNotNull().isZero();
         }
     }
 

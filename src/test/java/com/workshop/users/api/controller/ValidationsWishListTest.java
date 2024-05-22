@@ -3,7 +3,7 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.api.dto.WishListDto;
 import com.workshop.users.exceptions.ConflictWishListException;
-import com.workshop.users.exceptions.ProductNotFoundException;
+import com.workshop.users.exceptions.NotFoundProductException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.services.product.ProductService;
 import com.workshop.users.services.user.UserService;
@@ -66,7 +66,7 @@ class ValidationsWishListTest {
     class ValidateTheProductExists{
         @DisplayName("Given an existed products Then don't have an error")
         @Test
-        void validateIfExitsProduct() throws ProductNotFoundException {
+        void validateIfExitsProduct() throws NotFoundProductException {
             when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
                     .thenReturn(anyList());
             ValidationsWishList.validateExistsProduct(wishListDto,productService);
@@ -74,13 +74,13 @@ class ValidationsWishListTest {
 
         @DisplayName("Given a non existed product Then throw error")
         @Test
-        void nonProductId() throws ProductNotFoundException {
+        void nonProductId() throws NotFoundProductException {
             when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
-                    .thenThrow(new ProductNotFoundException("Not found product"));
+                    .thenThrow(new NotFoundProductException("Not found product"));
 
             assertThatThrownBy(()->{
                 ValidationsWishList.validateExistsProduct(wishListDto,productService);
-            }).isInstanceOf(ProductNotFoundException.class);
+            }).isInstanceOf(NotFoundProductException.class);
         }
     }
 
