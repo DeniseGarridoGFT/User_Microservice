@@ -5,8 +5,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-@Data
 @Builder
+@Data
 public class Product implements Serializable {
 
     private Long id;

@@ -5,6 +5,8 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.AuthenticateException;
+import com.workshop.users.exceptions.RegisterException;
+import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
@@ -37,7 +39,7 @@ public class InitializerController {
 
     @PostMapping("/register")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws ResponseStatusException, ParseException {
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) throws RegisterException, ParseException, UserValidationException {
         validations.checkAllMethods(user);
 
         AddressDto addressDto = user.getAddress();

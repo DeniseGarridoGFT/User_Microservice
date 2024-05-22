@@ -2,7 +2,9 @@ package com.workshop.users.services.address;
 
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.exceptions.AddressNotFoundException;
+import com.workshop.users.exceptions.AddressServiceException;
+import com.workshop.users.exceptions.NotFoundAddressException;
+import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.AddressDAORepository;
@@ -27,12 +29,15 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressDto addAddress(AddressDto address) throws ParseException {
+    public AddressDto addAddress(AddressDto address) throws RegisterException {
+        if (address.getId()!=null && addressDAORepository.findById(address.getId()).isPresent()){
+            throw new AddressServiceException("There's an error registering the address");
+        }
         return AddressEntity.fromEntity(addressDAORepository.save(AddressDto.toEntity(address)));
     }
 
     @Override
-    public AddressDto getAddressById(Long id) throws RuntimeException {
+    public AddressDto getAddressById(Long id) throws NotFoundAddressException {
         isNotNull(id);
         return AddressEntity.fromEntity(addressDAORepository.findById(id).orElseThrow());
     }
@@ -41,15 +46,16 @@ public class AddressServiceImpl implements AddressService {
 
     private void isNotNull(Long id) {
         if (id == null){
-            throw new RuntimeException("Request not valid");
+            throw new NotFoundAddressException("Request not valid. The address Id is null");
         }
     }
 
 
     @Override
-    public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws ParseException, AddressNotFoundException {
+    public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws RegisterException {
         AddressEntity addressEntity = addressDAORepository.findById(updatedAddressDto.getId())
-                .orElseThrow(() -> new AddressNotFoundException("The addres was not found")) ;
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Address not found"));
+
         addressEntity.setCityName(updatedAddressDto.getCityName());
         addressEntity.setZipCode(updatedAddressDto.getZipCode());
         addressEntity.setStreet(updatedAddressDto.getStreet());

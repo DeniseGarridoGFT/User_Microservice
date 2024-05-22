@@ -2,7 +2,7 @@ package com.workshop.users.services.address;
 
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.exceptions.AddressNotFoundException;
+import com.workshop.users.exceptions.NotFoundAddressException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -10,7 +10,7 @@ import java.text.ParseException;
 @Service
 public interface AddressService {
     AddressDto addAddress(AddressDto address) throws ParseException;
-    AddressDto getAddressById(Long id) throws RuntimeException;
-    AddressDto updateAddress(Long id, AddressDto addressDto) throws ParseException, AddressNotFoundException;
+    AddressDto getAddressById(Long id) throws NotFoundAddressException;
+    AddressDto updateAddress(Long id, AddressDto addressDto) throws ParseException;
 
 }

@@ -1,7 +1,10 @@
 package com.workshop.users.services.Address;
 
+import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.dto.AddressDto;
-import com.workshop.users.exceptions.AddressNotFoundException;
+import com.workshop.users.exceptions.AddressServiceException;
+import com.workshop.users.exceptions.NotFoundAddressException;
+import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.repositories.AddressDAORepository;
 import com.workshop.users.services.address.AddressService;
@@ -40,13 +43,13 @@ class AddressServiceImplTest {
                 .zipCode("36458")
                 .street("C/ Las Ramblas")
                 .build();
-         addressEntityWithId = new AddressEntity();
-         addressEntityWithId.setId(1L);
-         addressEntityWithId.setDoor("1A");
-         addressEntityWithId.setNumber(12);
-         addressEntityWithId.setCityName("Madrid");
-         addressEntityWithId.setZipCode("36458");
-         addressEntityWithId.setStreet("C/ Las Ramblas");
+        addressEntityWithId = new AddressEntity();
+        addressEntityWithId.setId(1L);
+        addressEntityWithId.setDoor("1A");
+        addressEntityWithId.setNumber(12);
+        addressEntityWithId.setCityName("Madrid");
+        addressEntityWithId.setZipCode("36458");
+        addressEntityWithId.setStreet("C/ Las Ramblas");
     }
 
     @Test
@@ -58,50 +61,62 @@ class AddressServiceImplTest {
 
     @Nested
     @DisplayName("When try to get Address")
-    class GetAddress{
+    class GetAddress {
         @Test
         @DisplayName("Given a valid Id then return a user")
         void getAddress() {
             when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
             assertThat(addressService.getAddressById(1L)).isEqualTo(AddressEntity.fromEntity(addressEntityWithId));
         }
+
+
         @Test
-        @DisplayName("Given a null Id then throw a error")
+        @DisplayName("Given a null Id then throw an error")
         void getAddressErrorIdNull() {
-            RuntimeException runtimeException = null;
-
-            try {
-                addressService.getAddressById(null);
-            }catch (Exception exception){
-                runtimeException = (RuntimeException) exception;
-            }
-            assertThat(runtimeException.getMessage()).isEqualTo("Request not valid");
+            assertThatThrownBy(() -> addressService.getAddressById(null))
+                    .isInstanceOf(NotFoundAddressException.class)
+                    .hasMessage("Request not valid. The address Id is null");
         }
 
         @Test
-        @DisplayName("Given a non valid Id then throw a error")
-        void getAddressErrorNotExistUserl() {
-            Exception exceptionThrowIt = new Exception();
+        @DisplayName("Add address with a null Id then throw an error")
+        void getAddressErrorNotExistUser() {
             when(addressDAORepository.findById(anyLong())).thenReturn(Optional.empty());
-            try {
-                addressService.getAddressById(1L);
-            }catch (Exception exception){
-                exceptionThrowIt = exception;
-            }
-            assertThat(exceptionThrowIt).isInstanceOf(RuntimeException.class);
+            assertThatThrownBy(() -> addressService.getAddressById(1L))
+                    .isInstanceOf(RuntimeException.class);
         }
-    }
 
-    @Nested
-    @DisplayName("When try to updated Address")
-    class updateAddress{
         @Test
-        @DisplayName("Given a address to change then return the address updated")
-        void updateAddress() throws ParseException, AddressNotFoundException {
-            addressDto.setId(1L);
-            when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
-            when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
-            assertThat(addressService.updateAddress(addressDto.getId(),addressDto)).isEqualTo(addressDto);
+        @DisplayName("Given a null Id then throw an error")
+        void addAddressErrorIdNull() {
+            assertThatThrownBy(() -> addressService.getAddressById(null))
+                    .isInstanceOf(NotFoundAddressException.class)
+                    .hasMessage("Request not valid. The address Id is null");
+        }
+
+        @Test
+        @DisplayName("Given an existing Id then throw a RegisterException")
+        void addAddressWithExistingId() {
+                AddressDto addressWithExistingId = DataInitzializerController.ADDRESS_VALLECAS;
+            addressWithExistingId.setId(1L);
+            when(addressDAORepository.findById(addressWithExistingId.getId())).thenReturn(Optional.of(new AddressEntity()));
+
+            assertThatThrownBy(() -> addressService.addAddress(addressWithExistingId))
+                    .isInstanceOf(AddressServiceException.class)
+                    .hasMessage("There's an error registering the address");
+        }
+
+        @Nested
+        @DisplayName("When try to updated Address")
+        class updateAddress {
+            @Test
+            @DisplayName("Given a address to change then return the address updated")
+            void updateAddress() throws ParseException {
+                addressDto.setId(1L);
+                when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
+                when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
+                assertThat(addressService.updateAddress(addressDto.getId(), addressDto)).isEqualTo(addressDto);
+            }
         }
     }
 }

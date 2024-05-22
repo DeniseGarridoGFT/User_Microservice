@@ -6,8 +6,6 @@ import com.workshop.users.model.CountryEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class CountryServiceImpl implements CountryService {
 
@@ -18,10 +16,10 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public CountryDto getCountryById(Long id) {
+    public CountryDto getCountryById(Long id) throws CountryNotFoundException{
         isNotNull(id);
         CountryEntity countryEntity = countryDAORepository.findById(id)
-                .orElseThrow(() -> new CountryNotFoundException("Country not found"));
+                .orElseThrow(() -> new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia"));
         return CountryEntity.fromEntity(countryEntity);
     }
 
@@ -29,13 +27,13 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto getCountryByName(String name) throws CountryNotFoundException {
         isNotNull(name);
         CountryEntity countryEntity = countryDAORepository.findByName(name)
-                .orElseThrow(() -> new CountryNotFoundException("Country not found"));
+                .orElseThrow(() -> new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia"));
         return CountryEntity.fromEntity(countryEntity);
     }
 
     private void isNotNull(Object obj) throws CountryNotFoundException  {
         if (obj == null) {
-            throw new CountryNotFoundException("Country not found");
+            throw new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia");
         }
     }
 }

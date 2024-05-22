@@ -108,6 +108,77 @@ class TestEnd2EndRegisterTest {
         }
 
         @Test
+        @DisplayName("Given correct credentials but Put Fail Country. Then throw an countryError")
+        void registerUserWithWrongCountry() {
+            // Given
+            UserDto newUser = UserDto.builder()
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("aria2@example.com")
+                    .password("Ar1a@31234.")
+                    .fidelityPoints(40)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .address(AddressDto.builder()
+                            .cityName("Valencia")
+                            .zipCode("46360")
+                            .street("C/ La Calle")
+                            .number(32)
+                            .door("2A")
+                            .build())
+                    .country(CountryDto.builder()
+                            .name("Paco")
+                            .build())
+                    .build();
+
+            // When
+            webTestClient.post()
+                    .uri("/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(newUser)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    });
+        }
+
+
+        @Test
+        @DisplayName("Given incorrect credentials. Then throw an registerException")
+        void registerUserWitRegisterError() {
+            // Given
+            UserDto newUser = UserDto.builder()
+                    .id(1L)
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("aria3@example.com")
+                    .password("Ar1a@31234.")
+                    .fidelityPoints(40)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .address(AddressDto.builder()
+                            .build())
+                    .country(CountryDto.builder()
+                            .name("España")
+                            .build())
+                    .build();
+
+            // When
+            webTestClient.post()
+                    .uri("/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(newUser)
+                    .exchange()
+                    .expectStatus().isBadRequest()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    });
+        }
+
+        @Test
         @DisplayName("Given incorrect credentials a user can't be registered. Then return BAD_REQUEST status")
         void invalidUserRegister() {
             //Given
@@ -139,7 +210,11 @@ class TestEnd2EndRegisterTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(invalidUser)
                     .exchange()
-                    .expectStatus().isBadRequest();
+                    .expectStatus().isBadRequest()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    });
         }
     }
 
@@ -379,6 +454,7 @@ class TestEnd2EndRegisterTest {
 
             mockWebServer.enqueue(new MockResponse()
                     .setBody("{\"message\":\"Not found product with this ids\"}")
+                    .setStatus("HTTP/1.1 404 Not Found")
                     .setHeader("Content-Type", "application/json"));
 
             //When
