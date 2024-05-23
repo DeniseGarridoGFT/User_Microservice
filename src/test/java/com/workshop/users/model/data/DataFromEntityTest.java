@@ -6,9 +6,10 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.CountryEntity;
 import com.workshop.users.model.UserEntity;
+import lombok.Generated;
 
 import java.util.Date;
-
+@Generated
 public class DataFromEntityTest {
 
 

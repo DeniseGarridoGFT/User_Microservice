@@ -1,10 +1,12 @@
 package com.workshop.users.model.data;
 
 import com.workshop.users.api.dto.WishListDto;
+import lombok.Generated;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+@Generated
 
 public class DataWishListDto {
 

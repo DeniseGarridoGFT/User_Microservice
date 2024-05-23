@@ -135,9 +135,8 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isNotFound()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
-                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                    });
+                    .value(myResponseError ->
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.NOT_FOUND));
         }
 
 
@@ -169,9 +168,8 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isBadRequest()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
-                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                    });
+                    .value(myResponseError ->
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST));
         }
 
         @Test
@@ -208,9 +206,8 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isBadRequest()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
-                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                    });
+                    .value(myResponseError ->
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST));
         }
     }
 
@@ -723,7 +720,7 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(myResponseError.getMessage()).isEqualTo("The product with id 655 " +
                                                                                     "is not in your wishes");
-                    });;
+                    });
 
         }
     }
