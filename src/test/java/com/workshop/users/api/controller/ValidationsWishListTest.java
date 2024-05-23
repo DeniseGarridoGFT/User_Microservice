@@ -15,8 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ValidationsWishListTest {
 
@@ -54,9 +53,9 @@ class ValidationsWishListTest {
             when(userService.getUserById(1L))
                     .thenThrow(new NotFoundUserException("Not found user"));
 
-            assertThatThrownBy(()->{
-                ValidationsWishList.validateUserId(wishListDto,userService);
-            }).isInstanceOf(NotFoundUserException.class);
+            assertThatThrownBy(()->
+                ValidationsWishList.validateUserId(wishListDto,userService))
+            .isInstanceOf(NotFoundUserException.class);
         }
     }
 
@@ -78,9 +77,9 @@ class ValidationsWishListTest {
             when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
                     .thenThrow(new NotFoundProductException("Not found product"));
 
-            assertThatThrownBy(()->{
-                ValidationsWishList.validateExistsProduct(wishListDto,productService);
-            }).isInstanceOf(NotFoundProductException.class);
+            assertThatThrownBy(()->
+                ValidationsWishList.validateExistsProduct(wishListDto,productService))
+            .isInstanceOf(NotFoundProductException.class);
         }
     }
 
@@ -89,10 +88,11 @@ class ValidationsWishListTest {
     class SaveProduct{
         @DisplayName("Given an wish list dto Then save the all the products correctly")
         @Test
-        void saveProductInWishList() throws  ConflictWishListException {
+        void saveProductInWishList() throws ConflictWishListException {
             when(wishProductService.addWishProducts(any()))
                     .thenReturn(any());
             ValidationsWishList.saveWishList(wishListDto,wishProductService);
+            verify(wishProductService,times(3)).addWishProducts(any());
         }
 
         @DisplayName("Given a product that is already saved Then throw error")
@@ -102,9 +102,9 @@ class ValidationsWishListTest {
                     .thenThrow(new ConflictWishListException("The wish product has already saved"));
 
 
-            assertThatThrownBy(()->{
-                ValidationsWishList.saveWishList(wishListDto,wishProductService);
-            }).isInstanceOf(ConflictWishListException.class);
+            assertThatThrownBy(()->
+                ValidationsWishList.saveWishList(wishListDto,wishProductService))
+            .isInstanceOf(ConflictWishListException.class);
         }
     }
 

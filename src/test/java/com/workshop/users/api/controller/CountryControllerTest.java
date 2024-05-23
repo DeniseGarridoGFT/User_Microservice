@@ -6,7 +6,6 @@ import com.workshop.users.exceptions.CountryNotFoundException;
 import com.workshop.users.services.country.CountryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
