@@ -8,6 +8,6 @@ import org.springframework.web.client.RestClient;
 public class ProductWebClientConfiguration {
     @Bean
     public RestClient.Builder restClientBuilder(){
-        return RestClient.builder().baseUrl("http://localhost:8081");
+        return RestClient.builder().baseUrl("https://catalog-workshop-yequy5sv5a-uc.a.run.app/catalog");
     }
 }
