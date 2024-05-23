@@ -124,7 +124,7 @@ class UpdateUser{
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo("manuelupdated@example.com");
         Assertions.assertThat(updatedUser.getBirthDate()).isEqualTo(userDtoUpdated.getBirthDate());
         Assertions.assertThat(updatedUser.getPassword()).isEqualTo("2B8sda2?_");
-        Assertions.assertThat(updatedUser.getFidelityPoints()).isEqualTo(0);
+        Assertions.assertThat(updatedUser.getFidelityPoints()).isZero();
         Assertions.assertThat(updatedUser.getPhone()).isEqualTo("963258741");
         Assertions.assertThat(updatedUser.getAddress()).isNotNull();
 
@@ -227,7 +227,7 @@ class UpdateUser{
         Assertions.assertThat(userSaved.getEmail()).isEqualTo("manuelupdated@example.com");
         Assertions.assertThat(userSaved.getBirthDate()).isEqualTo(userSaved.getBirthDate());
         Assertions.assertThat(Login.BCRYPT.matches(userSaved.getPassword(),userDtoToSave.getPassword())).isTrue();
-        Assertions.assertThat(userSaved.getFidelityPoints()).isEqualTo(0);
+        Assertions.assertThat(userSaved.getFidelityPoints()).isZero();
         Assertions.assertThat(userSaved.getPhone()).isEqualTo("963258741");
         Assertions.assertThat(userSaved.getAddress()).isNotNull();
     }

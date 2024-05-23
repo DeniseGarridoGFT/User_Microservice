@@ -4,7 +4,6 @@ import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.exceptions.AddressServiceException;
 import com.workshop.users.exceptions.NotFoundAddressException;
-import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.repositories.AddressDAORepository;
 import com.workshop.users.services.address.AddressService;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -23,7 +21,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddressServiceImplTest {
+class AddressServiceImplTest {
 
     private AddressDAORepository addressDAORepository;
     private AddressService addressService;
@@ -54,7 +52,7 @@ public class AddressServiceImplTest {
 
     @Test
     @DisplayName("When try to add Address then return the correct address")
-    void addAddress() throws ParseException {
+    void addAddress()  {
         when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
         assertThat(addressService.addAddress(addressDto)).isEqualTo(AddressEntity.fromEntity(addressEntityWithId));
     }
@@ -64,7 +62,7 @@ public class AddressServiceImplTest {
     class GetAddress {
         @Test
         @DisplayName("Given a valid Id then return a user")
-        public void getAddress() {
+        void getAddress() {
             when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
             assertThat(addressService.getAddressById(1L)).isEqualTo(AddressEntity.fromEntity(addressEntityWithId));
         }
@@ -112,7 +110,7 @@ public class AddressServiceImplTest {
         class updateAddress {
             @Test
             @DisplayName("Given a address to change then return the address updated")
-            void updateAddress() throws ParseException {
+            void updateAddressTest()  {
                 addressDto.setId(1L);
                 when(addressDAORepository.findById(anyLong())).thenReturn(Optional.of(addressEntityWithId));
                 when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
@@ -131,5 +129,4 @@ public class AddressServiceImplTest {
             }
         }
     }
-
 }

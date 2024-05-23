@@ -74,12 +74,9 @@ class ProductServiceImplTest {
             when(productRepository.findProductsByIds(ids))
                     .thenThrow(new NotFoundProductException("Not found product"));
 
-            assertThatThrownBy(() -> {
-                productService.findProductsByIds(ids);
-            }).isInstanceOf(NotFoundProductException.class);
+            assertThatThrownBy(() ->
+                productService.findProductsByIds(ids))
+            .isInstanceOf(NotFoundProductException.class);
         }
     }
-
-
-
 }

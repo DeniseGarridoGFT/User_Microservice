@@ -21,7 +21,7 @@ public class WishProductServiceImplTests {
     private WishProductDAORepository wishProductDAORepository;
     private WishProductService wishProductService;
     private WishProductEntity wishProductEntity;
-    private WishProductPK wishProductPK;
+    WishProductPK wishProductPK;
 
     @BeforeEach
     void setUp() {
@@ -62,9 +62,9 @@ public class WishProductServiceImplTests {
             when(wishProductDAORepository.save(wishProductEntity))
                     .thenThrow(new EntityExistsException());
             //When and Then
-            assertThatThrownBy(() -> {
-                wishProductService.addWishProducts(wishProductEntity);
-            }).isInstanceOf(ConflictWishListException.class);
+            assertThatThrownBy(() ->
+                wishProductService.addWishProducts(wishProductEntity))
+            .isInstanceOf(ConflictWishListException.class);
         }
     }
 
@@ -85,6 +85,7 @@ public class WishProductServiceImplTests {
 
             verify(wishProductDAORepository).delete(wishProductEntity);
         }
+
         @Test
         @DisplayName("Given wish product that not exists " +
                 "Then throw NotFoundWishProductException")
@@ -93,12 +94,9 @@ public class WishProductServiceImplTests {
             when(wishProductDAORepository.findById(any(WishProductPK.class)))
                     .thenReturn(Optional.empty());
             //When and Then
-            assertThatThrownBy(() -> {
-                wishProductService.deleteWishProducts(wishProductEntity);
-            }).isInstanceOf(NotFoundWishProductException.class);
+            assertThatThrownBy(() ->
+                wishProductService.deleteWishProducts(wishProductEntity))
+            .isInstanceOf(NotFoundWishProductException.class);
         }
     }
-
-
-
 }
