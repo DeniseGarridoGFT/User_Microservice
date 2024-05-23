@@ -123,7 +123,7 @@ class AddressServiceImplTest {
                 addressDto.setId(1L);
                 when(addressDAORepository.findById(anyLong())).thenReturn(Optional.empty());
                 when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
-                assertThatThrownBy(()->addressService.updateAddress(addressDto.getId(),addressDto))
+                assertThatThrownBy(()->addressService.updateAddress(1L,addressDto))
                         .isInstanceOf(NotFoundAddressException.class)
                         .hasMessage("Address not found");
             }
