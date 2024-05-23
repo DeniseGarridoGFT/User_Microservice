@@ -1,13 +1,19 @@
 package com.workshop.users.services.user;
 
+import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
+import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.AddressServiceException;
+import com.workshop.users.exceptions.AuthenticateException;
+import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
+import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
 import org.assertj.core.api.Assertions;
-import org.h2.engine.User;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -17,19 +23,20 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
 
     private UserDAORepository userDAORepository;
+    private CountryDAORepository countryDAORepository;
     private UserService userService;
 
     @BeforeEach
     void setUp() {
         userDAORepository = Mockito.mock(UserDAORepository.class);
+        countryDAORepository = Mockito.mock(CountryDAORepository.class);
         userService = new UserServiceImpl(userDAORepository);
     }
 
@@ -55,21 +62,22 @@ class UserServiceImplTest {
         void getUserByIdAddingNotExistingUser() {
             //Given
             Mockito.when(userDAORepository.findById(3L))
-                    .thenThrow(new RuntimeException("User not found"));
+                    .thenReturn(Optional.empty());
             //When and Then
-            assertThrows(RuntimeException.class, () -> userService.getUserById(3L));
+            assertThrows(NotFoundUserException.class, () -> userService.getUserById(3L));
             verify(userDAORepository).findById(Mockito.anyLong());
         }
+
         @Test
         @DisplayName("givenNull_whenGetUserById_thenThrowsRunTimeException")
         void getUserByIdAddingNull() {
-
-            //When and Then
-            assertThrows(RuntimeException.class, () -> userService.getUserById(null));
+            //When
+            assertThrows(NotFoundUserException.class, () -> userService.getUserById(null));
         }
+
         @Test
         @DisplayName("givenId_whenGetUserById_thenReturnTheAssociatedUser")
-        void getUserById() {
+        void getUserById() throws NotFoundUserException {
             //Given
             Mockito.when(userDAORepository.findById(2L))
                     .thenReturn(Optional.of(DataToMockInUserServiceImplTest.USER_1));
@@ -85,10 +93,14 @@ class UserServiceImplTest {
 
 
 
+}
 
+@Nested
+@DisplayName("When try to update User")
+class UpdateUser{
     @Test
     @DisplayName("Given an user to update when update user then return the user dto updated")
-    void testUpdateUser() {
+    void testUpdateUser() throws Exception {
         UserEntity userEntity = DataToMockInUserServiceImplTest.USER_1;
 
         UserDto userDtoUpdated = UserDto.builder()
@@ -119,7 +131,34 @@ class UserServiceImplTest {
         verify(userDAORepository).findById(2L);
         verify(userDAORepository).save(any(UserEntity.class));
     }
+
+    @Test
+    @DisplayName("Given an user to update that not exists when update user then throw UserNotFoundException")
+    void testUpdateUserThrowError() throws Exception {
+        UserEntity userEntity = DataToMockInUserServiceImplTest.USER_1;
+
+        UserDto userDtoUpdated = UserDto.builder()
+                .name("Manuel updated")
+                .lastName("Salamanca updated")
+                .password("2B8sda2?_")
+                .phone("963258741")
+                .email("manuelupdated@example.com")
+                .birthDate("2000/01/14")
+                .fidelityPoints(60)
+                .country(DataToUserControllerTesting.COUNTRY_ESPANYA)
+                .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
+                .build();
+
+        Mockito.when(userDAORepository.findById(2L)).thenReturn(Optional.empty());
+        Mockito.when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoUpdated));
+         assertThatThrownBy(()->userService.updateUser(2L, userDtoUpdated))
+                    .isInstanceOf(NotFoundUserException.class)
+                    .hasMessage("The user with this id not exists");
+
+        verify(userDAORepository).findById(2L);
+        verify(userDAORepository,times(0)).save(any(UserEntity.class));
     }
+}
 
 
     @Nested
@@ -135,35 +174,53 @@ class UserServiceImplTest {
             UserDto userDto = userService.getUserByEmail("manuel@example.com");
             //Then
             assertThat(userDto).isEqualTo(userExpected);
-
         }
 
         @Test
         @DisplayName("Given a non-existent email return null")
         void getUserByNonExistingEmail() {
             //Given
-            when(userDAORepository.findByEmail("paquito@perez.com")).thenReturn(null);
-            //When and Then
+                when(userDAORepository.findByEmail("paquito@perez.com")).thenReturn(Optional.empty());
+            //When
             assertThatThrownBy(()->{
                 userService.getUserByEmail("paquito@perez.com");
-            }).isInstanceOf(RuntimeException.class);
+            }).isInstanceOf(AuthenticateException.class);
         }
 
         @Test
-        @DisplayName("Given a null email return null")
-        void getUserByNullEmail() {
-            //Given null
-            //When and Then
-            assertThatThrownBy(()->{
-                userService.getUserByEmail(null);
-            }).isInstanceOf(RuntimeException.class)
-                    .hasMessageContaining("Request not valid");
+        @DisplayName("Given a user with null FidelityPoints, when added, then set FidelityPoints to 0")
+        void addUserWithNullFidelityPointsSetsToZero() throws RegisterException, ParseException {
+            // Given
+            UserDto userWithNullFidelityPoints = DataInitzializerController.USER_REGISTERED;
+            userWithNullFidelityPoints.setFidelityPoints(null);
+
+            //When
+            when(userDAORepository.save(any(UserEntity.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            //Then
+            UserDto result = userService.addUser(userWithNullFidelityPoints);
+            assertThat(result.getFidelityPoints()).isZero();
         }
+
+        @Test
+        @DisplayName("Given an existing Id then throw a RegisterException")
+        void addUserWithExistingId() {
+            UserDto userWithExistingId = DataInitzializerController.USER_REGISTERED;
+            userWithExistingId.setId(1L);
+            when(userDAORepository.findById(userWithExistingId.getId())).thenReturn(Optional.of(new UserEntity()));
+
+            assertThatThrownBy(() -> userService.addUser(userWithExistingId))
+                    .isInstanceOf(RegisterException.class)
+                    .hasMessage("There's an error registering the user");
+        }
+
+
     }
 
     @Test
     @DisplayName("Given an userdto when add user then save the user")
-    void addUser() throws ParseException {
+    void addUser()  {
         UserDto userDtoToSave = UserDto.builder()
                 .name("Manuel updated")
                 .lastName("Salamanca updated")
@@ -172,7 +229,7 @@ class UserServiceImplTest {
                 .email("manuelupdated@example.com")
                 .birthDate("2000/01/14")
                 .fidelityPoints(60)
-                .country(DataToUserControllerTesting.COUNTRY_ESPANYA)
+                .country(DataInitzializerController.COUNTRY_SPAIN)
                 .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
                 .build();
         UserDto userDtoAux = userDtoToSave;
@@ -189,5 +246,34 @@ class UserServiceImplTest {
         Assertions.assertThat(userSaved.getPhone()).isEqualTo("963258741");
         Assertions.assertThat(userSaved.getAddress()).isNotNull();
     }
+
+    @Nested
+    @DisplayName("When try to update fildelity points")
+    class UpdateFidelityPoints {
+        @Test
+        @DisplayName("Given a valid user then update fidelity points")
+        void updateFidelityPointsTest() throws NotFoundUserException {
+            UserEntity userUpdated = DataToMockInUserServiceImplTest.USER_1_UPDATED;
+            when(userDAORepository.findById(1L)).thenReturn(Optional.of(DataToMockInUserServiceImplTest.USER_1));
+            when(userDAORepository.save(any(UserEntity.class))).thenReturn(userUpdated);
+
+            UserDto userDto = userService.updateFidelityPoints(1L, 70);
+            assertThat(userDto.getFidelityPoints()).isEqualTo(120);
+
+        }
+        @Test
+        @DisplayName("Given a non exist user then throw notFoundUserException")
+        void updateFidelityPointsTestThrowNotFoundError() throws NotFoundUserException {
+            when(userDAORepository.findById(9999L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> userService.updateFidelityPoints(9999L, 70))
+                    .isInstanceOf(NotFoundUserException.class)
+                    .hasMessage("Not found user");
+
+        }
+
+    }
+
+
 
 }

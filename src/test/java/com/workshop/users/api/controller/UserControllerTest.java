@@ -3,6 +3,9 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.NotFoundAddressException;
+import com.workshop.users.exceptions.NotFoundUserException;
+import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.user.UserService;
 
@@ -10,9 +13,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.text.ParseException;
 
 import static com.workshop.users.api.controller.Data.DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS;
 import static com.workshop.users.api.controller.Data.DataToUserControllerTesting.USER_ID_2;
@@ -47,7 +48,7 @@ class UserControllerTest {
         @DisplayName("Checking the correct functioning of get method")
         @Order(1)
         @Test
-        void getUser() {
+        void getUser() throws NotFoundUserException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             when(userService.getUserById(2L)).thenReturn(userDtoChecked);
             ResponseEntity<UserDto> responseEntity = userController.getUser(2L);
@@ -61,6 +62,15 @@ class UserControllerTest {
             assertNotEquals("123456789", userDto.getPassword());
             assertEquals(100, userDto.getFidelityPoints());
         }
+
+        @DisplayName("Checking the correct functioning of get method Then throw an exception")
+        @Order(2)
+        @Test
+        void getUserNotFoundExceptions() throws NotFoundUserException {
+            when(userService.getUserById(2L)).thenThrow(new NotFoundUserException("Can't found user with this id"));
+            assertThatThrownBy(()->userController.getUser(2L))
+                    .isInstanceOf(NotFoundUserException.class);
+        }
     }
 
     @Nested
@@ -70,7 +80,7 @@ class UserControllerTest {
         @Test
         @Order(1)
         @DisplayName("Given a valid user")
-        void putMappingTest() throws ParseException {
+        void putMappingTest() throws Exception {
 
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             userDtoChecked.setEmail("paquito@gmail.com");
@@ -84,8 +94,8 @@ class UserControllerTest {
             UserDto userResponse = responseEntity.getBody();
 
             assertThat(userResponse).isEqualTo(userDtoChecked);
-            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(responseEntity.getHeaders()).hasSize(0);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(responseEntity.getHeaders()).isEmpty();
             verify(validations, times(1)).checkAllMethods(userDtoChecked);
             verify(addressService, times(1)).updateAddress(addressDto.getId(),addressDto);
             verify(userService, times(1)).updateUser(userDtoChecked.getId(), userDtoChecked);
@@ -94,75 +104,82 @@ class UserControllerTest {
         @Test
         @Order(2)
         @DisplayName("Given an existing user with incorrect values Then return the BAD_REQUEST ")
-        void updateUserErrorPasswordTest() {
+        void updateUserErrorPasswordTest() throws UserValidationException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
             userDtoChecked.setPassword("wArong@.com");
             when(validations.checkAllMethods(USER_ID_2))
-                    .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must" +
+                    .thenThrow(new UserValidationException( "The password must" +
                             " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character."));
             UserDto userDto = userDtoChecked;
 
-            try {
-                //When
-                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
-            } catch (Exception exception) {
-                //Then
-                assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(responseStatusException.getReason()).isEqualTo("The password must" +
-                        " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character.");
-            }
+            assertThatThrownBy(()->userController.updateUser(2L,userDto))
+                    .isInstanceOf(UserValidationException.class)
+                            .hasMessage("The password must" +
+                                    " contain, at least, 8 alphanumeric characters, " +
+                                    "uppercase, lowercase an special character.");
+
         }
         @Test
-        @Order(2)
+        @Order(3)
         @DisplayName("Given an non associated address Then return the NOT_FOUND exception ")
-        void updateUserErrorNotFoundAddress() throws ParseException {
+        void updateUserErrorNotFoundAddress() throws UserValidationException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
-            when(validations.checkAllMethods(USER_ID_2))
-                    .thenReturn(true);
-            when(addressService.updateAddress(userDtoChecked.getAddress().getId(),userDtoChecked.getAddress())).thenThrow(new RuntimeException());
-            UserDto userDto = userDtoChecked;
+            when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
+            when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress()))
+                    .thenThrow(new NotFoundAddressException( "Address not found"));
 
-            try {
-                //When
-                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
-            } catch (Exception exception) {
-                //Then
-                assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                assertThat(responseStatusException.getReason()).isEqualTo("Address not found");
-            }
-
+            //When
+            assertThatThrownBy(()->userController.updateUser(2L,userDtoChecked))
+                    .isInstanceOf(NotFoundAddressException.class)
+                    .hasMessage("Address not found");
         }
 
         @Test
-        @Order(2)
-        @DisplayName("Given an non associated user Then return the NOT_FOUND exception ")
-        void updateUserErrorNotFoundUser() throws ParseException {
+        @Order(4)
+        @DisplayName("Given a non-associated user, then return the NOT_FOUND exception")
+        void updateUserErrorNotFoundUser()
+                throws UserValidationException, NotFoundUserException {
             UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
-            when(validations.checkAllMethods(USER_ID_2))
-                    .thenReturn(true);
-            when(addressService.updateAddress(userDtoChecked.getAddress().getId(),userDtoChecked.getAddress())).thenReturn(userDtoChecked.getAddress());
-            when(userService.updateUser(userDtoChecked.getId(),userDtoChecked)).thenThrow(new RuntimeException());
-            UserDto userDto = userDtoChecked;
+            when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
+            when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress()))
+                    .thenReturn(userDtoChecked.getAddress());
+            when(userService.updateUser(userDtoChecked.getId(), userDtoChecked))
+                    .thenThrow(new NotFoundUserException( "User not found"));
 
-            try {
-                //When
-                ResponseEntity<UserDto> responseStatusException = userController.updateUser(2L,userDto);
-            } catch (Exception exception) {
-                //Then
-                assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                assertThat(responseStatusException.getReason()).isEqualTo("User not found");
-            }
+            assertThatThrownBy(()->userController.updateUser(2L,userDtoChecked))
+                    .isInstanceOf(NotFoundUserException.class)
+                    .hasMessage("User not found");
 
         }
-
-
-
     }
 
-}
+    @Nested
+    @DisplayName("When try to increment fidelity")
+    class FidelityPoints {
+        @Test
+        @DisplayName("Given a good id user and fidelity points to increment " +
+                "then return a response entity with the user modify")
+        void incrementFidelityPointsTest() throws NotFoundUserException {
+            when(userService.updateFidelityPoints(anyLong(), anyInt()))
+                    .thenReturn(USER_ID_2);
+            ResponseEntity<UserDto> responseEntity = userController.incrementFidelityPoints(1L, 1);
+
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(responseEntity.getBody()).isEqualTo(USER_ID_2);
+        }
+
+        @Test
+        @DisplayName("Given a non existed id user and fidelity points to increment " +
+                "then throw a NotFoundUserException")
+        void incrementFidelityPointsTestError() throws NotFoundUserException {
+            when(userService.updateFidelityPoints(anyLong(), anyInt()))
+                    .thenThrow(new NotFoundUserException("The user with this id not exists"));
+
+            assertThatThrownBy(() -> userController.incrementFidelityPoints(1L, 1))
+                    .isInstanceOf(NotFoundUserException.class)
+                    .hasMessage("The user with this id not exists");
+
+        }
+    }
+
+ }

@@ -7,8 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.Serializable;
 
-@Builder
 @Data
+@Builder
 public class Login implements Serializable {
     @NonNull
     private String email;

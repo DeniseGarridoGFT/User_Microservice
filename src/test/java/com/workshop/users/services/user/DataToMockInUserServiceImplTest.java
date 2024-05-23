@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class DataToMockInUserServiceImplTest {
     public final static AddressEntity ADDRESS_VALLECAS;
-
+    public final static UserEntity USER_1_UPDATED;
 
     public final static CountryEntity COUNTRY_SPAIN;
     public final static UserEntity USER_1;
@@ -41,6 +41,18 @@ public class DataToMockInUserServiceImplTest {
         USER_1.setFidelityPoints(50);
         USER_1.setCountry(COUNTRY_SPAIN);
         USER_1.setAddress(ADDRESS_VALLECAS);
+
+        USER_1_UPDATED = new UserEntity();
+        USER_1_UPDATED.setId(2L);
+        USER_1_UPDATED.setEmail("manuel@example.com");
+        USER_1_UPDATED.setName("Manuel");
+        USER_1_UPDATED.setPassword("2B8sda2?_");
+        USER_1_UPDATED.setLastName("Salamanca");
+        USER_1_UPDATED.setPhone("839234012");
+        USER_1_UPDATED.setBirthDate(new Date("2000/14/01"));
+        USER_1_UPDATED.setFidelityPoints(120);
+        USER_1_UPDATED.setCountry(COUNTRY_SPAIN);
+        USER_1_UPDATED.setAddress(ADDRESS_VALLECAS);
 
 
     }

@@ -2,7 +2,11 @@ package com.workshop.users.api.controller;
 
 import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.dto.*;
+import com.workshop.users.exceptions.AuthenticateException;
+import com.workshop.users.exceptions.RegisterException;
+import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 
 import static org.assertj.core.api.Assertions.*;
@@ -22,10 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class InitializerControllerTests {
-
-
     private UserService userService;
     private AddressService addressService;
+    private CountryService countryService;
     private InitializerController initializerController;
     private Validations validations;
 
@@ -34,8 +37,8 @@ public class InitializerControllerTests {
         userService = mock(UserService.class);
         addressService = mock(AddressService.class);
         validations = mock(Validations.class);
-        initializerController = new InitializerController(userService, addressService, validations);
-
+        countryService = mock(CountryService.class);
+        initializerController = new InitializerController(userService, addressService, validations, countryService);
     }
 
     @Nested
@@ -43,7 +46,7 @@ public class InitializerControllerTests {
     class RegisterTest {
         @Test
         @DisplayName("Given correct credentials the user is created and registered")
-        void testRegisterUser() throws ParseException {
+        void testRegisterUser() throws ParseException, UserValidationException {
 
             // Given
             UserDto userRegistered = DataInitzializerController.USER_REGISTERED;
@@ -67,70 +70,67 @@ public class InitializerControllerTests {
 
         @Test
         @DisplayName("Given incorrect credentials the user can't be registered")
-        void testRegisterUserIncorrect() {
-
+        void testRegisterUserIncorrect() throws UserValidationException {
             // Given
             UserDto userNotRegistered = DataInitzializerController.USER_WITHOUT_ID;
             when(validations.checkAllMethods(userNotRegistered))
-                    .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must" +
-                            " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character."));
-            try {
-                // When
-                ResponseEntity<UserDto> responseStatusException = initializerController.addUser(userNotRegistered);
-            } catch (ResponseStatusException exception) {
-                // Then
-                assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(responseStatusException.getReason()).isEqualTo("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character.");
-            }
+                    .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase and special character."));
+
+            // When
+            assertThatThrownBy(() -> initializerController.addUser(userNotRegistered))
+                    .isInstanceOf(ResponseStatusException.class)
+                    .hasMessageContaining("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase and special character.")
+                    .extracting(throwable -> (ResponseStatusException) throwable)
+                    .satisfies(exception -> {
+                        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    });
+
             verify(validations, times(1)).checkAllMethods(userNotRegistered);
         }
 
+
         @Test
         @DisplayName("The address can't be added to the user, so it gives server error")
-        void testAddressUserIncorrect() throws ParseException {
+        void testAddressUserIncorrect() throws RegisterException, ParseException, UserValidationException {
             // Given
             UserDto userWithAddress = DataInitzializerController.USER_WITHOUT_ID;
             AddressDto addressDto = userWithAddress.getAddress();
             when(validations.checkAllMethods(userWithAddress)).thenReturn(true);
-            when(addressService.addAddress(addressDto)).thenThrow(new RuntimeException());
+            when(addressService.addAddress(addressDto)).thenThrow(new RegisterException("There's an error adding your address"));
             when(userService.addUser(userWithAddress)).thenReturn(userWithAddress);
+
             // When
-            try {
+            assertThatThrownBy(() -> {
                 initializerController.addUser(userWithAddress);
-            } catch (ResponseStatusException exception) {
-                // Then
-                assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-                assertThat(exception.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR \"Internal Server Error\"");
-                verify(addressService, times(1)).addAddress(addressDto);
-            }
-            verify(addressService,times(1)).addAddress(addressDto);
-            verify(userService,times(0)).addUser(userWithAddress);
+            }).isInstanceOf(RegisterException.class)
+                    .isInstanceOf(RegisterException.class);
+
+            verify(addressService, times(1)).addAddress(addressDto);
+            verify(addressService, times(1)).addAddress(addressDto);
+            verify(userService, times(0)).addUser(userWithAddress);
         }
 
         @Test
         @DisplayName("There's an error creating the user")
-        void testAddUserIncorrect() throws ParseException {
+        void testAddUserIncorrect() throws RegisterException, ParseException, UserValidationException {
             // Given
             UserDto createdUser = DataInitzializerController.USER_WITHOUT_ID;
             when(validations.checkAllMethods(createdUser)).thenReturn(true);
-            when(addressService.addAddress(any())).thenThrow(new RuntimeException());
-            when(userService.addUser(createdUser)).thenThrow(new RuntimeException());
+            when(addressService.addAddress(any())).thenThrow(new RegisterException("There's an error registering the address"));
+            when(userService.addUser(createdUser)).thenThrow(new RegisterException("User can't be registered"));
+
             // When
-            try {
+            assertThatThrownBy(() -> {
                 initializerController.addUser(createdUser);
-            } catch (ResponseStatusException exception) {
-                // Then
-                assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-                assertThat(exception.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR \"Internal Server Error\"");
-            }
-            verify(userService,times(0)).addUser(createdUser);
+            }).isInstanceOf(RegisterException.class)
+                    .isInstanceOf(RegisterException.class);
+
+            verify(userService, times(0)).addUser(createdUser);
         }
 
         @Nested
         @DisplayName("When try to login user")
-        class LogginTest {
+        class LoginTest {
             @Test
             @DisplayName("Given existing email and correct password Then return the correct user")
             void loginUser() {
@@ -156,16 +156,10 @@ public class InitializerControllerTests {
                 //Given
                 when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
                 Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
-                try {
-                    //When
-                    ResponseEntity<UserDto> responseStatusException = initializerController.loginUser(userToLogin);
-                } catch (Exception exception) {
-                    //Then
-                    assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                    assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-                    assertThat(responseStatusException.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password is incorrect\"");
-                }
+
+                assertThatThrownBy(() -> {
+                    initializerController.loginUser(userToLogin);
+                }).isInstanceOf(AuthenticateException.class);
 
                 verify(userService, times(1)).getUserByEmail(anyString());
             }
@@ -174,19 +168,14 @@ public class InitializerControllerTests {
             @DisplayName("Given non-existing email and correct password Then return the email error")
             void loginUserErrorEmail() {
                 //Given
-                when(userService.getUserByEmail("denipse@gmail.com")).thenThrow(new RuntimeException());
+                when(userService.getUserByEmail("denipse@gmail.com"))
+                        .thenThrow(new AuthenticateException("Can't authenticate"));
+
                 Login userToLogin = Login.builder().email("denipse@gmail.com").password("3214").build();
 
-                try {
-                    //When
-                    ResponseEntity<UserDto> responseStatusException = initializerController.loginUser(userToLogin);
-                } catch (Exception exception) {
-                    //Then
-                    assertThat(exception).isInstanceOf(ResponseStatusException.class);
-                    ResponseStatusException responseStatusException = (ResponseStatusException) exception;
-                    assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-                    assertThat(responseStatusException.getMessage()).isEqualTo("401 UNAUTHORIZED \"Email or password is incorrect\"");
-                }
+                assertThatThrownBy(() -> {
+                    initializerController.loginUser(userToLogin);
+                }).isInstanceOf(AuthenticateException.class);
 
                 verify(userService, times(1)).getUserByEmail(anyString());
             }

@@ -1,10 +1,12 @@
 package com.workshop.users.services.product;
 
 import com.workshop.users.api.dto.Product;
-import reactor.core.publisher.Mono;
+import com.workshop.users.exceptions.NotFoundProductException;
+
+import java.util.List;
 
 public interface ProductService {
 
-    Product findProductById(Long id);
+    List<Product> findProductsByIds(List<Long> ids) throws NotFoundProductException;
 
 }

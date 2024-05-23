@@ -1,30 +1,33 @@
 package com.workshop.users.services.product;
 
 import com.workshop.users.api.dto.Product;
+import com.workshop.users.exceptions.NotFoundProductException;
 import com.workshop.users.repositories.ProductRepository;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
 
 class ProductServiceImplTest {
 
     private ProductRepository productRepository;
     private ProductService productService;
-    private Product product;
+    private List<Product> product;
+
+    private List<Long> ids;
 
     @BeforeEach
     void setUp() {
         productRepository = Mockito.mock(ProductRepository.class);
         productService = new ProductServiceImpl(productRepository);
-        product = Product.builder()
+        product = List.of(Product.builder()
                 .id(2L)
                 .name("ToyStory toy")
                 .categoryId(3)
@@ -33,7 +36,19 @@ class ProductServiceImplTest {
                 .price(10D)
                 .minStock(100)
                 .weight(0.5D)
-                .build();
+                .build(),
+                Product.builder()
+                        .id(1L)
+                        .name("ToyStory toy")
+                        .categoryId(3)
+                        .currentStock(200)
+                        .description("The best toy for your children")
+                        .price(10D)
+                        .minStock(100)
+                        .weight(0.5D)
+                        .build());
+
+        ids = List.of(1L,2L);
     }
 
 
@@ -42,46 +57,26 @@ class ProductServiceImplTest {
     class FindProductById{
 
         @Test
-        @DisplayName("Given a valid Id Then return the associated Product")
-        void findProductByIdGood() {
-            //Given
-            Mockito.when(productRepository.findProductById(2L)).thenReturn(Mono.just(product));
-            //When
-            Product productObtainedCallingMethod = productService.findProductById(2L);
-            //Then
-            assertThat(productObtainedCallingMethod).isEqualTo(product);
+        @DisplayName("Given a valid Ids " +
+                "Then return the associated Products")
+        void findProductByIdGood() throws NotFoundProductException {
+            when(productRepository.findProductsByIds(ids))
+                    .thenReturn(product);
+
+            assertThat(productService.findProductsByIds(ids))
+                    .isEqualTo(product);
+
         }
         @Test
-        @DisplayName("Given a invalid Id Then return the associated Product")
+        @DisplayName("Given a invalid Ids " +
+                "Then throw not found product exception")
         void findProductByIdInvalid() {
-            //Given
-            Mockito.when(productRepository.findProductById(2L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,"The product not exists"));
-            //When
-            try {
-                productService.findProductById(2L);
-            }catch (Exception exc){
-                //Then
-                assertThat(exc).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exc;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                assertThat(responseStatusException.getMessage()).isEqualTo("404 NOT_FOUND \"The product not exists\"");
-            }
-        }
-        @Test
-        @DisplayName("Given a null Then throw exception")
-        void findProductByIdNull() {
-            //Given
-            Mockito.when(productRepository.findProductById(2L)).thenReturn(Mono.empty());
-            //When
-            try {
-                productService.findProductById(2L);
-            }catch (Exception exc){
-                //Then
-                assertThat(exc).isInstanceOf(ResponseStatusException.class);
-                ResponseStatusException responseStatusException = (ResponseStatusException) exc;
-                assertThat(responseStatusException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                assertThat(responseStatusException.getMessage()).isEqualTo("404 NOT_FOUND \"The product not exists\"");
-            }
+            when(productRepository.findProductsByIds(ids))
+                    .thenThrow(new NotFoundProductException("Not found product"));
+
+            assertThatThrownBy(() -> {
+                productService.findProductsByIds(ids);
+            }).isInstanceOf(NotFoundProductException.class);
         }
     }
 
