@@ -10,15 +10,13 @@ import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+
+@RestController
+@RequestMapping("/api2")
 public class WishProductController {
 
     private final WishProductService wishProductService;

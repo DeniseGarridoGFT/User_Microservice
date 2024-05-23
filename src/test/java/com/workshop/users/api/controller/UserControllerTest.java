@@ -7,6 +7,7 @@ import com.workshop.users.exceptions.NotFoundAddressException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 
 import org.junit.jupiter.api.*;
@@ -25,21 +26,22 @@ class UserControllerTest {
     private UserService userService;
     private UserController userController;
     private AddressService addressService;
-
     private Validations validations;
+    private CountryService countryService;
 
     @BeforeEach
     void setUp() {
         validations = mock(Validations.class);
         userService  = Mockito.mock(UserService.class);
         addressService = Mockito.mock(AddressService.class);
-        userController = new UserController(userService, addressService, validations);
+        countryService = Mockito.mock(CountryService.class);
+        userController = new UserController(userService, addressService, validations, countryService);
     }
 
     @AfterEach
     void tearDown() {
-        UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
-        userDtoChecked.setEmail("denise@gmail.com");
+        DataToUserControllerTesting.USER_ID_2.setEmail("denise@gmail.com");
+
     }
 
     @Nested
@@ -49,8 +51,9 @@ class UserControllerTest {
         @Order(1)
         @Test
         void getUser() throws NotFoundUserException {
-            UserDto userDtoChecked = DataToUserControllerTesting.USER_ID_2;
-            when(userService.getUserById(2L)).thenReturn(userDtoChecked);
+
+            when(userService.getUserById(2L))
+                    .thenReturn( DataToUserControllerTesting.USER_ID_2);
             ResponseEntity<UserDto> responseEntity = userController.getUser(2L);
             UserDto userDto = responseEntity.getBody();
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -86,8 +89,12 @@ class UserControllerTest {
             userDtoChecked.setEmail("paquito@gmail.com");
             AddressDto addressDto = ADDRESS_CALLE_VARAJAS;
 
-            when(validations.checkAllMethods(userDtoChecked)).thenReturn(true);
-            when(addressService.updateAddress(3L, userDtoChecked.getAddress())).thenReturn(ADDRESS_CALLE_VARAJAS);
+            when(validations.checkAllMethods(userDtoChecked))
+                    .thenReturn(true);
+            when(addressService.updateAddress(3L, userDtoChecked.getAddress()))
+                    .thenReturn(ADDRESS_CALLE_VARAJAS);
+            when(countryService.getCountryByName(anyString()))
+                    .thenReturn(DataToUserControllerTesting.COUNTRY_ESPANYA);
             when(userService.updateUser(2L, userDtoChecked)).thenReturn(userDtoChecked);
 
             ResponseEntity<UserDto> responseEntity = userController.updateUser(2L, userDtoChecked);
@@ -126,7 +133,8 @@ class UserControllerTest {
             when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
             when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress()))
                     .thenThrow(new NotFoundAddressException( "Address not found"));
-
+            when(countryService.getCountryByName(anyString()))
+                    .thenReturn(DataToUserControllerTesting.COUNTRY_ESPANYA);
             //When
             assertThatThrownBy(()->userController.updateUser(2L,userDtoChecked))
                     .isInstanceOf(NotFoundAddressException.class)
@@ -142,6 +150,9 @@ class UserControllerTest {
             when(validations.checkAllMethods(USER_ID_2)).thenReturn(true);
             when(addressService.updateAddress(userDtoChecked.getAddress().getId(), userDtoChecked.getAddress()))
                     .thenReturn(userDtoChecked.getAddress());
+            when(countryService.getCountryByName(anyString()))
+                    .thenReturn(DataToUserControllerTesting.COUNTRY_ESPANYA);
+
             when(userService.updateUser(userDtoChecked.getId(), userDtoChecked))
                     .thenThrow(new NotFoundUserException( "User not found"));
 

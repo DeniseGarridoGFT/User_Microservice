@@ -385,6 +385,7 @@ class TestEnd2EndRegisterTest {
                             .build())
                     .country(CountryDto.builder()
                             .id(2L)
+                            .name("Estonia")
                             .build())
                     .build();
         }
@@ -447,6 +448,7 @@ class TestEnd2EndRegisterTest {
                             .build())
                     .country(CountryDto.builder()
                             .id(2L)
+                            .name("Estonia")
                             .build())
                     .build();
             //When
