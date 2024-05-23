@@ -770,4 +770,46 @@ class TestEnd2EndRegisterTest {
                     });
         }
     }
+
+    @Nested
+    @DisplayName("Get a Country By Id ")
+    class TestEnd2EndGetCountry {
+    @Test
+    @DisplayName("Given an  associated country id when call to get country endpoint Then return the correct country")
+    void getCountryById() {
+        //When
+        webTestClient.get()
+                .uri("/country/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CountryDto.class)
+                .value(countryDto -> {
+                    //Then
+                    assertThat(countryDto.getName()).isEqualTo("España");
+                    assertThat(countryDto)
+                            .hasFieldOrPropertyWithValue("id", 1L)
+                            .hasFieldOrPropertyWithValue("tax", 21.0f)
+                            .hasFieldOrPropertyWithValue("prefix", "+34")
+                            .hasFieldOrPropertyWithValue("timeZone", "Europe/Madrid");
+                });
+    }
+        @Test
+        @DisplayName("Given a non associated country id when call to get country endpoint Then not found exceptions")
+        void getCountryByNonAssociatedId() {
+
+        //When
+        webTestClient.get()
+                .uri("/country/10")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(MyResponseException.class)
+                .value(exception -> {
+                    //Then
+                    assertThat(exception).isEqualTo(MyResponseException.builder()
+                            .code(HttpStatus.NOT_FOUND)
+                            .message("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia")
+                            .build());
+                });
+        }
+    }
 }
