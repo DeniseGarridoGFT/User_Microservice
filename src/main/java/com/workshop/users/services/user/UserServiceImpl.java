@@ -26,9 +26,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserDto user) throws AuthenticateException, RegisterException {
-        if (user.getFidelityPoints() == null) {
-            user.setFidelityPoints(0);
-        }
 
         String encryptedPassword = Login.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);

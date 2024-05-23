@@ -110,7 +110,7 @@ class UpdateUser{
                 .phone("963258741")
                 .email("manuelupdated@example.com")
                 .birthDate("2000/01/14")
-                .fidelityPoints(60)
+                .fidelityPoints(0)
                 .country(DataToUserControllerTesting.COUNTRY_ESPANYA)
                 .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
                 .build();
@@ -124,7 +124,7 @@ class UpdateUser{
         Assertions.assertThat(updatedUser.getEmail()).isEqualTo("manuelupdated@example.com");
         Assertions.assertThat(updatedUser.getBirthDate()).isEqualTo(userDtoUpdated.getBirthDate());
         Assertions.assertThat(updatedUser.getPassword()).isEqualTo("2B8sda2?_");
-        Assertions.assertThat(updatedUser.getFidelityPoints()).isEqualTo(60);
+        Assertions.assertThat(updatedUser.getFidelityPoints()).isEqualTo(0);
         Assertions.assertThat(updatedUser.getPhone()).isEqualTo("963258741");
         Assertions.assertThat(updatedUser.getAddress()).isNotNull();
 
@@ -187,21 +187,6 @@ class UpdateUser{
             }).isInstanceOf(AuthenticateException.class);
         }
 
-        @Test
-        @DisplayName("Given a user with null FidelityPoints, when added, then set FidelityPoints to 0")
-        void addUserWithNullFidelityPointsSetsToZero() throws RegisterException, ParseException {
-            // Given
-            UserDto userWithNullFidelityPoints = DataInitzializerController.USER_REGISTERED;
-            userWithNullFidelityPoints.setFidelityPoints(null);
-
-            //When
-            when(userDAORepository.save(any(UserEntity.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
-
-            //Then
-            UserDto result = userService.addUser(userWithNullFidelityPoints);
-            assertThat(result.getFidelityPoints()).isZero();
-        }
 
         @Test
         @DisplayName("Given an existing Id then throw a RegisterException")
@@ -214,7 +199,6 @@ class UpdateUser{
                     .isInstanceOf(RegisterException.class)
                     .hasMessage("There's an error registering the user");
         }
-
 
     }
 
@@ -242,7 +226,7 @@ class UpdateUser{
         Assertions.assertThat(userSaved.getEmail()).isEqualTo("manuelupdated@example.com");
         Assertions.assertThat(userSaved.getBirthDate()).isEqualTo(userSaved.getBirthDate());
         Assertions.assertThat(Login.BCRYPT.matches(userSaved.getPassword(),userDtoToSave.getPassword())).isTrue();
-        Assertions.assertThat(userSaved.getFidelityPoints()).isEqualTo(60);
+        Assertions.assertThat(userSaved.getFidelityPoints()).isEqualTo(0);
         Assertions.assertThat(userSaved.getPhone()).isEqualTo("963258741");
         Assertions.assertThat(userSaved.getAddress()).isNotNull();
     }

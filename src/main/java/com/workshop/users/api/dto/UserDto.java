@@ -38,7 +38,7 @@ public class UserDto implements Serializable {
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
         entity.setPassword(dto.getPassword());
-        entity.setFidelityPoints(dto.getFidelityPoints());
+        entity.setFidelityPoints(0);
         entity.setBirthDate(new Date(dto.getBirthDate()));
         entity.setPhone(dto.getPhone());
         entity.setAddress(dto.getAddress()!=null?AddressDto.toEntity(dto.getAddress()):null);

@@ -59,7 +59,7 @@ class TestEnd2EndRegisterTest {
                     .lastName("Fei")
                     .email("aria@example.com")
                     .password("Ar1a@31234.")
-                    .fidelityPoints(40)
+                    .fidelityPoints(0)
                     .birthDate("1994/04/14")
                     .phone("123456789")
                     .address(AddressDto.builder()
