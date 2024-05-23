@@ -3,13 +3,9 @@ package com.workshop.users.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workshop.users.api.dto.*;
-import com.workshop.users.exceptions.MyResponseException;
-import com.workshop.users.model.WishProductEntity;
-import com.workshop.users.model.WishProductPK;
-import com.workshop.users.repositories.WishProductDAORepository;
+import com.workshop.users.exceptions.MyResponseError;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.h2.engine.User;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -139,9 +134,9 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(newUser)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
-                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.NOT_FOUND);
                     });
         }
 
@@ -173,9 +168,9 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(newUser)
                     .exchange()
                     .expectStatus().isBadRequest()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
-                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
                     });
         }
 
@@ -212,9 +207,9 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(invalidUser)
                     .exchange()
                     .expectStatus().isBadRequest()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
-                        assertThat(myResponseException.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
                     });
         }
     }
@@ -287,10 +282,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(validLogin)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
+                    .expectBody(MyResponseError.class)
                     .value(exception -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                        assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
                                 .message("The email or the password are incorrect.")
                                 .build());
@@ -312,10 +307,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(validLogin)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
+                    .expectBody(MyResponseError.class)
                     .value(exception -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                        assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
                                 .message("The email or the password are incorrect.")
                                 .build());
@@ -357,10 +352,10 @@ class TestEnd2EndRegisterTest {
                     .uri("/users/5")
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
+                    .expectBody(MyResponseError.class)
                     .value(exception -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                        assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
                                 .message("The user with this id don't exists.")
                                 .build());
@@ -464,10 +459,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(userWithNoExistingId)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
+                    .expectBody(MyResponseError.class)
                     .value(exception -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                        assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
                                 .message("The user with this id don't exists.")
                                 .build());
@@ -496,10 +491,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(userWithBadCredentials)
                     .exchange()
                     .expectStatus().isBadRequest()
-                    .expectBody(MyResponseException.class)
+                    .expectBody(MyResponseError.class)
                     .value(exception -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                        assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.BAD_REQUEST)
                                 .message("The password must contain, at least," +
                                         " 8 alphanumeric characters, uppercase, " +
@@ -541,10 +536,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(userWithBadCredentials)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
+                    .expectBody(MyResponseError.class)
                     .value(exception -> {
                         //Then
-                        assertThat(exception).isEqualTo(MyResponseException.builder()
+                        assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
                                 .message("The address with this id don't exists.")
                                 .build());
@@ -624,10 +619,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(wishListDto)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("The user with this id don't exists.");
+                        assertThat(myResponseError.getMessage()).isEqualTo("The user with this id don't exists.");
                     });
         }
 
@@ -652,10 +647,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(wishListDto)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
+                        assertThat(myResponseError.getMessage()).isEqualTo("One id of product not exists.");
                     });
         }
 
@@ -687,10 +682,10 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(wishListDto)
                     .exchange()
                     .expectStatus().is4xxClientError()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("One id of product not exists.");
+                        assertThat(myResponseError.getMessage()).isEqualTo("One id of product not exists.");
                     });
 
 
@@ -723,10 +718,10 @@ class TestEnd2EndRegisterTest {
                     .uri("/wishlist/54/655")
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseException.getMessage()).isEqualTo("The product with id 655 " +
+                        assertThat(myResponseError.getMessage()).isEqualTo("The product with id 655 " +
                                                                                     "is not in your wishes");
                     });;
 
@@ -762,9 +757,9 @@ class TestEnd2EndRegisterTest {
                     .bodyValue(50)
                     .exchange()
                     .expectStatus().isNotFound()
-                    .expectBody(MyResponseException.class)
-                    .value(myResponseException -> {
-                        assertThat(myResponseException)
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
+                        assertThat(myResponseError)
                                 .hasFieldOrPropertyWithValue("code", HttpStatus.NOT_FOUND)
                                 .hasFieldOrPropertyWithValue("message","The user with this id don't exists.");
                     });
@@ -802,10 +797,10 @@ class TestEnd2EndRegisterTest {
                 .uri("/country/10")
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody(MyResponseException.class)
+                .expectBody(MyResponseError.class)
                 .value(exception -> {
                     //Then
-                    assertThat(exception).isEqualTo(MyResponseException.builder()
+                    assertThat(exception).isEqualTo(MyResponseError.builder()
                             .code(HttpStatus.NOT_FOUND)
                             .message("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia")
                             .build());
