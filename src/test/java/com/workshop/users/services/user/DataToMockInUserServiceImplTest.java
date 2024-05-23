@@ -1,6 +1,7 @@
 package com.workshop.users.services.user;
 
 
+import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.CountryEntity;
 import com.workshop.users.model.UserEntity;
@@ -39,7 +40,7 @@ public class DataToMockInUserServiceImplTest {
         USER_1.setPassword("2B8sda2?_");
         USER_1.setLastName("Salamanca");
         USER_1.setPhone("839234012");
-        USER_1.setBirthDate(new Date("2000/14/01"));
+        USER_1.setBirthDate(UserDto.convertDateToLocalDate("2000/01/14"));
         USER_1.setFidelityPoints(50);
         USER_1.setCountry(COUNTRY_SPAIN);
         USER_1.setAddress(ADDRESS_VALLECAS);
@@ -51,7 +52,7 @@ public class DataToMockInUserServiceImplTest {
         USER_1_UPDATED.setPassword("2B8sda2?_");
         USER_1_UPDATED.setLastName("Salamanca");
         USER_1_UPDATED.setPhone("839234012");
-        USER_1_UPDATED.setBirthDate(new Date("2000/14/01"));
+        USER_1_UPDATED.setBirthDate(UserDto.convertDateToLocalDate("2000/01/14"));
         USER_1_UPDATED.setFidelityPoints(120);
         USER_1_UPDATED.setCountry(COUNTRY_SPAIN);
         USER_1_UPDATED.setAddress(ADDRESS_VALLECAS);

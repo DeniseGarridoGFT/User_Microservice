@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AddressServiceImpl implements AddressService {
 
-    private AddressDAORepository addressDAORepository;
+    private final AddressDAORepository addressDAORepository;
 
     public AddressServiceImpl(AddressDAORepository addressDAORepository){
         this.addressDAORepository = addressDAORepository;

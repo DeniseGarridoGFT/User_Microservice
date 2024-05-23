@@ -8,6 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Data
@@ -39,7 +40,7 @@ public class UserDto implements Serializable {
         entity.setEmail(dto.getEmail());
         entity.setPassword(dto.getPassword());
         entity.setFidelityPoints(dto.getFidelityPoints());
-        entity.setBirthDate(new Date(dto.getBirthDate()));
+        entity.setBirthDate(convertDateToLocalDate(dto.getBirthDate()));
         entity.setPhone(dto.getPhone());
         entity.setAddress(dto.getAddress()!=null?AddressDto.toEntity(dto.getAddress()):null);
         entity.setCountry(CountryDto.toEntity(dto.getCountry()));
@@ -88,6 +89,11 @@ public class UserDto implements Serializable {
             totalPoints = 0;
         }
         return  totalPoints;
+    }
+
+    public static LocalDate convertDateToLocalDate(String stringDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(stringDate, formatter);
     }
 
 }

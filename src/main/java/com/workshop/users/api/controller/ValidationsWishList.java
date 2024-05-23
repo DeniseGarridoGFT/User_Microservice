@@ -9,6 +9,9 @@ import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
 
 public class ValidationsWishList {
+    private ValidationsWishList(){
+
+    }
 
 
     public static void validateExistsProduct(WishListDto wishListDto, ProductService productService)
