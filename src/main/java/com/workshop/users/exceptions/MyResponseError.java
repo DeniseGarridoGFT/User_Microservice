@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class MyResponseException implements Serializable {
+public class MyResponseError implements Serializable {
     private HttpStatus code;
     private String message;
 }

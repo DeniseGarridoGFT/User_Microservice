@@ -3,7 +3,8 @@ package com.workshop.users.api.dto;
 import com.workshop.users.model.CountryEntity;
 import lombok.Builder;
 import lombok.Data;
-import org.antlr.v4.runtime.misc.NotNull;
+
+import java.io.Serializable;
 
 @Data
 @Builder

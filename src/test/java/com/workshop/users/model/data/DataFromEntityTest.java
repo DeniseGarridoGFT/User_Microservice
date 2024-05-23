@@ -64,7 +64,7 @@ public class DataFromEntityTest {
         USER_ENTITY_ID_2.setLastName("Garrido");
         USER_ENTITY_ID_2.setEmail("denise@gmail.com");
         USER_ENTITY_ID_2.setAddress(ADDRESS_ENTITY_CALLE_VARAJAS);
-        USER_ENTITY_ID_2.setBirthDate(new Date("2004/04/14"));
+        USER_ENTITY_ID_2.setBirthDate(UserDto.convertDateToLocalDate("2004/04/14"));
         USER_ENTITY_ID_2.setPassword("passwordAS123");
         USER_ENTITY_ID_2.setPhone("12346789");
         USER_ENTITY_ID_2.setFidelityPoints(100);

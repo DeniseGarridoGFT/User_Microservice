@@ -1,7 +1,6 @@
 package com.workshop.users.repositories;
 
 import com.workshop.users.model.CountryEntity;
-import com.workshop.users.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

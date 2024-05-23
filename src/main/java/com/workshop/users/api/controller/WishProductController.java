@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class WishProductController {
 
-    private WishProductService wishProductService;
-    private UserService userService;
-    private ProductService productService;
+    private final WishProductService wishProductService;
+    private final UserService userService;
+    private final ProductService productService;
 
     public WishProductController(WishProductService wishProductService, UserService userService, ProductService productService) {
         this.wishProductService = wishProductService;

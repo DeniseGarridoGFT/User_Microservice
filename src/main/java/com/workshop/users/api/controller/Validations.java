@@ -6,7 +6,6 @@ import com.workshop.users.model.UserEntity;
 import org.springframework.stereotype.Controller;
 import com.workshop.users.services.user.UserService;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -73,7 +72,7 @@ public class Validations {
 
 
     boolean isExistsEmailAndNotIsFromTheUser(UserDto userToCheck, UserDto userDto) {
-        return userToCheck.getId() == null || userDto.getId()!= userToCheck.getId();
+        return userToCheck.getId() == null || !userDto.getId().equals(userToCheck.getId());
     }
 
     boolean checkAllMethods(UserDto userToCheck) throws UserValidationException {

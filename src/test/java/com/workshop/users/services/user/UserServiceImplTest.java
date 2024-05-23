@@ -49,7 +49,7 @@ class UserServiceImplTest {
         DataToMockInUserServiceImplTest.USER_1.setPassword("2B8sda2?_");
         DataToMockInUserServiceImplTest.USER_1.setLastName("Salamanca");
         DataToMockInUserServiceImplTest.USER_1.setPhone("839234012");
-        DataToMockInUserServiceImplTest.USER_1.setBirthDate(new Date("2000/14/01"));
+        DataToMockInUserServiceImplTest.USER_1.setBirthDate(UserDto.convertDateToLocalDate("2000/01/14"));
         DataToMockInUserServiceImplTest.USER_1.setFidelityPoints(50);
     }
 

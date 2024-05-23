@@ -23,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class InitializerController {
     private final UserService userService;
     private final AddressService addressService;
-    private CountryService countryService;
-    private Validations validations;
+    private final CountryService countryService;
+    private final Validations validations;
 
     public InitializerController(UserService userService, AddressService addressService,Validations validations, CountryService countryService) {
         this.addressService = addressService;
