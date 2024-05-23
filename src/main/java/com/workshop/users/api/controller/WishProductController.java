@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api2")
+@RequestMapping("/wishlist")
 public class WishProductController {
 
     private final WishProductService wishProductService;
@@ -29,7 +29,7 @@ public class WishProductController {
         this.productService = productService;
     }
 
-    @PostMapping("/wishlist")
+    @PostMapping()
     @Transactional(rollbackFor = ConflictWishListException.class)
     public ResponseEntity<WishListDto> postWishList(@Validated @RequestBody WishListDto wishListDto)
             throws NotFoundUserException, NotFoundProductException, ConflictWishListException {
@@ -39,7 +39,7 @@ public class WishProductController {
         return new ResponseEntity<>(wishListDto,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/wishlist/{user_id}/{product_id}")
+    @DeleteMapping("/{user_id}/{product_id}")
     public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,
                                                       @PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {
