@@ -10,25 +10,19 @@ import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 
 import static org.assertj.core.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.text.ParseException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class InitializerControllerTests {
     private UserService userService;
     private AddressService addressService;
-    private CountryService countryService;
+    CountryService countryService;
     private InitializerController initializerController;
     private Validations validations;
 
@@ -46,7 +40,7 @@ public class InitializerControllerTests {
     class RegisterTest {
         @Test
         @DisplayName("Given correct credentials the user is created and registered")
-        void testRegisterUser() throws ParseException, UserValidationException {
+        void testRegisterUser() throws UserValidationException {
 
             // Given
             UserDto userRegistered = DataInitzializerController.USER_REGISTERED;
@@ -81,9 +75,8 @@ public class InitializerControllerTests {
                     .isInstanceOf(ResponseStatusException.class)
                     .hasMessageContaining("The password must contain, at least, 8 alphanumeric characters, uppercase, lowercase and special character.")
                     .extracting(throwable -> (ResponseStatusException) throwable)
-                    .satisfies(exception -> {
-                        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                    });
+                    .satisfies(exception ->
+                        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST));
 
             verify(validations, times(1)).checkAllMethods(userNotRegistered);
         }
@@ -91,7 +84,7 @@ public class InitializerControllerTests {
 
         @Test
         @DisplayName("The address can't be added to the user, so it gives server error")
-        void testAddressUserIncorrect() throws RegisterException, ParseException, UserValidationException {
+        void testAddressUserIncorrect() throws RegisterException, UserValidationException {
             // Given
             UserDto userWithAddress = DataInitzializerController.USER_WITHOUT_ID;
             AddressDto addressDto = userWithAddress.getAddress();
@@ -100,9 +93,9 @@ public class InitializerControllerTests {
             when(userService.addUser(userWithAddress)).thenReturn(userWithAddress);
 
             // When
-            assertThatThrownBy(() -> {
-                initializerController.addUser(userWithAddress);
-            }).isInstanceOf(RegisterException.class)
+            assertThatThrownBy(() ->
+                initializerController.addUser(userWithAddress))
+            .isInstanceOf(RegisterException.class)
                     .isInstanceOf(RegisterException.class);
 
             verify(addressService, times(1)).addAddress(addressDto);
@@ -112,7 +105,7 @@ public class InitializerControllerTests {
 
         @Test
         @DisplayName("There's an error creating the user")
-        void testAddUserIncorrect() throws RegisterException, ParseException, UserValidationException {
+        void testAddUserIncorrect() throws RegisterException, UserValidationException {
             // Given
             UserDto createdUser = DataInitzializerController.USER_WITHOUT_ID;
             when(validations.checkAllMethods(createdUser)).thenReturn(true);
@@ -120,9 +113,9 @@ public class InitializerControllerTests {
             when(userService.addUser(createdUser)).thenThrow(new RegisterException("User can't be registered"));
 
             // When
-            assertThatThrownBy(() -> {
-                initializerController.addUser(createdUser);
-            }).isInstanceOf(RegisterException.class)
+            assertThatThrownBy(() ->
+                initializerController.addUser(createdUser))
+            .isInstanceOf(RegisterException.class)
                     .isInstanceOf(RegisterException.class);
 
             verify(userService, times(0)).addUser(createdUser);
@@ -157,9 +150,9 @@ public class InitializerControllerTests {
                 when(userService.getUserByEmail("denise@gmail.com")).thenReturn(DataInitzializerController.USER_LOGGED);
                 Login userToLogin = Login.builder().email("denise@gmail.com").password("3214").build();
 
-                assertThatThrownBy(() -> {
-                    initializerController.loginUser(userToLogin);
-                }).isInstanceOf(AuthenticateException.class);
+                assertThatThrownBy(() ->
+                    initializerController.loginUser(userToLogin))
+                .isInstanceOf(AuthenticateException.class);
 
                 verify(userService, times(1)).getUserByEmail(anyString());
             }
@@ -173,9 +166,9 @@ public class InitializerControllerTests {
 
                 Login userToLogin = Login.builder().email("denipse@gmail.com").password("3214").build();
 
-                assertThatThrownBy(() -> {
-                    initializerController.loginUser(userToLogin);
-                }).isInstanceOf(AuthenticateException.class);
+                assertThatThrownBy(() ->
+                    initializerController.loginUser(userToLogin))
+                .isInstanceOf(AuthenticateException.class);
 
                 verify(userService, times(1)).getUserByEmail(anyString());
             }

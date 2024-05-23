@@ -23,7 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class TestEnd2EndRegisterTest {
     @Autowired
-    private WebTestClient webTestClient;
+    WebTestClient webTestClient;
     private static ObjectMapper objectMapper;
     private static MockWebServer mockWebServer;
 
@@ -39,7 +39,7 @@ class TestEnd2EndRegisterTest {
         mockWebServer.close();
     }
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Nested
     @DisplayName("Register")
@@ -135,9 +135,8 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isNotFound()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
-                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.NOT_FOUND);
-                    });
+                    .value(myResponseError ->
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.NOT_FOUND));
         }
 
 
@@ -169,9 +168,8 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isBadRequest()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
-                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                    });
+                    .value(myResponseError ->
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST));
         }
 
         @Test
@@ -208,9 +206,8 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isBadRequest()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
-                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                    });
+                    .value(myResponseError ->
+                        assertThat(myResponseError.getCode()).isEqualTo(HttpStatus.BAD_REQUEST));
         }
     }
 
@@ -368,7 +365,7 @@ class TestEnd2EndRegisterTest {
     @Nested
     @DisplayName("Put user by Id")
     class TestEnd2EndPutUserTest {
-        private  UserDto newUser;
+        private final UserDto newUser;
         public TestEnd2EndPutUserTest(){
             newUser = UserDto.builder()
                     .id(2L)
@@ -698,7 +695,7 @@ class TestEnd2EndRegisterTest {
 
         @Test
         @DisplayName("Given an user id an product When delete wish product Then delete wish product")
-        void deleteWishList() throws JsonProcessingException {
+        void deleteWishList()  {
             //When
             webTestClient.delete()
                     .uri("/wishlist/1/8")
@@ -711,7 +708,7 @@ class TestEnd2EndRegisterTest {
         @Test
         @DisplayName("Given a user id and product id which are no associated" +
                 " When delete wish product Then throw not found exception")
-        void postWishListNotFoundUserException() throws JsonProcessingException {
+        void postWishListNotFoundUserException()  {
 
             //When
             webTestClient.delete()
@@ -723,7 +720,7 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(myResponseError.getMessage()).isEqualTo("The product with id 655 " +
                                                                                     "is not in your wishes");
-                    });;
+                    });
 
         }
     }
@@ -741,12 +738,11 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isCreated()
                     .expectBody(UserDto.class)
-                    .value(user -> {
+                    .value(user ->
                         assertThat(user)
                                 .hasFieldOrPropertyWithValue("name","Juan")
                                 .hasFieldOrPropertyWithValue("email","juangarcia@example.com")
-                                .hasFieldOrPropertyWithValue("fidelityPoints",150);
-                    });
+                                .hasFieldOrPropertyWithValue("fidelityPoints",150));
         }
 
         @Test
@@ -758,13 +754,13 @@ class TestEnd2EndRegisterTest {
                     .exchange()
                     .expectStatus().isNotFound()
                     .expectBody(MyResponseError.class)
-                    .value(myResponseError -> {
+                    .value(myResponseError ->
                         assertThat(myResponseError)
                                 .hasFieldOrPropertyWithValue("code", HttpStatus.NOT_FOUND)
-                                .hasFieldOrPropertyWithValue("message","The user with this id don't exists.");
-                    });
+                                .hasFieldOrPropertyWithValue("message","The user with this id don't exists."));
+                    }
         }
-    }
+
 
     @Nested
     @DisplayName("Get a Country By Id ")

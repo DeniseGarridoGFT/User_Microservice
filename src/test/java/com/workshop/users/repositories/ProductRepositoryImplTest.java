@@ -6,33 +6,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 class ProductRepositoryImplTest {
 
 
     private Product[] products;
-    private RestClient.Builder restClientBuilder;
+    RestClient.Builder restClientBuilder;
     private RestClient restClient;
     private List<Long> ids;
     private ProductRepository productRepository;
@@ -115,9 +103,9 @@ class ProductRepositoryImplTest {
                     Mockito.any()
             )).thenThrow(new NotFoundProductException("Can't found one id of one product"));
             //When and Then
-            assertThatThrownBy(() -> {
-                productRepository.findProductsByIds(ids);
-            }).isInstanceOf(NotFoundProductException.class)
+            assertThatThrownBy(() ->
+                productRepository.findProductsByIds(ids))
+            .isInstanceOf(NotFoundProductException.class)
                     .hasFieldOrPropertyWithValue("message", "Can't found one id of one product");
         }
     }

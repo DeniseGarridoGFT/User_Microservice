@@ -5,8 +5,6 @@ import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.model.UserEntity;
-import com.workshop.users.services.address.AddressService;
-import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;

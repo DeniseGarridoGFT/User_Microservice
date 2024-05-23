@@ -4,13 +4,10 @@ import com.workshop.users.api.dto.CountryDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @SpringBootTest
 public class CountryTest {
 
-    private CountryDto country;
+    CountryDto country;
     @BeforeEach
     void setUp() {
         country = CountryDto.builder()

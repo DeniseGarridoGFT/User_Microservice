@@ -6,9 +6,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+import java.io.Serializable;
+
 @Data
 @Builder
-public class CountryDto {
+public class CountryDto implements Serializable {
     private Long id;
     private String name;
     private Float tax;
