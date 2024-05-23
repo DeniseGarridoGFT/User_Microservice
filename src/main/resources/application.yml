@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: users
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:users
+    username: sa
+  jpa:
+    defer-datasource-initialization: true
