@@ -218,6 +218,7 @@ class UpdateUser{
                 .build();
         UserDto userDtoAux = userDtoToSave;
         userDtoAux.setId(1L);
+        userDtoAux.setFidelityPoints(0);
         when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoAux));
         UserDto userSaved = userService.addUser(userDtoToSave);
 

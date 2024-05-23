@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
 
         String encryptedPassword = Login.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);
+        user.setFidelityPoints(0);
 
         if (user.getId() != null && userDAORepository.findById(user.getId()).isPresent()) {
             throw new RegisterException("There's an error registering the user");

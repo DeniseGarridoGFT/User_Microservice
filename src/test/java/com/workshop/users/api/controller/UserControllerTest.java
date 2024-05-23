@@ -110,9 +110,8 @@ class UserControllerTest {
             when(validations.checkAllMethods(USER_ID_2))
                     .thenThrow(new UserValidationException( "The password must" +
                             " contain, at least, 8 alphanumeric characters, uppercase, lowercase an special character."));
-            UserDto userDto = userDtoChecked;
 
-            assertThatThrownBy(()->userController.updateUser(2L,userDto))
+            assertThatThrownBy(()->userController.updateUser(2L,userDtoChecked))
                     .isInstanceOf(UserValidationException.class)
                             .hasMessage("The password must" +
                                     " contain, at least, 8 alphanumeric characters, " +

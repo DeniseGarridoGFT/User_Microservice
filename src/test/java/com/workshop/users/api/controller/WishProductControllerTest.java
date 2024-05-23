@@ -22,9 +22,9 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 public class WishProductControllerTest {
-    private ProductService productService;
+    ProductService productService;
     private WishProductService wishProductService;
-    private UserService userService;
+    UserService userService;
     private WishProductController wishProductController;
     private WishListDto wishListDto;
     private  MockedStatic<ValidationsWishList> validationsWishListMock;
@@ -75,9 +75,9 @@ public class WishProductControllerTest {
                     .thenCallRealMethod();
             validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
                     .thenCallRealMethod();
-            assertThatThrownBy(()->{
-                wishProductController.postWishList(wishListDto);
-            }).isInstanceOf(NotFoundUserException.class);
+            assertThatThrownBy(()->
+                wishProductController.postWishList(wishListDto))
+                    .isInstanceOf(NotFoundUserException.class);
         }
 
         @Test
@@ -89,9 +89,9 @@ public class WishProductControllerTest {
                     .thenThrow(new NotFoundProductException("Not found product"));
             validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
                     .thenCallRealMethod();
-            assertThatThrownBy(()->{
-                wishProductController.postWishList(wishListDto);
-            }).isInstanceOf(NotFoundProductException.class);
+            assertThatThrownBy(()->
+                wishProductController.postWishList(wishListDto))
+            .isInstanceOf(NotFoundProductException.class);
         }
 
         @Test
@@ -103,9 +103,9 @@ public class WishProductControllerTest {
                     .thenCallRealMethod();
             validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
                     .thenThrow(new ConflictWishListException("The wish has saved yet"));
-           assertThatThrownBy(()->{
-               wishProductController.postWishList(wishListDto);
-           }).isInstanceOf(ConflictWishListException.class);
+           assertThatThrownBy(()->
+               wishProductController.postWishList(wishListDto))
+           .isInstanceOf(ConflictWishListException.class);
         }
     }
 

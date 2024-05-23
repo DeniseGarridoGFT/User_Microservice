@@ -3,6 +3,9 @@ package com.workshop.users.api.controller.Data;
 import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.UserDto;
+import lombok.Generated;
+
+@Generated
 
 public class DataToUserControllerTesting {
     public final static AddressDto ADDRESS_CALLE_VARAJAS = AddressDto.builder()

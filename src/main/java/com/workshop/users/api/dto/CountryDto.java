@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.io.Serializable;
+
 @Data
 @Builder
-public class CountryDto {
+public class CountryDto implements Serializable {
     private Long id;
     private String name;
     private Float tax;
