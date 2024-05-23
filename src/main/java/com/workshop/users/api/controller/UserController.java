@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
-    private UserService userService = null;
-    private Validations validations;
+    private final UserService userService;
+    private final Validations validations;
     private AddressService addressService;
 
 

@@ -77,7 +77,6 @@ public class UserServiceImpl implements UserService {
         userEntity.setEmail(userDto.getEmail());
         userEntity.setBirthDate(new Date(userDto.getBirthDate()));
         userEntity.setPassword(Login.BCRYPT.encode(userDto.getPassword()));
-        userEntity.setFidelityPoints(userDto.getFidelityPoints());
         userEntity.setPhone(userDto.getPhone());
         userEntity.setAddress(AddressDto.toEntity(userDto.getAddress()));
         userEntity.setCountry(CountryDto.toEntity(userDto.getCountry()));

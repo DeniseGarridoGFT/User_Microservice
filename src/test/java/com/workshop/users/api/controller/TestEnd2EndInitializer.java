@@ -381,7 +381,6 @@ class TestEnd2EndRegisterTest {
                     .lastName("Fei")
                     .email("ramoncita@example.com")
                     .password("Ar1a@31234.")
-                    .fidelityPoints(40)
                     .birthDate("1994/04/14")
                     .phone("123456789")
                     .address(AddressDto.builder()
@@ -419,7 +418,6 @@ class TestEnd2EndRegisterTest {
                         assertThat(userDto.getLastName()).isEqualTo(newUser.getLastName());
                         assertThat(userDto.getEmail()).isEqualTo(newUser.getEmail());
                         assertThat(userDto.getBirthDate()).isEqualTo(newUser.getBirthDate());
-                        assertThat(userDto.getFidelityPoints()).isEqualTo(newUser.getFidelityPoints());
                         assertThat(userDto.getPhone()).isEqualTo(newUser.getPhone());
 
                         assertThat(userDto.getAddress().getCityName()).isEqualTo(newUser.getAddress().getCityName());

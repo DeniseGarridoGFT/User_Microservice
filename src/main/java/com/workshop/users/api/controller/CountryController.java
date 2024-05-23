@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CountryController {
-    private CountryService countryService;
+    private final CountryService countryService;
 
     public CountryController(CountryService countryService) {
         this.countryService = countryService;
