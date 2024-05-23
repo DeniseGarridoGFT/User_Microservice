@@ -4,8 +4,6 @@ import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.model.WishProductPK;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.Serializable;
 import java.util.*;

@@ -235,7 +235,7 @@ class TestEnd2EndRegisterTest {
                     .lastName("García")
                     .email("juangarcia@example.com")
                     .password("$2a$10$OyJUHBSm0sU8eF8os0ZuoOwDRmgg8ns4owWtIXItlYmN.1pDVxve6")
-                    .fidelityPoints(100)
+                    .fidelityPoints(150)
                     .birthDate("1990/01/01")
                     .phone("123456789")
                     .address(AddressDto.builder()
@@ -732,6 +732,44 @@ class TestEnd2EndRegisterTest {
                                                                                     "is not in your wishes");
                     });;
 
+        }
+    }
+
+    @Nested
+    @DisplayName("When try to update fidelity points")
+    class IncrementFidelityPoints {
+
+        @Test
+        @DisplayName("Given a exist id user then update the fidelity points")
+        void patchFidelityPoints() {
+            webTestClient.patch()
+                    .uri("/fidelitypoints/1")
+                    .bodyValue(50)
+                    .exchange()
+                    .expectStatus().isCreated()
+                    .expectBody(UserDto.class)
+                    .value(user -> {
+                        assertThat(user)
+                                .hasFieldOrPropertyWithValue("name","Juan")
+                                .hasFieldOrPropertyWithValue("email","juangarcia@example.com")
+                                .hasFieldOrPropertyWithValue("fidelityPoints",150);
+                    });
+        }
+
+        @Test
+        @DisplayName("Given a non exist id user then throw not found error")
+        void patchFidelityPointsUserError() {
+            webTestClient.patch()
+                    .uri("/fidelitypoints/9999")
+                    .bodyValue(50)
+                    .exchange()
+                    .expectStatus().isNotFound()
+                    .expectBody(MyResponseException.class)
+                    .value(myResponseException -> {
+                        assertThat(myResponseException)
+                                .hasFieldOrPropertyWithValue("code", HttpStatus.NOT_FOUND)
+                                .hasFieldOrPropertyWithValue("message","The user with this id don't exists.");
+                    });
         }
     }
 }
