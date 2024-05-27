@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateFidelityPoints(Long id, Integer points) throws NotFoundUserException {
         UserEntity userToUpdate = userDAORepository.findById(id)
-                .orElseThrow(() -> new NotFoundUserException("Not found user"));
+                .orElseThrow(() -> new NotFoundUserException("The user with the id " + id  + " was not found."));
 
         userToUpdate.setFidelityPoints(UserDto.setSaveFidelityPoints(userToUpdate.getFidelityPoints(), points));
 
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) throws NotFoundUserException{
-        UserEntity userEntity = userDAORepository.findById(id).orElseThrow(()->new NotFoundUserException("The user with this id not exists"));
+        UserEntity userEntity = userDAORepository.findById(id).orElseThrow(()->new NotFoundUserException("The user with the id " + id  + " was not found."));
         userEntity.setName(userDto.getName());
         userEntity.setLastName(userDto.getLastName());
         userEntity.setEmail(userDto.getEmail());

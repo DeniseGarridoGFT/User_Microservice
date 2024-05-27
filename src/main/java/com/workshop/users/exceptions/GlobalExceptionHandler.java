@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MyResponseError> handleProductNotFoundUserException(NotFoundUserException ex) {
         MyResponseError myResponseError = MyResponseError.builder()
                 .code(HttpStatus.NOT_FOUND)
-                .message("The user with this id don't exists.")
+                .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(myResponseError, HttpStatus.NOT_FOUND);
     }
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MyResponseError> handleProductNotFoundAddressException(NotFoundAddressException ex) {
         MyResponseError myResponseError = MyResponseError.builder()
                 .code(HttpStatus.NOT_FOUND)
-                .message("The address with this id don't exists.")
+                .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(myResponseError, HttpStatus.NOT_FOUND);
     }
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MyResponseError> handleGeneralException(NotFoundProductException ex) {
         MyResponseError myResponseError = MyResponseError.builder()
                 .code(HttpStatus.NOT_FOUND)
-                .message("One id of product not exists.")
+                .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(myResponseError, HttpStatus.NOT_FOUND);
     }
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MyResponseError> handleConflictWishListException(ConflictWishListException ex) {
         MyResponseError myResponseError = MyResponseError.builder()
                 .code(HttpStatus.CONFLICT)
-                .message("One id of product not exists.")
+                .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(myResponseError, HttpStatus.CONFLICT);
     }

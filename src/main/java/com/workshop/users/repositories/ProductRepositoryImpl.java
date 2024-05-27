@@ -30,7 +30,7 @@ public class ProductRepositoryImpl implements ProductRepository{
                 .retrieve()
 
                 .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new NotFoundProductException("Can't found one id of one product");
+                    throw new NotFoundProductException("Can't found the id of one product");
                 })
                 .body(Product[].class)));
     }
