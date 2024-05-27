@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /catalog
+    context-path: /
   port: ${PORT:8080}
 
 spring:
