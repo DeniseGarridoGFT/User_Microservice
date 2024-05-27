@@ -198,7 +198,5 @@ class UserTest {
             assertThat(localDate).isInstanceOf(LocalDate.class);
         }
     }
-
-
 }
 
