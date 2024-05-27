@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
+@ActiveProfiles("test")
 class TestEnd2EndRegisterTest {
     @Autowired
     WebTestClient webTestClient;
@@ -354,7 +355,7 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
-                                .message("The user with this id don't exists.")
+                                .message("Not found user")
                                 .build());
                     });
         }
@@ -385,6 +386,7 @@ class TestEnd2EndRegisterTest {
                             .build())
                     .country(CountryDto.builder()
                             .id(2L)
+                            .name("Estonia")
                             .build())
                     .build();
         }
@@ -447,6 +449,7 @@ class TestEnd2EndRegisterTest {
                             .build())
                     .country(CountryDto.builder()
                             .id(2L)
+                            .name("Estonia")
                             .build())
                     .build();
             //When
@@ -461,7 +464,7 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
-                                .message("The user with this id don't exists.")
+                                .message("The user with the id 999999 was not found.")
                                 .build());
                     });
         }
@@ -538,7 +541,7 @@ class TestEnd2EndRegisterTest {
                         //Then
                         assertThat(exception).isEqualTo(MyResponseError.builder()
                                 .code(HttpStatus.NOT_FOUND)
-                                .message("The address with this id don't exists.")
+                                .message("The address with the id 999999 was not found.")
                                 .build());
                     });
         }
@@ -619,7 +622,7 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseError.class)
                     .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseError.getMessage()).isEqualTo("The user with this id don't exists.");
+                        assertThat(myResponseError.getMessage()).isEqualTo("Not found user");
                     });
         }
 
@@ -647,7 +650,7 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseError.class)
                     .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseError.getMessage()).isEqualTo("One id of product not exists.");
+                        assertThat(myResponseError.getMessage()).isEqualTo("Can't found the id of one product");
                     });
         }
 
@@ -682,7 +685,7 @@ class TestEnd2EndRegisterTest {
                     .expectBody(MyResponseError.class)
                     .value(myResponseError -> {
                         //Then
-                        assertThat(myResponseError.getMessage()).isEqualTo("One id of product not exists.");
+                        assertThat(myResponseError.getMessage()).isEqualTo("The user with id 1 already have the product with id 1 in wishes");
                     });
 
 
@@ -757,7 +760,7 @@ class TestEnd2EndRegisterTest {
                     .value(myResponseError ->
                         assertThat(myResponseError)
                                 .hasFieldOrPropertyWithValue("code", HttpStatus.NOT_FOUND)
-                                .hasFieldOrPropertyWithValue("message","The user with this id don't exists."));
+                                .hasFieldOrPropertyWithValue("message","The user with the id 9999 was not found."));
                     }
         }
 

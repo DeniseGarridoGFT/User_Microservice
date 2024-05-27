@@ -24,13 +24,13 @@ public class ProductRepositoryImpl implements ProductRepository{
             throws NotFoundProductException  {
 
         return List.of(Objects.requireNonNull(restClient.post()
-                .uri("/products")
+                .uri("/products/byIds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ids)
                 .retrieve()
 
-                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    throw new NotFoundProductException("Can't found one id of one product");
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new NotFoundProductException("Can't found the id of one product");
                 })
                 .body(Product[].class)));
     }

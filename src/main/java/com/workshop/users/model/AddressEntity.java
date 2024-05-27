@@ -2,7 +2,6 @@ package com.workshop.users.model;
 
 import com.workshop.users.api.dto.AddressDto;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;

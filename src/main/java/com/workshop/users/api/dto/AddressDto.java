@@ -3,7 +3,6 @@ package com.workshop.users.api.dto;
 import com.workshop.users.model.AddressEntity;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.io.Serializable;
 

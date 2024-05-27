@@ -2,14 +2,11 @@ package com.workshop.users.services.user;
 
 import com.workshop.users.api.controller.Data.DataInitzializerController;
 import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
-import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
-import com.workshop.users.exceptions.AddressServiceException;
 import com.workshop.users.exceptions.AuthenticateException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.exceptions.RegisterException;
-import com.workshop.users.model.AddressEntity;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
@@ -17,7 +14,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,7 +26,7 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
     private UserDAORepository userDAORepository;
-    private CountryDAORepository countryDAORepository;
+    CountryDAORepository countryDAORepository;
     private UserService userService;
 
     @BeforeEach
@@ -49,7 +45,7 @@ class UserServiceImplTest {
         DataToMockInUserServiceImplTest.USER_1.setPassword("2B8sda2?_");
         DataToMockInUserServiceImplTest.USER_1.setLastName("Salamanca");
         DataToMockInUserServiceImplTest.USER_1.setPhone("839234012");
-        DataToMockInUserServiceImplTest.USER_1.setBirthDate(new Date("2000/14/01"));
+        DataToMockInUserServiceImplTest.USER_1.setBirthDate(UserDto.convertDateToLocalDate("2000/01/14"));
         DataToMockInUserServiceImplTest.USER_1.setFidelityPoints(50);
     }
 
@@ -134,8 +130,7 @@ class UpdateUser{
 
     @Test
     @DisplayName("Given an user to update that not exists when update user then throw UserNotFoundException")
-    void testUpdateUserThrowError() throws Exception {
-        UserEntity userEntity = DataToMockInUserServiceImplTest.USER_1;
+    void testUpdateUserThrowError()  {
 
         UserDto userDtoUpdated = UserDto.builder()
                 .name("Manuel updated")
@@ -153,7 +148,7 @@ class UpdateUser{
         Mockito.when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoUpdated));
          assertThatThrownBy(()->userService.updateUser(2L, userDtoUpdated))
                     .isInstanceOf(NotFoundUserException.class)
-                    .hasMessage("The user with this id not exists");
+                    .hasMessage("The user with the id 2 was not found.");
 
         verify(userDAORepository).findById(2L);
         verify(userDAORepository,times(0)).save(any(UserEntity.class));
@@ -182,9 +177,9 @@ class UpdateUser{
             //Given
                 when(userDAORepository.findByEmail("paquito@perez.com")).thenReturn(Optional.empty());
             //When
-            assertThatThrownBy(()->{
-                userService.getUserByEmail("paquito@perez.com");
-            }).isInstanceOf(AuthenticateException.class);
+            assertThatThrownBy(()->
+                userService.getUserByEmail("paquito@perez.com"))
+            .isInstanceOf(AuthenticateException.class);
         }
 
 
@@ -225,7 +220,6 @@ class UpdateUser{
         Assertions.assertThat(userSaved.getName()).isEqualTo("Manuel updated");
         Assertions.assertThat(userSaved.getLastName()).isEqualTo("Salamanca updated");
         Assertions.assertThat(userSaved.getEmail()).isEqualTo("manuelupdated@example.com");
-        Assertions.assertThat(userSaved.getBirthDate()).isEqualTo(userSaved.getBirthDate());
         Assertions.assertThat(Login.BCRYPT.matches(userSaved.getPassword(),userDtoToSave.getPassword())).isTrue();
         Assertions.assertThat(userSaved.getFidelityPoints()).isZero();
         Assertions.assertThat(userSaved.getPhone()).isEqualTo("963258741");
@@ -248,12 +242,12 @@ class UpdateUser{
         }
         @Test
         @DisplayName("Given a non exist user then throw notFoundUserException")
-        void updateFidelityPointsTestThrowNotFoundError() throws NotFoundUserException {
+        void updateFidelityPointsTestThrowNotFoundError() {
             when(userDAORepository.findById(9999L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> userService.updateFidelityPoints(9999L, 70))
                     .isInstanceOf(NotFoundUserException.class)
-                    .hasMessage("Not found user");
+                    .hasMessage("The user with the id 9999 was not found.");
 
         }
 

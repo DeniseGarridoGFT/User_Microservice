@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.*;
 
 
@@ -185,6 +187,16 @@ class UserTest {
         }
     }
 
-
+    @Nested
+    @DisplayName("Set local date")
+    class ToLocalDateTest {
+        @Test
+        @DisplayName("Given a valid date then return a LocalDate")
+        void convertDateToLocalDateTest() {
+            String stringDate = "1980/10/14";
+            LocalDate localDate = UserDto.convertDateToLocalDate(stringDate);
+            assertThat(localDate).isInstanceOf(LocalDate.class);
+        }
+    }
 }
 

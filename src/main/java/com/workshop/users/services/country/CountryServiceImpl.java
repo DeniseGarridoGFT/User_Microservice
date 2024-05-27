@@ -4,22 +4,23 @@ import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.exceptions.CountryNotFoundException;
 import com.workshop.users.model.CountryEntity;
 import com.workshop.users.repositories.CountryDAORepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class CountryServiceImpl implements CountryService {
 
     private final CountryDAORepository countryDAORepository;
+    private static final String COUNTRY_MESSAGE = "Sorry! We're not in that country yet. We deliver " +
+            "to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia";
 
-    public CountryServiceImpl(CountryDAORepository countryDAORepository) {
-        this.countryDAORepository = countryDAORepository;
-    }
 
     @Override
     public CountryDto getCountryById(Long id) throws CountryNotFoundException{
         isNotNull(id);
         CountryEntity countryEntity = countryDAORepository.findById(id)
-                .orElseThrow(() -> new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia"));
+                .orElseThrow(() -> new CountryNotFoundException(COUNTRY_MESSAGE));
         return CountryEntity.fromEntity(countryEntity);
     }
 
@@ -27,13 +28,13 @@ public class CountryServiceImpl implements CountryService {
     public CountryDto getCountryByName(String name) throws CountryNotFoundException {
         isNotNull(name);
         CountryEntity countryEntity = countryDAORepository.findByName(name)
-                .orElseThrow(() -> new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia"));
+                .orElseThrow(() -> new CountryNotFoundException(COUNTRY_MESSAGE));
         return CountryEntity.fromEntity(countryEntity);
     }
 
     private void isNotNull(Object obj) throws CountryNotFoundException  {
         if (obj == null) {
-            throw new CountryNotFoundException("Sorry! We're not in that country yet. We deliver to España, Estonia, Finlandia, Francia, Italia, Portugal, Grecia");
+            throw new CountryNotFoundException(COUNTRY_MESSAGE);
         }
     }
 }

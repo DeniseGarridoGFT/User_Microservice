@@ -74,7 +74,7 @@ class AddressServiceImplTest {
         void getAddressErrorIdNull() {
             assertThatThrownBy(() -> addressService.getAddressById(null))
                     .isInstanceOf(NotFoundAddressException.class)
-                    .hasMessage("Request not valid. The address Id is null");
+                    .hasMessage("Request not valid. The address with the id null is null");
         }
 
         @Test
@@ -90,7 +90,7 @@ class AddressServiceImplTest {
         void addAddressErrorIdNull() {
             assertThatThrownBy(() -> addressService.getAddressById(null))
                     .isInstanceOf(NotFoundAddressException.class)
-                    .hasMessage("Request not valid. The address Id is null");
+                    .hasMessage("Request not valid. The address with the id null is null");
         }
 
         @Test
@@ -123,9 +123,9 @@ class AddressServiceImplTest {
                 addressDto.setId(1L);
                 when(addressDAORepository.findById(anyLong())).thenReturn(Optional.empty());
                 when(addressDAORepository.save(any(AddressEntity.class))).thenReturn(addressEntityWithId);
-                assertThatThrownBy(()->addressService.updateAddress(addressDto.getId(),addressDto))
+                assertThatThrownBy(()->addressService.updateAddress(1L,addressDto))
                         .isInstanceOf(NotFoundAddressException.class)
-                        .hasMessage("Address not found");
+                        .hasMessage("The address with the id 1 was not found.");
             }
         }
     }

@@ -1,12 +1,10 @@
 package com.workshop.users.services.address;
 
 import com.workshop.users.api.dto.AddressDto;
-import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.NotFoundAddressException;
 import com.workshop.users.exceptions.RegisterException;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 
 @Service
 public interface AddressService {

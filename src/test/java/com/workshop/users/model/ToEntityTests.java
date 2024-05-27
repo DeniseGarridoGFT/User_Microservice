@@ -29,4 +29,14 @@ class ToEntityTests {
         AddressDto addressDto = DataFromEntityTest.ADDRESS_DTO_CALLE_VARAJAS;
         assertThat(AddressDto.toEntity(addressDto)).isEqualTo(DataFromEntityTest.ADDRESS_ENTITY_CALLE_VARAJAS);
     }
+
+    @Test
+    @DisplayName("Given a UserDto When fromEntity with Null Address then return a user entity")
+    void UserToEntityTestWithAddressNull() {
+        UserDto userDto = DataFromEntityTest.USER_DTO_ID_2;
+        userDto.setAddress(null);
+        assertThat(UserDto.toEntity(userDto)).isEqualTo(UserDto.toEntity(userDto));
+        userDto.setAddress(DataFromEntityTest.ADDRESS_DTO_CALLE_VARAJAS);
+    }
+
 }

@@ -6,22 +6,18 @@ import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.*;
 import com.workshop.users.model.UserEntity;
-import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserDAORepository userDAORepository;
+    private final UserDAORepository userDAORepository;
 
-    public UserServiceImpl(UserDAORepository userDAORepository) {
-        this.userDAORepository = userDAORepository;
-    }
 
 
     @Override
@@ -60,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateFidelityPoints(Long id, Integer points) throws NotFoundUserException {
         UserEntity userToUpdate = userDAORepository.findById(id)
-                .orElseThrow(() -> new NotFoundUserException("Not found user"));
+                .orElseThrow(() -> new NotFoundUserException("The user with the id " + id  + " was not found."));
 
         userToUpdate.setFidelityPoints(UserDto.setSaveFidelityPoints(userToUpdate.getFidelityPoints(), points));
 
@@ -69,11 +65,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) throws NotFoundUserException{
-        UserEntity userEntity = userDAORepository.findById(id).orElseThrow(()->new NotFoundUserException("The user with this id not exists"));
+        UserEntity userEntity = userDAORepository.findById(id).orElseThrow(()->new NotFoundUserException("The user with the id " + id  + " was not found."));
         userEntity.setName(userDto.getName());
         userEntity.setLastName(userDto.getLastName());
         userEntity.setEmail(userDto.getEmail());
-        userEntity.setBirthDate(new Date(userDto.getBirthDate()));
+        userEntity.setBirthDate(UserDto.convertDateToLocalDate(userDto.getBirthDate()));
         userEntity.setPassword(Login.BCRYPT.encode(userDto.getPassword()));
         userEntity.setPhone(userDto.getPhone());
         userEntity.setAddress(AddressDto.toEntity(userDto.getAddress()));
@@ -81,7 +77,6 @@ public class UserServiceImpl implements UserService {
         return UserEntity.fromEntity(userDAORepository.save(userEntity));
 
     }
-
 
 
 }

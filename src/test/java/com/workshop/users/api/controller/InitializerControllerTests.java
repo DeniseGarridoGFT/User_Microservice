@@ -32,7 +32,7 @@ public class InitializerControllerTests {
         addressService = mock(AddressService.class);
         validations = mock(Validations.class);
         countryService = mock(CountryService.class);
-        initializerController = new InitializerController(userService, addressService, validations, countryService);
+        initializerController = new InitializerController(userService, addressService, countryService, validations);
     }
 
     @Nested

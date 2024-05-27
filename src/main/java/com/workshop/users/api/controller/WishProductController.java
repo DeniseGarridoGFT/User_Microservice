@@ -8,41 +8,39 @@ import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.services.product.ProductService;
 import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@AllArgsConstructor
+@RestController
+@RequestMapping("/wishlist")
 public class WishProductController {
 
-    private WishProductService wishProductService;
-    private UserService userService;
-    private ProductService productService;
+    private final WishProductService wishProductService;
+    private final UserService userService;
+    private final ProductService productService;
 
-    public WishProductController(WishProductService wishProductService, UserService userService, ProductService productService) {
-        this.wishProductService = wishProductService;
-        this.userService = userService;
-        this.productService = productService;
-    }
-
-    @PostMapping("/wishlist")
+    @PostMapping()
     @Transactional(rollbackFor = ConflictWishListException.class)
     public ResponseEntity<WishListDto> postWishList(@Validated @RequestBody WishListDto wishListDto)
             throws NotFoundUserException, NotFoundProductException, ConflictWishListException {
-        ValidationsWishList.validateUserId(wishListDto,userService);
-        ValidationsWishList.validateExistsProduct(wishListDto,productService);
-        ValidationsWishList.saveWishList(wishListDto,wishProductService);
+
+        productService.findProductsByIds(wishListDto.getProductsIds().stream().toList());
+        userService.getUserById(wishListDto.getUserId());
+
+        for (Long productId:wishListDto.getProductsIds()){
+            wishProductService.addWishProducts(WishListDto.getEntity(wishListDto.getUserId(),productId));
+        }
+        
         return new ResponseEntity<>(wishListDto,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/wishlist/{user_id}/{product_id}")
-    public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,
+    @DeleteMapping("/{user_id}/{product_id}")
+    public ResponseEntity<WishListDto> deleteWishList(@PathVariable(name = "user_id") Long userId,
                                                       @PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {
         wishProductService.deleteWishProducts(WishListDto.getEntity(userId,productId));
