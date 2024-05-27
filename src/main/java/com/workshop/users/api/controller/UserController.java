@@ -11,11 +11,13 @@ import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 public class UserController {
     private final UserService userService;
     private final Validations validations;
@@ -24,13 +26,6 @@ public class UserController {
 
 
 
-    public UserController(UserService userService, AddressService addressService, Validations validations, CountryService countryService) {
-
-        this.userService = userService;
-        this.addressService = addressService;
-        this.validations = validations;
-        this.countryService = countryService;
-    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) throws NotFoundUserException {

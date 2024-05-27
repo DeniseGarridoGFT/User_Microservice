@@ -10,6 +10,7 @@ import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
 import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,18 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @RestController
+@AllArgsConstructor
 public class InitializerController {
     private final UserService userService;
     private final AddressService addressService;
     private final CountryService countryService;
     private final Validations validations;
 
-    public InitializerController(UserService userService, AddressService addressService,Validations validations, CountryService countryService) {
-        this.addressService = addressService;
-        this.userService = userService;
-        this.validations =validations;
-        this.countryService = countryService;
-    }
 
     @PostMapping("/register")
     @Transactional(rollbackFor = Exception.class)

@@ -3,18 +3,17 @@ package com.workshop.users.api.controller;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.model.UserEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import com.workshop.users.services.user.UserService;
 
 import java.util.Optional;
 
 @Controller
+@AllArgsConstructor
 public class Validations {
     private final UserService userService;
 
-    public Validations(UserService userService) {
-        this.userService = userService;
-    }
 
     boolean checkEmail(UserDto userToCheck) throws UserValidationException {
         if (!userToCheck.checkFormatEmail()) {

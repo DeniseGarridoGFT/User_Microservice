@@ -4,16 +4,14 @@ import com.workshop.users.exceptions.ConflictWishListException;
 import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.model.WishProductEntity;
 import com.workshop.users.repositories.WishProductDAORepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@AllArgsConstructor
 public class WishProductServiceImpl implements WishProductService {
     private final WishProductDAORepository wishProductDAORepository;
-
-    public WishProductServiceImpl(WishProductDAORepository wishProductDAORepository) {
-        this.wishProductDAORepository = wishProductDAORepository;
-    }
 
 
     @Override

@@ -6,18 +6,18 @@ import com.workshop.users.exceptions.NotFoundAddressException;
 import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.repositories.AddressDAORepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 
 @Service
+@AllArgsConstructor
 public class AddressServiceImpl implements AddressService {
 
     private final AddressDAORepository addressDAORepository;
 
-    public AddressServiceImpl(AddressDAORepository addressDAORepository){
-        this.addressDAORepository = addressDAORepository;
-    }
+
 
     @Override
     public AddressDto addAddress(AddressDto address) throws RegisterException {
@@ -37,7 +37,7 @@ public class AddressServiceImpl implements AddressService {
 
     private void isNotNull(Long id) {
         if (id == null){
-            throw new NotFoundAddressException("Request not valid. The address Id is null");
+            throw new NotFoundAddressException("Request not valid. The address with the id " + id  + " is null");
         }
     }
 
@@ -45,7 +45,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDto updateAddress(Long id, AddressDto updatedAddressDto) throws NotFoundAddressException{
         AddressEntity addressEntity = addressDAORepository.findById(updatedAddressDto.getId())
-                .orElseThrow(() -> new NotFoundAddressException("Address not found"));
+                .orElseThrow(() -> new NotFoundAddressException("The address with the id " + id  + " was not found."));
         addressEntity.setCityName(updatedAddressDto.getCityName());
         addressEntity.setZipCode(updatedAddressDto.getZipCode());
         addressEntity.setStreet(updatedAddressDto.getStreet());
