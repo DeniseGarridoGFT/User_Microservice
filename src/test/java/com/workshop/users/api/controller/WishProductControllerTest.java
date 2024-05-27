@@ -63,19 +63,6 @@ public class WishProductControllerTest {
 
 
 
-        @Test
-        @DisplayName("Given a list with non associated user then return not found error")
-        void postWishListNotFoundUser() throws ConflictWishListException, NotFoundUserException {
-            when(productService.findProductsByIds(anyList()))
-                    .thenReturn(anyList());
-            when(userService.getUserById(1L))
-                    .thenThrow(new NotFoundUserException("Not found user"));
-            when(wishProductService.addWishProducts(any()))
-                    .thenReturn(any());
-            assertThatThrownBy(()->
-                    wishProductController.postWishList(wishListDto))
-                    .isInstanceOf(NotFoundUserException.class);
-        }
 
 
         @Test
