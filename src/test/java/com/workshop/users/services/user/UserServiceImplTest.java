@@ -153,7 +153,7 @@ class UpdateUser{
         Mockito.when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoUpdated));
          assertThatThrownBy(()->userService.updateUser(2L, userDtoUpdated))
                     .isInstanceOf(NotFoundUserException.class)
-                    .hasMessage("The user with this id not exists");
+                    .hasMessage("The user with the id 2 was not found.");
 
         verify(userDAORepository).findById(2L);
         verify(userDAORepository,times(0)).save(any(UserEntity.class));
@@ -253,7 +253,7 @@ class UpdateUser{
 
             assertThatThrownBy(() -> userService.updateFidelityPoints(9999L, 70))
                     .isInstanceOf(NotFoundUserException.class)
-                    .hasMessage("Not found user");
+                    .hasMessage("The user with the id 9999 was not found.");
 
         }
 
