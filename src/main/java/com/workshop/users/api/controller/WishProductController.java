@@ -8,13 +8,14 @@ import com.workshop.users.exceptions.NotFoundWishProductException;
 import com.workshop.users.services.product.ProductService;
 import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/wishlist")
 public class WishProductController {
@@ -22,12 +23,6 @@ public class WishProductController {
     private final WishProductService wishProductService;
     private final UserService userService;
     private final ProductService productService;
-
-    public WishProductController(WishProductService wishProductService, UserService userService, ProductService productService) {
-        this.wishProductService = wishProductService;
-        this.userService = userService;
-        this.productService = productService;
-    }
 
     @PostMapping()
     @Transactional(rollbackFor = ConflictWishListException.class)
