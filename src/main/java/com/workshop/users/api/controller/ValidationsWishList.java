@@ -13,7 +13,6 @@ public class ValidationsWishList {
 
     }
 
-
     public static void validateExistsProduct(WishListDto wishListDto, ProductService productService)
             throws NotFoundProductException {
         productService.findProductsByIds(wishListDto.getProductsIds().stream().toList());

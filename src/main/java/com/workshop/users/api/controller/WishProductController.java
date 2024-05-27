@@ -40,7 +40,7 @@ public class WishProductController {
     }
 
     @DeleteMapping("/{user_id}/{product_id}")
-    public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,
+    public ResponseEntity<WishListDto> deleteWishList(@PathVariable(name = "user_id") Long userId,
                                                       @PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {
         wishProductService.deleteWishProducts(WishListDto.getEntity(userId,productId));

@@ -35,7 +35,7 @@ public class InitializerController {
 
     @PostMapping("/register")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user)
+    public ResponseEntity<UserDto> addUser(@Validated @RequestBody UserDto user)
             throws RegisterException, UserValidationException {
         validations.checkAllMethods(user);
 

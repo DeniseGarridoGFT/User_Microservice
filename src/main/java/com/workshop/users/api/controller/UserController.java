@@ -13,7 +13,6 @@ import com.workshop.users.services.user.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDto> getUser(@Validated @PathVariable("id") Long id) throws NotFoundUserException {
+    public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) throws NotFoundUserException {
         UserDto user = userService.getUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
