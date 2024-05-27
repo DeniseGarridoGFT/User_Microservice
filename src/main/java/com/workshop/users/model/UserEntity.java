@@ -3,11 +3,11 @@ package com.workshop.users.model;
 import com.workshop.users.api.dto.UserDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -38,7 +38,7 @@ public class UserEntity implements Serializable {
     @Column(name= "FIDELITY_POINTS", columnDefinition = "integer default 0")
     private Integer fidelityPoints;
     @Column(name= "BIRTH_DATE")
-    private Date birthDate;
+    private LocalDate birthDate;
     @Column(name= "PHONE")
     @NotNull
     private String phone;
@@ -63,9 +63,8 @@ public class UserEntity implements Serializable {
                 .build();
     }
 
-    public static String parseDate(Date date){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        return dateFormat.format(date);
+    public static String parseDate(LocalDate date){
+        return date.toString().replace("-","/");
     }
 
 }

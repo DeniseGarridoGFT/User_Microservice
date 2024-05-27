@@ -10,20 +10,18 @@ import com.workshop.users.services.user.UserService;
 import com.workshop.users.services.wishproduct.WishProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+
+@RestController
+@RequestMapping("/wishlist")
 public class WishProductController {
 
-    private WishProductService wishProductService;
-    private UserService userService;
-    private ProductService productService;
+    private final WishProductService wishProductService;
+    private final UserService userService;
+    private final ProductService productService;
 
     public WishProductController(WishProductService wishProductService, UserService userService, ProductService productService) {
         this.wishProductService = wishProductService;
@@ -31,7 +29,7 @@ public class WishProductController {
         this.productService = productService;
     }
 
-    @PostMapping("/wishlist")
+    @PostMapping()
     @Transactional(rollbackFor = ConflictWishListException.class)
     public ResponseEntity<WishListDto> postWishList(@Validated @RequestBody WishListDto wishListDto)
             throws NotFoundUserException, NotFoundProductException, ConflictWishListException {
@@ -41,7 +39,7 @@ public class WishProductController {
         return new ResponseEntity<>(wishListDto,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/wishlist/{user_id}/{product_id}")
+    @DeleteMapping("/{user_id}/{product_id}")
     public ResponseEntity<WishListDto> deleteWishList(@Validated @PathVariable(name = "user_id") Long userId,
                                                       @PathVariable(name = "product_id") Long productId)
             throws NotFoundWishProductException {

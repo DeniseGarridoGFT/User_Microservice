@@ -1,11 +1,14 @@
 package com.workshop.users.api.controller;
 
 import com.workshop.users.api.dto.AddressDto;
+import com.workshop.users.api.dto.CountryDto;
 import com.workshop.users.api.dto.UserDto;
+import com.workshop.users.exceptions.CountryNotFoundException;
 import com.workshop.users.exceptions.NotFoundAddressException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.exceptions.UserValidationException;
 import com.workshop.users.services.address.AddressService;
+import com.workshop.users.services.country.CountryService;
 import com.workshop.users.services.user.UserService;
 
 import org.springframework.http.HttpStatus;
@@ -17,15 +20,17 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
     private final Validations validations;
-    private AddressService addressService;
+    private final AddressService addressService;
+    private final CountryService countryService;
 
 
 
-    public UserController(UserService userService, AddressService addressService, Validations validations) {
+    public UserController(UserService userService, AddressService addressService, Validations validations, CountryService countryService) {
 
         this.userService = userService;
         this.addressService = addressService;
         this.validations = validations;
+        this.countryService = countryService;
     }
 
     @GetMapping("/users/{id}")
@@ -36,11 +41,13 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto updatedUserDto)
-            throws UserValidationException, NotFoundUserException, NotFoundAddressException {
+            throws UserValidationException, NotFoundUserException, NotFoundAddressException, CountryNotFoundException {
         updatedUserDto.setId(id);
         validations.checkAllMethods(updatedUserDto);
         AddressDto addressDtoUpdated = addressService.updateAddress(updatedUserDto.getAddress().getId(), updatedUserDto.getAddress());
+        CountryDto countryDtoUpdated = countryService.getCountryByName(updatedUserDto.getCountry().getName());
         updatedUserDto.setAddress(addressDtoUpdated);
+        updatedUserDto.setCountry(countryDtoUpdated);
         UserDto updatedUser = userService.updateUser(id, updatedUserDto);
         return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }

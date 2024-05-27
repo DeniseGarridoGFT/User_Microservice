@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
+@ActiveProfiles("test")
 class TestEnd2EndRegisterTest {
     @Autowired
     WebTestClient webTestClient;
@@ -385,6 +386,7 @@ class TestEnd2EndRegisterTest {
                             .build())
                     .country(CountryDto.builder()
                             .id(2L)
+                            .name("Estonia")
                             .build())
                     .build();
         }
@@ -447,6 +449,7 @@ class TestEnd2EndRegisterTest {
                             .build())
                     .country(CountryDto.builder()
                             .id(2L)
+                            .name("Estonia")
                             .build())
                     .build();
             //When
