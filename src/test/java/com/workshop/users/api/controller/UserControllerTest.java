@@ -35,7 +35,7 @@ class UserControllerTest {
         userService  = Mockito.mock(UserService.class);
         addressService = Mockito.mock(AddressService.class);
         countryService = Mockito.mock(CountryService.class);
-        userController = new UserController(userService, addressService, validations, countryService);
+        userController = new UserController(userService, validations,  addressService, countryService);
     }
 
     @AfterEach

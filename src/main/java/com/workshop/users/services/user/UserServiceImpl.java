@@ -7,18 +7,17 @@ import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.*;
 import com.workshop.users.model.UserEntity;
 import com.workshop.users.repositories.UserDAORepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserDAORepository userDAORepository;
 
-    public UserServiceImpl(UserDAORepository userDAORepository) {
-        this.userDAORepository = userDAORepository;
-    }
 
 
     @Override

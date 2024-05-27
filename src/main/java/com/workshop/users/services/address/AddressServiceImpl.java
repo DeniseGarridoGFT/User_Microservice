@@ -6,18 +6,18 @@ import com.workshop.users.exceptions.NotFoundAddressException;
 import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.AddressEntity;
 import com.workshop.users.repositories.AddressDAORepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 
 @Service
+@AllArgsConstructor
 public class AddressServiceImpl implements AddressService {
 
     private final AddressDAORepository addressDAORepository;
 
-    public AddressServiceImpl(AddressDAORepository addressDAORepository){
-        this.addressDAORepository = addressDAORepository;
-    }
+
 
     @Override
     public AddressDto addAddress(AddressDto address) throws RegisterException {

@@ -1,5 +1,6 @@
 package com.workshop.users.api.controller;
 
+import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.api.dto.WishListDto;
 import com.workshop.users.exceptions.ConflictWishListException;
 import com.workshop.users.exceptions.NotFoundProductException;
@@ -12,7 +13,7 @@ import com.workshop.users.services.wishproduct.WishProductService;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
-import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -22,12 +23,12 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 public class WishProductControllerTest {
-    ProductService productService;
+    private ProductService productService;
     private WishProductService wishProductService;
-    UserService userService;
+    private UserService userService;
     private WishProductController wishProductController;
     private WishListDto wishListDto;
-    private  MockedStatic<ValidationsWishList> validationsWishListMock;
+
 
     @BeforeEach
     void setUp() {
@@ -36,15 +37,9 @@ public class WishProductControllerTest {
         userService = mock(UserService.class);
         wishProductController = new WishProductController(wishProductService,userService,productService);
         wishListDto = WishListDto.builder().userId(1L).productsIds(new HashSet<>(List.of(1L,2L,3L,4L))).build();
-        validationsWishListMock = mockStatic(ValidationsWishList.class);
 
     }
 
-    @AfterEach
-    void tearDown() {
-        // Deshacer la mock estática de ValidationsWishList después de cada prueba
-        validationsWishListMock.close();
-    }
 
     @Nested
     @DisplayName("When post a Wish list")
@@ -53,12 +48,12 @@ public class WishProductControllerTest {
         @DisplayName("Given a good list Then throw the wish list created")
         void postWishList() throws NotFoundProductException, ConflictWishListException, NotFoundUserException {
             //Given
-            validationsWishListMock.when(() -> ValidationsWishList.validateExistsProduct(any(WishListDto.class), any(ProductService.class)))
-                    .thenCallRealMethod();
-            validationsWishListMock.when(() -> ValidationsWishList.validateUserId(any(WishListDto.class), any(UserService.class)))
-                    .thenCallRealMethod();
-            validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
-                    .thenCallRealMethod();
+            when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
+                    .thenReturn(anyList());
+            when(userService.getUserById(1L))
+                    .thenReturn(UserDto.builder().build());
+            when(wishProductService.addWishProducts(any()))
+                    .thenReturn(any());
             //When
             ResponseEntity<WishListDto> responseEntity = wishProductController.postWishList(wishListDto);
             //Then
@@ -66,29 +61,32 @@ public class WishProductControllerTest {
             assertThat(responseEntity.getBody()).isEqualTo(wishListDto);
         }
 
+
+
         @Test
         @DisplayName("Given a list with non associated user then return not found error")
-        void postWishListNotFoundUser(){
-            validationsWishListMock.when(() -> ValidationsWishList.validateUserId(any(WishListDto.class), any(UserService.class)))
+        void postWishListNotFoundUser() throws ConflictWishListException, NotFoundUserException {
+            when(productService.findProductsByIds(anyList()))
+                    .thenReturn(anyList());
+            when(userService.getUserById(1L))
                     .thenThrow(new NotFoundUserException("Not found user"));
-            validationsWishListMock.when(() -> ValidationsWishList.validateExistsProduct(any(WishListDto.class), any(ProductService.class)))
-                    .thenCallRealMethod();
-            validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
-                    .thenCallRealMethod();
+            when(wishProductService.addWishProducts(any()))
+                    .thenReturn(any());
             assertThatThrownBy(()->
-                wishProductController.postWishList(wishListDto))
+                    wishProductController.postWishList(wishListDto))
                     .isInstanceOf(NotFoundUserException.class);
         }
 
+
         @Test
         @DisplayName("Given a list with non associated product then throw not found error")
-        void postWishListNotFoundProduct(){
-            validationsWishListMock.when(() -> ValidationsWishList.validateUserId(any(WishListDto.class), any(UserService.class)))
-                    .thenCallRealMethod();
-            validationsWishListMock.when(() -> ValidationsWishList.validateExistsProduct(any(WishListDto.class), any(ProductService.class)))
+        void postWishListNotFoundProduct() throws ConflictWishListException, NotFoundUserException {
+            when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
                     .thenThrow(new NotFoundProductException("Not found product"));
-            validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
-                    .thenCallRealMethod();
+            when(userService.getUserById(1L))
+                    .thenReturn(UserDto.builder().build());
+            when(wishProductService.addWishProducts(any()))
+                    .thenReturn(any());
             assertThatThrownBy(()->
                 wishProductController.postWishList(wishListDto))
             .isInstanceOf(NotFoundProductException.class);
@@ -96,13 +94,13 @@ public class WishProductControllerTest {
 
         @Test
         @DisplayName("Given a list with products already saved then throw conflict error")
-        void postWishListProductSavedYet(){
-            validationsWishListMock.when(() -> ValidationsWishList.validateExistsProduct(any(WishListDto.class), any(ProductService.class)))
-                    .thenCallRealMethod();
-            validationsWishListMock.when(() -> ValidationsWishList.validateUserId(any(WishListDto.class), any(UserService.class)))
-                    .thenCallRealMethod();
-            validationsWishListMock.when(() -> ValidationsWishList.saveWishList(any(WishListDto.class), any(WishProductService.class)))
-                    .thenThrow(new ConflictWishListException("The wish has saved yet"));
+        void postWishListProductSavedYet() throws ConflictWishListException, NotFoundUserException {
+            when(productService.findProductsByIds(wishListDto.getProductsIds().stream().toList()))
+                    .thenReturn(anyList());
+            when(userService.getUserById(1L))
+                    .thenReturn(UserDto.builder().build());
+            when(wishProductService.addWishProducts(any()))
+                    .thenThrow(new ConflictWishListException("The wish product has already saved"));
            assertThatThrownBy(()->
                wishProductController.postWishList(wishListDto))
            .isInstanceOf(ConflictWishListException.class);
