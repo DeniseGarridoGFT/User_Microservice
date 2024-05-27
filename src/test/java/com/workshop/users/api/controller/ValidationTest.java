@@ -91,7 +91,6 @@ class ValidationTest {
             assertThatThrownBy(()-> validations.checkSameEmail(userToChangeEmail))
                     .isInstanceOf(UserValidationException.class)
                     .hasMessage("Your email is already registered.");
-
         }
 
 
@@ -187,5 +186,30 @@ class ValidationTest {
                     .isInstanceOf(UserValidationException.class)
                     .hasMessage("The user must be of legal age.");
         }
+    }
+    @Nested
+    @DisplayName("Checking other user have the same email")
+    class CheckingSomeUserHaveTheSameEmailTest {
+        @Test
+        @DisplayName("Checking other user have the same email")
+        void ifSomeUserHaveSameEmailTest() throws UserValidationException {
+            UserDto userDto = DataToUserControllerTesting.USER_ID_2;
+            UserEntity userEntity = UserDto.toEntity(userDto);
+            userEntity.setId(2L);
+            validations.ifSomeUserHaveTheEmailThrowsError(userDto,userEntity);
+        }
+
+        @Test
+        @DisplayName("Checking other user have the same email")
+        void ifSomeUserHaveSameEmailThrowable()  {
+            UserDto userDto = DataToUserControllerTesting.USER_ID_2;
+            UserEntity userEntity = UserDto.toEntity(userDto);
+            userEntity.setId(3L);
+            assertThatThrownBy(()->validations.ifSomeUserHaveTheEmailThrowsError(userDto, userEntity))
+                    .isInstanceOf(UserValidationException.class)
+                    .hasMessage("Your email is already registered.");
+
+        }
+
     }
 }

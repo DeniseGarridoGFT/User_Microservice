@@ -61,7 +61,7 @@ public class Validations {
         return false;
     }
 
-    private void ifSomeUserHaveTheEmailThrowsError(UserDto userToCheck, UserEntity userWithTheSameEmail)
+    void ifSomeUserHaveTheEmailThrowsError(UserDto userToCheck, UserEntity userWithTheSameEmail)
             throws UserValidationException {
         UserDto userDto = UserEntity.fromEntity(userWithTheSameEmail);
         if (userDto != null && isExistsEmailAndNotIsFromTheUser(userToCheck, userDto)) {
