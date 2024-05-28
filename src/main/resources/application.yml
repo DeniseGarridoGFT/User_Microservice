@@ -16,7 +16,5 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true
-  jpa:
-    defer-datasource-initialization: true
 catalog:
   url: https://catalog-workshop-yequy5sv5a-uc.a.run.app/catalog
