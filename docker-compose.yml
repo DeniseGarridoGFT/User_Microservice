@@ -1,6 +1,6 @@
 services:
   app:
-    image: gcr.io/cloud-run-source-deploy/user_microservice/user-microservice@sha256:c7d8c6741e8bbc12e09f83364fa7becee10d5dd8d516d3bb1b62a2d435d9bb3b
+    image: us-central1-docker.pkg.dev/microservice-424612/cloud-run-source-deploy/user_microservice/user-microservice@sha256:820d28f27ae2586a08885c6f8d0af3601accbae6383e8098c03a2cc054e2bbab
     container_name: spring_app
     ports:
       - "8080:8080"
