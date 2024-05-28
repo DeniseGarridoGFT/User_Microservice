@@ -14,7 +14,16 @@ spring:
     console:
       enabled: true
       path: /h2-console
-      settings:
-        web-allow-others: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  sql:
+    init:
+      mode: always
+
 catalog:
   url: https://catalog-workshop-yequy5sv5a-uc.a.run.app/catalog
