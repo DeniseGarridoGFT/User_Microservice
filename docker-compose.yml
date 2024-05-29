@@ -1,7 +1,7 @@
 services:
   app:
-    image: us-central1-docker.pkg.dev/microservice-424612/cloud-run-source-deploy/user_microservice/user-microservice@sha256:18835c49bbc9c93ad6faa573f580a12a9ce7e01eae0bcaedaf6426259d3c2b6c
-    #container_name: spring_app
+    #image: us-central1-docker.pkg.dev/microservice-424612/cloud-run-source-deploy/user_microservice/user-microservice@sha256:18835c49bbc9c93ad6faa573f580a12a9ce7e01eae0bcaedaf6426259d3c2b6c
+    container_name: spring_app
     ports:
       - "80:8080"
     depends_on:
