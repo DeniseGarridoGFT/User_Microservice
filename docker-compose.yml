@@ -26,7 +26,6 @@ services:
       MYSQL_PASSWORD: user
     volumes:
       - db_data:/var/lib/mysql
-      - ./src/main/resources:/docker-entrypoint-initdb.d/
 
   adminer:
     image: adminer
