@@ -20,7 +20,7 @@ services:
     image: mysql:8.0
     container_name: mysql_db_catalog
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: userroot
       MYSQL_DATABASE: CatalogDB
@@ -34,7 +34,7 @@ services:
     image: mysql:8.0
     container_name: mysql_db_orders
     ports:
-      - "3306:3306"
+      - "3308:3306"
     environment:
       MYSQL_ROOT_PASSWORD: userroot
       MYSQL_DATABASE: OrdersDB
@@ -48,7 +48,7 @@ services:
     image: mysql:8.0
     container_name: mysql_db_cart
     ports:
-      - "3306:3306"
+      - "3309:3306"
     environment:
       MYSQL_ROOT_PASSWORD: userroot
       MYSQL_DATABASE: CartDB
