@@ -1,30 +1,62 @@
-services:
-  app:
-    image: us-central1-docker.pkg.dev/microservice-424612/cloud-run-source-deploy/user_microservice/user-microservice@sha256:820d28f27ae2586a08885c6f8d0af3601accbae6383e8098c03a2cc054e2bbab
-    container_name: spring_app
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: user
+version: '3.8'
 
-  db:
+services:
+
+  dbUsers:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: mysql_db_users
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: userroot
-      MYSQL_DATABASE: mydb
+      MYSQL_DATABASE: UsersDB
       MYSQL_USER: user
       MYSQL_PASSWORD: user
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
-      - db_data:/var/lib/mysql
-      - ./User_Microservice/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
-      - ./User_Microservice/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - db_data_users:/var/lib/mysql
+
+  dbCatalog:
+    image: mysql:8.0
+    container_name: mysql_db_catalog
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: userroot
+      MYSQL_DATABASE: CatalogDB
+      MYSQL_USER: catalog
+      MYSQL_PASSWORD: catalog
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data_catalog:/var/lib/mysql
+
+  dbOrders:
+    image: mysql:8.0
+    container_name: mysql_db_orders
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: userroot
+      MYSQL_DATABASE: OrdersDB
+      MYSQL_USER: orders
+      MYSQL_PASSWORD: orders
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data_orders:/var/lib/mysql
+
+  dbCart:
+    image: mysql:8.0
+    container_name: mysql_db_cart
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: userroot
+      MYSQL_DATABASE: CartDB
+      MYSQL_USER: cart
+      MYSQL_PASSWORD: cart
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data_cart:/var/lib/mysql
 
   adminer:
     image: adminer
@@ -33,4 +65,7 @@ services:
       - "8081:8080"
 
 volumes:
-  db_data:
+  db_data_users:
+  db_data_catalog:
+  db_data_orders:
+  db_data_cart:
