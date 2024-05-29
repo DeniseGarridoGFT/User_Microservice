@@ -12,6 +12,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: user
+    volumes:
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/
 
   db:
     image: mysql:8.0
@@ -25,8 +27,6 @@ services:
       MYSQL_PASSWORD: user
     volumes:
       - db_data:/var/lib/mysql
-      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
 
   adminer:
     image: adminer
