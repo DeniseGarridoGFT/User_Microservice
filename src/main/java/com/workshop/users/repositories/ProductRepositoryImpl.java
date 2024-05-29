@@ -4,6 +4,8 @@ import com.workshop.users.api.dto.Product;
 import com.workshop.users.exceptions.NotFoundProductException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClient;
 
@@ -20,6 +22,7 @@ public class ProductRepositoryImpl implements ProductRepository{
 
 
     @Override
+    @Retryable(retryFor = NotFoundProductException.class, maxAttempts = 3, backoff = @Backoff(delay = 500))
     public List<Product> findProductsByIds(List<Long> ids)
             throws NotFoundProductException  {
 
@@ -34,4 +37,6 @@ public class ProductRepositoryImpl implements ProductRepository{
                 })
                 .body(Product[].class)));
     }
+
+
 }

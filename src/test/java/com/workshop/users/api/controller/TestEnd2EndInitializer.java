@@ -638,7 +638,9 @@ class TestEnd2EndRegisterTest {
             mockWebServer.enqueue(new MockResponse()
                     .setBody("{\"message\":\"Not found product with this ids\"}")
                     .setStatus("HTTP/1.1 404 Not Found")
+                            .setResponseCode(404)
                     .setHeader("Content-Type", "application/json"));
+
 
             //When
             webTestClient.post()
@@ -651,6 +653,52 @@ class TestEnd2EndRegisterTest {
                     .value(myResponseError -> {
                         //Then
                         assertThat(myResponseError.getMessage()).isEqualTo("Can't found the id of one product");
+                    });
+        }
+
+        @Test
+        @DisplayName("Given a Wish List but the products not exists When post wish " +
+                "list Then throw not found exception")
+        void postWishListNotFoundProductExceptionRetry() throws JsonProcessingException {
+            //Given
+            WishListDto wishListDto = WishListDto.builder()
+                    .userId(1L)
+                    .productsIds(new HashSet<>(List.of(9L, 10L, 11L)))
+                    .build();
+
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Failed to conect\"}")
+                    .setStatus("HTTP/1.1 500 Internal Server Error")
+                    .setHeader("Content-Type", "application/json"));
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Failed to conect\"}")
+                    .setStatus("HTTP/1.1 500 Internal Server Error")
+                    .setHeader("Content-Type", "application/json"));
+
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody(objectMapper.writeValueAsString(List.of(Product.builder()
+                                    .id(1L)
+                                    .build(),
+                            Product.builder()
+                                    .id(2L)
+                                    .build(),
+                            Product.builder()
+                                    .id(3L)
+                                    .build())))
+                            .setStatus("HTTP/1.1 200 OK")
+                    .setHeader("Content-Type", "application/json"));
+
+            //When
+            webTestClient.post()
+                    .uri("/wishlist")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(wishListDto)
+                    .exchange()
+                    .expectStatus().isCreated()
+                    .expectBody(WishListDto.class)
+                    .value(wishListDtoResponse -> {
+                        //Then
+                        assertThat(wishListDtoResponse).isEqualTo(wishListDto);
                     });
         }
 
