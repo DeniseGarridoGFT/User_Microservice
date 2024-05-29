@@ -1,0 +1,36 @@
+services:
+  app:
+    image: us-central1-docker.pkg.dev/microservice-424612/cloud-run-source-deploy/user_microservice/user-microservice@sha256:820d28f27ae2586a08885c6f8d0af3601accbae6383e8098c03a2cc054e2bbab
+    container_name: spring_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mydb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: userroot
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./User_Microservice/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./User_Microservice/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8081:8080"
+
+volumes:
+  db_data:
