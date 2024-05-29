@@ -32,7 +32,7 @@ class TestEnd2EndRegisterTest {
     static void beforeAll() throws IOException {
         objectMapper = new ObjectMapper();
         mockWebServer = new MockWebServer();
-        mockWebServer.start(8081);
+        mockWebServer.start(8080);
     }
 
     @AfterAll

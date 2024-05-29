@@ -1,7 +1,7 @@
 server:
   servlet:
     context-path: /
-  port: ${PORT:8081}
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -9,7 +9,6 @@ spring:
 
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://google/Users?cloudSqlInstance=microservice-424612:europe-southwest1:usermicroservice&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false
     url: jdbc:mysql://34.175.180.158:3306/mydb
     username: user
     password: user
