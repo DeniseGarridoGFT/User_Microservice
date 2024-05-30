@@ -64,7 +64,7 @@ public class Validations {
     void ifSomeUserHaveTheEmailThrowsError(UserDto userToCheck, UserEntity userWithTheSameEmail)
             throws UserValidationException {
         UserDto userDto = UserEntity.fromEntity(userWithTheSameEmail);
-        if (userDto != null && isExistsEmailAndNotIsFromTheUser(userToCheck, userDto)) {
+        if (isExistsEmailAndNotIsFromTheUser(userToCheck, userDto)) {
             throw new UserValidationException("Your email is already registered.");
         }
     }
@@ -75,11 +75,12 @@ public class Validations {
     }
 
     boolean checkAllMethods(UserDto userToCheck) throws UserValidationException {
-        return checkEmail(userToCheck)
-                && checkPassword(userToCheck)
-                && checkDateFormat(userToCheck)
-                && checkPhone(userToCheck)
-                && checkAge(userToCheck)
-                && !checkSameEmail(userToCheck);
+        checkEmail(userToCheck);
+        checkPassword(userToCheck);
+        checkDateFormat(userToCheck);
+        checkPhone(userToCheck);
+        checkAge(userToCheck);
+        checkSameEmail(userToCheck);
+        return true;
     }
 }
