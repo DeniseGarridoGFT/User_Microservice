@@ -21,8 +21,8 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressDto addAddress(AddressDto address) throws RegisterException {
-        if (address.getId()!=null && addressDAORepository.findById(address.getId()).isPresent()){
-            throw new AddressServiceException("There's an error registering the address");
+        if (address.getId()!=null){
+            throw new AddressServiceException("You can't add an address with id");
         }
         return AddressEntity.fromEntity(addressDAORepository.save(AddressDto.toEntity(address)));
     }

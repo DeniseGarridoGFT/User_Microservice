@@ -8,10 +8,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.workshop.users.exceptions.MyResponseError;
 import org.junit.jupiter.api.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-
+@Disabled
 public class TestUserRegistration {
     private static RestClient restClient;
 

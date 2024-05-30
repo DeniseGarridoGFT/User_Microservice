@@ -102,7 +102,7 @@ class AddressServiceImplTest {
 
             assertThatThrownBy(() -> addressService.addAddress(addressWithExistingId))
                     .isInstanceOf(AddressServiceException.class)
-                    .hasMessage("There's an error registering the address");
+                    .hasMessage("You can't add an address with id");
         }
 
         @Nested
