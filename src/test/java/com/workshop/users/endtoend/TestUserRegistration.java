@@ -10,7 +10,6 @@ import com.workshop.users.exceptions.MyResponseError;
 import org.junit.jupiter.api.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-@Disabled
 public class TestUserRegistration {
     private static RestClient restClient;
 
