@@ -22,7 +22,7 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: userroot
+      MYSQL_ROOT_PASSWORD: catalogroot
       MYSQL_DATABASE: CatalogDB
       MYSQL_USER: catalog
       MYSQL_PASSWORD: catalog
