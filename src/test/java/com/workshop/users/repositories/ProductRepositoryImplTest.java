@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.web.client.RestClient;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +61,7 @@ class ProductRepositoryImplTest {
 
         when(restClientBuilder.build()).thenReturn(restClient);
 
-        productRepository = new ProductRepositoryImpl(restClientBuilder);
+        productRepository = new ProductRepositoryImpl(restClientBuilder,"routesByIds");
 
     }
 
@@ -68,7 +70,7 @@ class ProductRepositoryImplTest {
     class FindUserById {
         @Test
         @DisplayName("Given a good id then return a List product of products ")
-        void findProductById() {
+        void findProductById() throws URISyntaxException {
             //Given
             when(restClient.post()).thenReturn(request);
             Mockito.when(request.uri(anyString())).thenReturn(request);

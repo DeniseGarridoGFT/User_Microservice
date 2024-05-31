@@ -21,3 +21,9 @@ spring:
 
 catalog:
   url: https://catalog-workshop-yequy5sv5a-uc.a.run.app/catalog
+  products-by-ids: /products/byIds
+
+retryable:
+  max-attempts: 3
+  backoff: 1000
+
