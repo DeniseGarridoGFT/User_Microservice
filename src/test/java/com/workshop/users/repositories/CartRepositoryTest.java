@@ -20,7 +20,7 @@ public class CartRepositoryTest {
     RestClient.Builder restClientBuilder;
     private RestClient restClient;
     private CartRepository cartRepository;
-    private RestClient.RequestHeadersUriSpec request;
+    private RestClient.RequestBodyUriSpec request;
 
     private RestClient.ResponseSpec response;
 
@@ -28,7 +28,7 @@ public class CartRepositoryTest {
     void setUp() {
         restClientBuilder = Mockito.mock(RestClient.Builder.class);
         restClient = Mockito.mock(RestClient.class);
-        request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
+        request = Mockito.mock(RestClient.RequestBodyUriSpec.class);
         response = Mockito.mock(RestClient.ResponseSpec.class);
         when(restClientBuilder.build()).thenReturn(restClient);
         cartRepository = new CartRepositoryImpl(restClientBuilder,"createCart");
@@ -41,7 +41,7 @@ public class CartRepositoryTest {
         @Test
         @DisplayName("Given an id Then return true")
         void createCart() {
-            when(restClient.get()).thenReturn(request);
+            when(restClient.post()).thenReturn(request);
             Mockito.when(request.uri(anyString())).thenReturn(request);
             Mockito.when(request.retrieve()).thenReturn(response);
             when(response.onStatus(
@@ -54,7 +54,7 @@ public class CartRepositoryTest {
         @Test
         @DisplayName("Given an id Then throw the correct exception")
         void createCartThrowException() {
-            when(restClient.get()).thenReturn(request);
+            when(restClient.post()).thenReturn(request);
             Mockito.when(request.uri(anyString())).thenReturn(request);
             Mockito.when(request.retrieve()).thenReturn(response);
             when(response.onStatus(
