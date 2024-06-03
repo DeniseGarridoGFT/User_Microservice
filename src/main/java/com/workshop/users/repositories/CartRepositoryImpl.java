@@ -29,7 +29,7 @@ public class CartRepositoryImpl implements CartRepository {
     @Retryable(retryFor = CantCreateCartException.class, maxAttemptsExpression = "#{@retryConfig.getMaxAttempts()}",
             backoff = @Backoff(delayExpression = "#{@retryConfig.getBackoff()}"))
     public boolean createCart(Long id) throws CantCreateCartException {
-        return Objects.requireNonNull(restClient.get()
+        return Objects.requireNonNull(restClient.post()
                 .uri(createCart + id)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (request, response) -> {
