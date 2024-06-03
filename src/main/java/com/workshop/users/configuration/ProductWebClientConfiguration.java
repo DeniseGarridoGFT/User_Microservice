@@ -10,9 +10,16 @@ import org.springframework.web.client.RestClient;
 @EnableRetry
 public class ProductWebClientConfiguration {
     @Value("${catalog.url}")
-    private String URL;
-    @Bean
+    private String PRODUCT_URL;
+    @Value("${cart.url}")
+    private String CART_URL;
+
+    @Bean(name = "productRepository")
     public RestClient.Builder restClientBuilder(){
-        return RestClient.builder().baseUrl(URL);
+        return RestClient.builder().baseUrl(PRODUCT_URL);
+    }
+    @Bean(name = "cartRepository")
+    public RestClient.Builder restClientCartBuilder(){
+        return RestClient.builder().baseUrl(CART_URL);
     }
 }
