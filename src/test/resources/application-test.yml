@@ -1,8 +1,3 @@
-server:
-  servlet:
-    context-path: /catalog
-  port: 8080
-
 spring:
   config:
     activate:
@@ -20,11 +15,18 @@ spring:
       settings:
         web-allow-others: true
   jpa:
-    defer-datasource-initialization: true
-
+    hibernate:
+      ddl-auto: none
+    defer-datasource-initialization: false
+  sql:
+    init:
+      mode: always
 catalog:
-  url: https://catalog-workshop-yequy5sv5a-uc.a.run.app/catalog
-  products-by-id: /products/byIds
+  url: http://localhost:8081
+  products-by-ids: /products/byIds
+cart:
+  url: http://localhost:8081
+  create-cart: /carts/
 
 retryable:
   max-attemps: 3

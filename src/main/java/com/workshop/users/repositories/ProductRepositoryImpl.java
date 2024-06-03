@@ -2,6 +2,7 @@ package com.workshop.users.repositories;
 
 import com.workshop.users.api.dto.Product;
 import com.workshop.users.exceptions.NotFoundProductException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     private String routeByIds;
 
 
-    public ProductRepositoryImpl(RestClient.Builder builder,@Value("${catalog.products-by-ids}") String routeByIds) {
+    public ProductRepositoryImpl(@Qualifier("productRepository") RestClient.Builder builder, @Value("${catalog.products-by-ids}") String routeByIds) {
         this.restClient =  builder.build();
         this.routeByIds = routeByIds;
     }

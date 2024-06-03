@@ -52,6 +52,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(myResponseError, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CantCreateCartException.class)
+    public ResponseEntity<MyResponseError> handleCantCreateCartException(CantCreateCartException ex) {
+        MyResponseError myResponseError = MyResponseError.builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR)
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(myResponseError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     @ExceptionHandler(NotFoundProductException.class)
     public ResponseEntity<MyResponseError> handleGeneralException(NotFoundProductException ex) {
