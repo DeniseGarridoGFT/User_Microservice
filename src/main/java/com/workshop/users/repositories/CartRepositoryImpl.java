@@ -21,7 +21,7 @@ public class CartRepositoryImpl implements CartRepository {
     private RestClient restClient;
     private String createCart;
 
-    public CartRepositoryImpl(@Qualifier("productRepository") RestClient.Builder restClient, @Value("${cart.create-cart}") String createCart) {
+    public CartRepositoryImpl(@Qualifier("cartRepository") RestClient.Builder restClient, @Value("${cart.create-cart}") String createCart) {
         this.restClient = restClient.build();
     }
 
