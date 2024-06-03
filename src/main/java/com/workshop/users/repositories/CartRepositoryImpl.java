@@ -23,6 +23,7 @@ public class CartRepositoryImpl implements CartRepository {
 
     public CartRepositoryImpl(@Qualifier("cartRepository") RestClient.Builder restClient, @Value("${cart.create-cart}") String createCart) {
         this.restClient = restClient.build();
+        this.createCart = createCart;
     }
 
     @Override
