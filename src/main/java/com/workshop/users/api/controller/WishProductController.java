@@ -28,14 +28,11 @@ public class WishProductController {
     @Transactional(rollbackFor = ConflictWishListException.class)
     public ResponseEntity<WishListDto> postWishList(@Validated @RequestBody WishListDto wishListDto)
             throws NotFoundUserException, NotFoundProductException, ConflictWishListException {
-
         productService.findProductsByIds(wishListDto.getProductsIds().stream().toList());
         userService.getUserById(wishListDto.getUserId());
-
         for (Long productId:wishListDto.getProductsIds()){
             wishProductService.addWishProducts(WishListDto.getEntity(wishListDto.getUserId(),productId));
         }
-        
         return new ResponseEntity<>(wishListDto,HttpStatus.CREATED);
     }
 

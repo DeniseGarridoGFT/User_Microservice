@@ -5,9 +5,12 @@ import com.workshop.users.api.controller.Data.DataToUserControllerTesting;
 import com.workshop.users.api.dto.Login;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.AuthenticateException;
+import com.workshop.users.exceptions.CantCreateCartException;
 import com.workshop.users.exceptions.NotFoundUserException;
 import com.workshop.users.exceptions.RegisterException;
 import com.workshop.users.model.UserEntity;
+import com.workshop.users.repositories.CartRepository;
+import com.workshop.users.repositories.CartRepositoryImpl;
 import com.workshop.users.repositories.CountryDAORepository;
 import com.workshop.users.repositories.UserDAORepository;
 import org.assertj.core.api.Assertions;
@@ -27,13 +30,16 @@ class UserServiceImplTest {
 
     private UserDAORepository userDAORepository;
     CountryDAORepository countryDAORepository;
+
+    private CartRepository cartRepository;
     private UserService userService;
 
     @BeforeEach
     void setUp() {
         userDAORepository = Mockito.mock(UserDAORepository.class);
         countryDAORepository = Mockito.mock(CountryDAORepository.class);
-        userService = new UserServiceImpl(userDAORepository);
+        cartRepository = mock(CartRepository.class);
+        userService = new UserServiceImpl(userDAORepository,cartRepository);
     }
 
     @AfterEach
@@ -215,6 +221,7 @@ class UpdateUser{
         userDtoAux.setId(1L);
         userDtoAux.setFidelityPoints(0);
         when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoAux));
+        when(cartRepository.createCart(anyLong())).thenReturn(true);
         UserDto userSaved = userService.addUser(userDtoToSave);
 
         Assertions.assertThat(userSaved.getName()).isEqualTo("Manuel updated");
@@ -224,6 +231,30 @@ class UpdateUser{
         Assertions.assertThat(userSaved.getFidelityPoints()).isZero();
         Assertions.assertThat(userSaved.getPhone()).isEqualTo("963258741");
         Assertions.assertThat(userSaved.getAddress()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Given an good userdto but have an error creating the cart  when add user then throw an error")
+    void addUserCantCreateCartException()  {
+        UserDto userDtoToSave = UserDto.builder()
+                .name("Manuel updated")
+                .lastName("Salamanca updated")
+                .password("2B8sda2?_")
+                .phone("963258741")
+                .email("manuelotherd@example.com")
+                .birthDate("2000/01/14")
+                .fidelityPoints(60)
+                .country(DataInitzializerController.COUNTRY_SPAIN)
+                .address(DataToUserControllerTesting.ADDRESS_CALLE_VARAJAS)
+                .build();
+        UserDto userDtoAux = userDtoToSave;
+        userDtoAux.setId(1L);
+        userDtoAux.setFidelityPoints(0);
+        when(userDAORepository.save(any(UserEntity.class))).thenReturn(UserDto.toEntity(userDtoAux));
+        when(cartRepository.createCart(anyLong())).thenThrow(new CantCreateCartException("Error creating a cart"));
+        assertThatThrownBy(()->userService.addUser(userDtoToSave))
+                .isInstanceOf(CantCreateCartException.class)
+                .hasMessage("Error creating a cart");
     }
 
     @Nested

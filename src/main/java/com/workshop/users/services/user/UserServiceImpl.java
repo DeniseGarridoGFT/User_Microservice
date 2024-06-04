@@ -6,6 +6,7 @@ import com.workshop.users.api.dto.AddressDto;
 import com.workshop.users.api.dto.UserDto;
 import com.workshop.users.exceptions.*;
 import com.workshop.users.model.UserEntity;
+import com.workshop.users.repositories.CartRepository;
 import com.workshop.users.repositories.UserDAORepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserDAORepository userDAORepository;
+    private final CartRepository cartRepository;
 
 
 
     @Override
-    public UserDto addUser(UserDto user) throws AuthenticateException, RegisterException {
+    public UserDto addUser(UserDto user) throws AuthenticateException, RegisterException,CantCreateCartException {
 
         String encryptedPassword = Login.BCRYPT.encode(user.getPassword());
         user.setPassword(encryptedPassword);
@@ -30,7 +32,9 @@ public class UserServiceImpl implements UserService {
         if (user.getId() != null && userDAORepository.findById(user.getId()).isPresent()) {
             throw new RegisterException("There's an error registering the user");
         }
-        return UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
+        UserDto userSaved = UserEntity.fromEntity(userDAORepository.save(UserDto.toEntity(user)));
+        cartRepository.createCart(userSaved.getId());
+        return userSaved;
 
     }
 

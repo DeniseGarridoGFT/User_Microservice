@@ -32,7 +32,7 @@ class TestEnd2EndRegisterTest {
     static void beforeAll() throws IOException {
         objectMapper = new ObjectMapper();
         mockWebServer = new MockWebServer();
-        mockWebServer.start(8080);
+        mockWebServer.start(8081);
     }
 
     @AfterAll
@@ -48,7 +48,7 @@ class TestEnd2EndRegisterTest {
 
         @Test
         @DisplayName("Given correct credentials a user is registered. Then return that user")
-        void registerUser() {
+        void registerUser() throws JsonProcessingException {
             // Given
             UserDto newUser = UserDto.builder()
                     .name("Aria")
@@ -72,6 +72,11 @@ class TestEnd2EndRegisterTest {
                             .timeZone("Europe/Madrid")
                             .build())
                     .build();
+
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody(objectMapper.writeValueAsString(true))
+                    .setStatus("HTTP/1.1 201 Created")
+                    .setHeader("Content-Type", "application/json"));
 
             // When
             webTestClient.post()
@@ -101,6 +106,63 @@ class TestEnd2EndRegisterTest {
                         assertThat(userDto.getCountry().getTax()).isEqualTo(newUser.getCountry().getTax());
                         assertThat(userDto.getCountry().getPrefix()).isEqualTo(newUser.getCountry().getPrefix());
                         assertThat(userDto.getCountry().getTimeZone()).isEqualTo(newUser.getCountry().getTimeZone());
+                    });
+        }
+
+        @Test
+        @DisplayName("Given correct credentials a user is registered but have problems creating the cart." +
+                " Then throw my exception")
+        void registerUserCartError() throws JsonProcessingException {
+            // Given
+            UserDto newUser = UserDto.builder()
+                    .name("Aria")
+                    .lastName("Fei")
+                    .email("aria45@example.com")
+                    .password("Ar1a@31234.")
+                    .fidelityPoints(0)
+                    .birthDate("1994/04/14")
+                    .phone("123456789")
+                    .address(AddressDto.builder()
+                            .cityName("Valencia")
+                            .zipCode("46360")
+                            .street("C/ La Calle")
+                            .number(32)
+                            .door("2A")
+                            .build())
+                    .country(CountryDto.builder()
+                            .name("España")
+                            .tax(21f)
+                            .prefix("+34")
+                            .timeZone("Europe/Madrid")
+                            .build())
+                    .build();
+
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Failed to conect\"}")
+                    .setStatus("HTTP/1.1 500 Internal Server Error")
+                    .setHeader("Content-Type", "application/json"));
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Failed to conect\"}")
+                    .setStatus("HTTP/1.1 500 Internal Server Error")
+                    .setHeader("Content-Type", "application/json"));
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Failed to conect\"}")
+                    .setStatus("HTTP/1.1 500 Internal Server Error")
+                    .setHeader("Content-Type", "application/json"));
+
+            // When
+            webTestClient.post()
+                    .uri("/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(newUser)
+                    .exchange()
+                    .expectStatus().is5xxServerError()
+                    .expectBody(MyResponseError.class)
+                    .value(myResponseError -> {
+                        assertThat(myResponseError)
+                                .hasFieldOrPropertyWithValue("code",HttpStatus.INTERNAL_SERVER_ERROR)
+                                .hasFieldOrPropertyWithValue("message","Error creating a cart");
+
                     });
         }
 
@@ -419,7 +481,6 @@ class TestEnd2EndRegisterTest {
                         assertThat(userDto.getAddress().getStreet()).isEqualTo(newUser.getAddress().getStreet());
                         assertThat(userDto.getAddress().getNumber()).isEqualTo(newUser.getAddress().getNumber());
                         assertThat(userDto.getAddress().getDoor()).isEqualTo(newUser.getAddress().getDoor());
-
                         assertThat(userDto.getCountry().getId()).isEqualTo(2L);
                     });
         }
@@ -638,7 +699,18 @@ class TestEnd2EndRegisterTest {
             mockWebServer.enqueue(new MockResponse()
                     .setBody("{\"message\":\"Not found product with this ids\"}")
                     .setStatus("HTTP/1.1 404 Not Found")
-                            .setResponseCode(404)
+                    .setHeader("Content-Type", "application/json"));
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Not found product with this ids\"}")
+                    .setStatus("HTTP/1.1 404 Not Found")
+                    .setHeader("Content-Type", "application/json"));
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Not found product with this ids\"}")
+                    .setStatus("HTTP/1.1 404 Not Found")
+                    .setHeader("Content-Type", "application/json"));
+            mockWebServer.enqueue(new MockResponse()
+                    .setBody("{\"message\":\"Not found product with this ids\"}")
+                    .setStatus("HTTP/1.1 404 Not Found")
                     .setHeader("Content-Type", "application/json"));
 
 
