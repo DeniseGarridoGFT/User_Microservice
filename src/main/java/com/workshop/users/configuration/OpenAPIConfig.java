@@ -3,7 +3,6 @@ package com.workshop.users.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springdoc.core.GroupedOpenApi;
-import org.springframework.retry.annotation.EnableRetry;
 
 @Configuration
 

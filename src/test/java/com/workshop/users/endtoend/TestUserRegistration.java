@@ -11,7 +11,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 @Disabled
-public class TestUserRegistration {
+class TestUserRegistration {
     private static RestClient restClient;
 
     @BeforeAll
@@ -135,7 +135,7 @@ public class TestUserRegistration {
     @Test
     @DisplayName("Given a existing user that try to login then throw an exception")
 
-    public void testUserLoginException() {
+    void testUserLoginException() {
         Login login = Login.builder()
                 .email("juanagarcia@example.com")
                 .password("1234")
